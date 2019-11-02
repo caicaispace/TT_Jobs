@@ -24,6 +24,8 @@ App/Cron/Conf/pro.php       # 生产环境配置
 php App/Cron/bin/server start --d
 ```
 
+浏览器访问 http://localhost:9501
+
 ## 注意事项
 
 swoole >= 4.3.0 需要安装 [swoole Async 模块](https://github.com/swoole/ext-async)

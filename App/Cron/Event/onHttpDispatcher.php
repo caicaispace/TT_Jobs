@@ -33,7 +33,7 @@ class onHttpDispatcher
      */
     static function auth(Request $request, Response $response, $targetControllerClass, $action)
     {
-        return true;
+//        return true;
         $authSession = $request->session()->get('auth');
         if ($authSession && $authSession['username'] == 'admin') {
             return true;
