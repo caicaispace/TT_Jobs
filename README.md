@@ -1,4 +1,8 @@
 
+## 界面
+
+![home](home.png)
+
 ## 环境要求
 
 - php >= 5.6
@@ -39,6 +43,8 @@ phpize
 make -j 4
 sudo make install
 ```
+
+
 
 ## TODO
 
