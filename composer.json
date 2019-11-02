@@ -1,6 +1,6 @@
 {
   "name": "TT_Jobs",
-  "description": "use swoole run shell like linux crontab",
+  "description": "you can schedule shell better than linux crontab",
   "type": "project",
   "authors": [
     {
