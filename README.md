@@ -1,4 +1,8 @@
 
+# TT Jobs
+
+基于 swoole 开发的定时管理系统
+
 ## 界面
 
 ![home](home.png)
@@ -20,7 +24,7 @@ App/Cron/Conf/pro.php       # 生产环境配置
 
 2. `App/Cron/Runtime` 目录可写权限
 
-3. 导入 `App/Cron/Schemas` 目录下表结构 
+3. 导入 `App/Cron/Schemas/tt_jobs.sql` 表结构 
 
 ## 运行
 
