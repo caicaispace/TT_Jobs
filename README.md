@@ -17,7 +17,7 @@
 1. 修改 `App/Cron/Conf` 目录下配置
 
 ```
-App/Cron/Conf/config.ini    # 指定当前环境配置
+App/Cron/Conf/config.ini    # 指定当前环境
 App/Cron/Conf/dev.php       # 开发环境配置
 App/Cron/Conf/pro.php       # 生产环境配置
 ```
