@@ -1,0 +1,65 @@
+<div class="cal_operation">
+	<div class="col-md-2 month_last " data-opt="month_click" data-date = '<%= info.last_month %>' title="<%= info.last_month %>" > < </div>
+	<div class="col-md-8 month_show"> <span id="cal_date"><%= info.date %></span> 月 </div>
+	<div class="col-md-2 month_next " data-opt="month_click" data-date = '<%= info.next_month %>' title="<%= info.next_month %>" > > </div>
+</div>
+
+<div class="cal_lg">
+
+	<div class="cal_head hidden-xs">
+		<div>周 一</div>
+		<div>周 二</div>
+		<div>周 三</div>
+		<div>周 四</div>
+		<div>周 五</div>
+		<div>周 六</div>
+		<div>周 日</div>
+	</div>
+
+	<div class="cal_body">
+
+		<% var now_date = new Date().format('yyyyMMdd') %>
+		<% for(var i=1 ; i <= info.week_month_day1; i++) { %>
+			<div class="cal_none col-md-2 hidden-xs"><%= ++ info.last_month_days %></div>
+		<% } %>
+
+		<% for(var i=1 ; i<= info.month_days; i++) { %>
+
+			<% var day = i <= 9 ? '0'+i : i %>
+			<% var full_date = info.date.replace(/-/g,'') + day %>
+			<% var date_week = parseInt(moment(info.date+'-'+day).format('e')) + 1 %>
+
+			<% if(full_date >= info.timeStart && full_date >= now_date && full_date <= info.timeEnd && info.week['wd_'+date_week] == '1' ) { %>
+
+				<div data-opt="day_click" data-day="<%= day %>" data-month="<%= info.date %>" data-date="<%= info.date+'-'+day %>">
+					<strong><%= i %></strong>
+					<% if(full_date === now_date ) { %><span style="color:#ff4400;float: right">今天</span><% } %>
+					<br>
+					<span>
+						景:￥<%= info.data.cost_price %><br>
+						<%= info.data.proxy_price != '--' ? '代:￥ '+info.data.proxy_price : '' %><br>
+						<span style="color: #4cae4c;float: left"><%= typeof info.data.special_price[full_date] != 'undefined' ? '特' : '' %></span>
+						<span style="color: #00A0BD;float: right"></span>
+					</span>
+				</div>
+
+			<% }else{ %>
+
+				<div >
+					<strong><%= i %></strong>
+					<% if(full_date === now_date ) { %><span style="color:#ff4400;float: right">今天</span><% } %>
+					<br>
+					<span style="color: #959999;">
+						无<br>
+					</span>
+				</div>
+
+			<% } %>
+		<% } %>
+
+		<% for(var i = 1 ; i < 7 - info.week_month_day30; i++) { %>
+			<div class="cal_none hidden-xs"><%= i %></div>
+		<% } %>
+
+	</div>
+</div>

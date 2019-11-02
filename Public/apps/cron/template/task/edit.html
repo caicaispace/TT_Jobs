@@ -1,0 +1,102 @@
+form|&|
+<form class="form-horizontal">
+
+    <div class="form-group custom-form-group">
+        <label class="col-sm-2 control-label"><span class="form-must">*</span>任务名称 :</label>
+        <div class="col-sm-4">
+            <input name="task_name" type="text" class="form-control" data-validation="must" placeholder="名称唯一" value="<%= data.task_name || '' %>">
+        </div>
+        <div class="col-sm-6"></div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label"><span class="form-must">*</span>任务说明 :</label>
+        <div class="col-sm-10">
+            <textarea name="description" class="form-control" rows="4" placeholder="注明执行周期"><%= data.description || '' %></textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label"><span class="form-must">*</span>任务分组 :</label>
+        <div class="col-sm-4">
+            <select class="form-control" name="group_id">
+                <option value="0" > 未分组 </option>
+                <% var i %>
+                <% for(i in task_group) { %>
+                    <option value="<%= task_group[i]['id'] %>" <%= task_group[i]['id'] == data['group_id'] ? 'selected' : '' %> > <%= task_group[i]['group_name'] %> </option>
+                <% } %>
+            </select>
+        </div>
+        <div class="col-sm-6"><em><small></small></em></div>
+    </div>
+
+    <!--<div class="form-group">-->
+        <!--<label class="col-sm-2 control-label"><span class="form-must">*</span>服务器 :</label>-->
+        <!--<div class="col-sm-4">-->
+            <!--<select class="form-control" name="server_id">-->
+                <!--<option value="1"  > 未分组 </option>-->
+                <!--<option value="2"  > 测试任务 </option>-->
+                <!--<option value="3"  > 抓取任务 </option>-->
+            <!--</select>-->
+        <!--</div>-->
+        <!--<div class="col-sm-6"><em><small></small></em></div>-->
+    <!--</div>-->
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label"><span class="form-must">*</span>是否单例 :</label>
+        <div class="col-sm-4">
+            <% var i, consts = consts_re.single, num = 0 %>
+            <% for(i in consts){ %>
+            <% c = consts[i] %>
+            <label class="radio-inline">
+                <input type="radio" name="single" value="<%= i %>" data-validation="must"
+                <%=
+                    data && data['single'] == i
+                        ? 'checked'
+                        : num == 0
+                            ? 'checked'
+                            : ''
+                %>
+                ><%= c %>
+            </label>
+            <% num += 1 %>
+            <% } %>
+        </div>
+        <div class="col-sm-6"><small><u>设为“是”的话，如果该任务在上一个时间点还没执行完，则略过不执行</u></small></div>
+    </div>
+
+    <div class="form-group custom-form-group">
+        <label class="col-sm-2 control-label"><span class="form-must">*</span>时间表达式 :</label>
+        <div class="col-sm-4">
+            <input name="cron_spec" type="text" class="form-control" data-validation="must" value="<%= data.cron_spec || '* * * * *' %>">
+        </div>
+        <div class="col-sm-6"><small><u>默认：* * * * *，详见：《使用帮助》</u></small></div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">命令脚本 :</label>
+        <div class="col-sm-10">
+            <textarea name="command" class="form-control" rows="4" placeholder="支持 bash 命令和 shell 文件"><%= data.command || '' %></textarea>
+        </div>
+    </div>
+
+    <div class="form-group custom-form-group">
+        <label class="col-sm-2 control-label">超时设置 :</label>
+        <div class="col-sm-4">
+            <input name="timeout" type="text" class="form-control" value="<%= data.timeout || '3600' %>">
+        </div>
+        <div class="col-sm-6"><small></small><u>单位：秒， 默认：3600 秒</u></div>
+    </div>
+
+    <!--<div class="form-group">-->
+        <!--<label class="col-sm-2 control-label"><span class="form-must">*</span>排序 :</label>-->
+        <!--<div class="col-sm-2">-->
+            <!--<input name="sort" type="text" class="form-control" data-validation="must" value="<%= data.sort || 0 %>">-->
+        <!--</div>-->
+    <!--</div>-->
+
+</form>
+||&&||
+other|&|
+<div></div>

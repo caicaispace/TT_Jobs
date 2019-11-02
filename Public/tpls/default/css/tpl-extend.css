@@ -1,0 +1,65 @@
+/* PC layout */
+
+@media (min-width:768px) {
+	.navbar-extend {
+		position: fixed;
+		width: 100%;
+	}
+}
+
+
+/* Tablet layout*/
+
+
+/*@media (max-width:767px) {
+
+}*/
+
+
+/* Phone layout */
+
+@media (max-width:767px) {}
+
+.out-repaly>div>button {
+	box-shadow: 0 0 15px #777;
+}
+
+.matrix-img {
+	width: 60px !important;
+	margin: 5px !important;
+}
+
+#page-wrapper {
+	padding-top: 20px;
+}
+
+.ke-container {
+	width: 680px;
+}
+
+.form-must {
+	color: #ff0000;
+	padding: 0 5px;
+}
+
+.form-validation-prompt {
+	padding: 5px;
+	color: #a94442;
+}
+
+input[type="check"],
+input[type="radio"] {
+	cursor: pointer;
+}
+
+.tr-checked-all {
+	width: 40px;
+}
+
+.checkbox-c {
+	width: 6em;
+}
+
+.custom-form-group > button {
+	margin-left: 5px !important;
+}

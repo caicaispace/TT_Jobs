@@ -1,0 +1,136 @@
+init|&|
+
+
+<blockquote>
+    <p>表达式格式：</p>
+</blockquote>
+
+<pre>
+    *    *    *    *    *
+    -    -    -    -    -
+    |    |    |    |    |
+    |    |    |    |    + year [optional]
+    |    |    |    +----- month (1 - 12)
+    |    |    +---------- day of month (1 - 31)
+    |    +--------------- hour (0 - 23)
+    +-------------------- min (0 - 59)
+</pre>
+
+<blockquote><p>表达式例子：</p></blockquote>
+<table class="table table-hover table-bordered">
+    <tbody>
+    <tr><th scope="row">* * * * *</th><td>每分钟一次触发</td></tr>
+    <tr><th scope="row">*/10 * * * *</th><td>每 10 分钟触发</td></tr>
+    <tr><th scope="row">0 * * * *</th><td>每小时触发</td></tr>
+    <tr><th scope="row">20 * * * *</th><td>每小时的 20 分触发</td></tr>
+    <tr><th scope="row">0 */12 * * * *</th><td>每 12 小时触发</td></tr>
+    <tr><th scope="row">0 0 * * *</th><td>每天触发</td></tr>
+    <tr><th scope="row">0 0 3 * **</th><td>每天 3 点触发</td></tr>
+    <tr><th scope="row">0 0 * * 0</th><td>每周触发</td></tr>
+    <tr><th scope="row">0 0 1 * *</th><td>每月触发</td></tr>
+    <tr><th scope="row">0 0 1 1 *</th><td>每年触发</td></tr>
+    </tbody>
+</table>
+
+<blockquote><p>表达式生成器：</p></blockquote>
+
+<div>
+    <a href="http://cron.qqe2.com/" target="_blank">Cron表达式生成器</a>
+</div>
+
+<!--<div class="page-header">-->
+    <!--<h2>Cron 表达式说明</h2>-->
+<!--</div>-->
+
+<!--<blockquote>-->
+    <!--<p>合法的表达式格式：</p>-->
+<!--</blockquote>-->
+<!--<div class="panel panel-default">-->
+    <!--<div class="panel-body">-->
+        <!--<div>-->
+            <!--<span class="label label-primary">Seconds</span>-->
+            <!--<span class="label label-success">Minutes</span>-->
+            <!--<span class="label label-info">Hours</span>-->
+            <!--<span class="label label-warning">DayofMonth</span>-->
+            <!--<span class="label label-danger">Month</span>-->
+            <!--<span class="label label-default">[DayofWeek]</span>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+<!--<div class="alert alert-warning" role="alert">-->
+    <!--Cron表达式是一个字符串，字符串以空格隔开，分为 5 或 6 个域，每一个域代表一个含义，其中 <span class="label label-default">[DayofWeek]</span> 为可选域。-->
+<!--</div>-->
+
+<!--<hr>-->
+
+<!--<blockquote><p>每一个域有效字符：</p></blockquote>-->
+<!--<table class="table table-hover table-bordered">-->
+    <!--<tbody>-->
+    <!--<tr>-->
+        <!--<th scope="row">Seconds</th>-->
+        <!--<td>* / , -</td>-->
+        <!--<td>四个字符，有效范围为0-59的整数</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<th scope="row">Minutes</th>-->
+        <!--<td>* / , -</td>-->
+        <!--<td>四个字符，有效范围为0-59的整数</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<th scope="row">Hours</th>-->
+        <!--<td>* / , -</td>-->
+        <!--<td>四个字符，有效范围为0-23的整数</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<th scope="row">DayofMonth</th>-->
+        <!--<td>* / , - ?</td>-->
+        <!--<td>五个字符，有效范围为0-31的整数</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<th scope="row">Month</th>-->
+        <!--<td>, - * /</td>-->
+        <!--<td>四个字符，有效范围为1-12的整数或JAN-DEC</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+        <!--<th scope="row">DayofWeek</th>-->
+        <!--<td>* / , - ?</td>-->
+        <!--<td>五个字符，有效范围为0-6的整数或SUN-SAT两个范围。0表示星期天，1表示星期一， 依次类推</td>-->
+    <!--</tr>-->
+    <!--</tbody>-->
+<!--</table>-->
+
+<!--<hr>-->
+
+<!--<blockquote><p>各个字符的含义：</p></blockquote>-->
+<!--<table class="table table-hover table-bordered">-->
+    <!--<tbody>-->
+    <!--<tr><th scope="row">*</th><td>表示匹配该域的任意值，假如在Minutes域使用*, 即表示每分钟都会触发事件。</td></tr>-->
+    <!--<tr><th scope="row">?</th><td>字符仅被用于天（月）和天（星期）两个子表达式，表示不指定值，当2个子表达式其中之一被指定了值以后，为了避免冲突，需要将另一个子表达式的值设为“?”。</td></tr>-->
+    <!--<tr><th scope="row">-</th><td>表示范围，例如在Minutes域使用5-20，表示从5分到20分钟每分钟触发一次。</td></tr>-->
+    <!--<tr><th scope="row">/</th><td>表示起始时间开始触发，然后每隔固定时间触发一次，例如在Minutes域使用5/20,则意味着5分钟触发一次，而25，45等分别触发一次。</td></tr>-->
+    <!--<tr><th scope="row">,</th><td>表示列出枚举值值。例如：在Minutes域使用5,20，则意味着在5和20分每分钟触发一次。</td></tr>-->
+    <!--</tbody>-->
+<!--</table>-->
+
+<!--<hr>-->
+
+<!--<blockquote><p>例子：</p></blockquote>-->
+<!--<table class="table table-hover table-bordered">-->
+    <!--<tbody>-->
+    <!--<tr><th scope="row">0 0 10,14,16 * * ?</th><td>每天上午10点，下午2点，4点触发</td></tr>-->
+    <!--<tr><th scope="row">0 0/30 9-17 * * ?</th><td>朝九晚五工作时间内每半小时触发</td></tr>-->
+    <!--<tr><th scope="row">0 0 12 ? * WED </th><td>表示每个星期三中午12点触发</td></tr>-->
+    <!--<tr><th scope="row">0 0 12 * * ? </th><td>每天中午12点触发</td></tr>-->
+    <!--<tr><th scope="row">0 15 10 * * ? </th><td>每天上午10:15触发</td></tr>-->
+    <!--<tr><th scope="row">0 15 10 * * ? * </th><td>每天上午10:15触发</td></tr>-->
+    <!--<tr><th scope="row">0 * 14 * * ? </th><td>在每天下午2点到下午2:59期间的每1分钟触发</td></tr>-->
+    <!--<tr><th scope="row">0 0/5 14 * * ? </th><td>在每天下午2点到下午2:55期间的每5分钟触发</td></tr>-->
+    <!--<tr><th scope="row">0 0/5 14,18 * * ? </th><td>在每天下午2点到2:55期间和下午6点到6:55期间的每5分钟触发</td></tr>-->
+    <!--<tr><th scope="row">0 0-5 14 * * ? </th><td>在每天下午2点到下午2:05期间的每1分钟触发</td></tr>-->
+    <!--<tr><th scope="row">0 10,44 14 ? 3 WED </th><td>每年三月的星期三的下午2:10和2:44触发</td></tr>-->
+    <!--<tr><th scope="row">0 15 10 ? * MON-FRI </th><td>周一至周五的上午10:15触发</td></tr>-->
+    <!--<tr><th scope="row">0 15 10 15 * ? </th><td>每月15日上午10:15触发</td></tr>-->
+    <!--</tbody>-->
+<!--</table>-->
+
+||&&||

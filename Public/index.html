@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>定时任务管理后台</title>
+
+    <link href="_static/img/favorite.ico" rel="shortcut icon">
+
+    <!------------------ Base CSS ------------------>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="/base/css/bootstrap.css" rel="stylesheet">
+
+    <!------------------ Template CSS ------------------>
+    <!-- MetisMenu CSS -->
+    <link href="/tpls/default/plugins/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- plugins CSS -->
+    <link href="/base/plugins/bootstrap-daterangepicker/bootstrap-daterangepicker.css" rel="stylesheet">
+    <link href="/base/plugins/nprogress/nprogress.css" rel="stylesheet">
+    <link href="/base/plugins/bootstrap-jquery.fileupload/bootstrap-jquery.fileupload.css" rel="stylesheet">
+    <link href="/base/plugins/bootstrap-dialog/bootstrap-dialog.min.css" rel="stylesheet" type="text/css">
+    <link href="/base/plugins/bootstrap-jquery.multi-select/jquery.multi-select.css" rel="stylesheet" type="text/css">
+
+    <!-- Custom CSS -->
+    <!-- <link href="/tpls/default/css/sb-admin-2.css" rel="stylesheet"> -->
+
+    <!-- Morris Charts CSS -->
+    <link href="/tpls/default/plugins/morrisjs/morris.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="/tpls/default/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <link href="/tpls/default/css/bootstrap-clear-radius.css" rel="stylesheet">
+    <link href="/tpls/default/css/tpl-base.css" rel="stylesheet">
+    <link href="/tpls/default/css/tpl-extend.css" rel="stylesheet">
+    <link href="/tpls/default/css/bootstrap-extend.css" rel="stylesheet">
+    <link href="/tpls/default/plugins/toastr/toastr.css" rel="stylesheet" type="text/css">
+
+    <!-- <link href="/tpls/default/css/tpl-extend.css" rel="stylesheet"> -->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+<div id="wrapper">
+    <nav class="navbar navbar-default navbar-static-top navbar-extend" role="navigation">
+        <div id="headerbar"></div>
+        <div class="navbar-default sidebar" role="navigation">
+            <div class="sidebar-nav navbar-collapse">
+                <ul class="nav" id="side-menu"></ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <ol class="breadcrumb page-header">
+                    <span class="extend-route-history-back" id="route-history-back"><i
+                            class="fa fa-arrow-circle-left fa-fw"></i></span>
+                    <span id="breadcrumb">***** / ***** / *****</span>
+                    <span class="extend-route-history-go" id="route-history-go"><i
+                            class="fa fa-arrow-circle-right fa-fw"></i></span>
+                </ol>
+            </div>
+        </div>
+        <div id="right-content"></div>
+    </div>
+
+</div>
+
+<!-- <script src="/base/js/require.js" data-main="/apps-build/admin/main" ></script> -->
+<script src="/base/js/require.js" data-main="/apps/cron/main"></script>
+
+</body>
+
+</html>

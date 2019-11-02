@@ -1,0 +1,45 @@
+form|&|
+<form class="form-horizontal">
+
+    <div class="form-group custom-form-group">
+        <label class="col-sm-2 control-label"><span class="form-must">*</span>用户名 :</label>
+        <div class="col-sm-4">
+            <input name="username" type="text" class="form-control" data-validation="must" placeholder="" value="<%= data.username || '' %>">
+        </div>
+        <div class="col-sm-6"></div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">邮箱 :</label>
+        <div class="col-sm-4">
+            <input name="email" type="text" class="form-control" placeholder="" value="<%= data.email || '' %>">
+        </div>
+        <div class="col-sm-6"></div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">密码 :</label>
+        <div class="col-sm-4">
+            <input name="password" type="text" class="form-control" placeholder="" >
+        </div>
+        <div class="col-sm-6"></div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label"><span class="form-must">*</span>用户组 :</label>
+        <div class="col-sm-4">
+            <select id='groups' name="groups[]" multiple='multiple'>
+                <% var i, group, num = 0 %>
+                <% for(i in group_list){ %>
+                <% group = group_list[i] %>
+                <option value='<%= group.id %>' <% if(data.groups != void 0){ %><%= data.groups.split(',').indexOf(''+group.id) > -1 ? 'selected' : '' %><% } %>><%= group.title %></option>
+                <% } %>
+            </select>
+        </div>
+        <div class="col-sm-6"></div>
+    </div>
+
+</form>
+||&&||
+other|&|
+<div></div>

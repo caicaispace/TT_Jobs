@@ -1,0 +1,31 @@
+{
+  "name": "TT_Jobs",
+  "description": "use swoole run shell like linux crontab",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Yang.Cai",
+      "email": "yangcai.email@foxmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.6",
+    "ext-json": "*",
+    "ext-pcntl": "*",
+    "ext-inotify": "*",
+    "ext-posix": "*",
+    "phpdr.net/php-curlmulti": "^4.1",
+    "dragonmantank/cron-expression": "1.*",
+    "topthink/think-orm": "1.*",
+    "topthink/think-template": "1.*",
+    "topthink/think-validate": "1.*"
+  },
+  "require-dev": {
+  },
+  "repositories": {
+    "packagist": {
+      "type": "composer",
+      "url": "https://packagist.phpcomposer.com"
+    }
+  }
+}

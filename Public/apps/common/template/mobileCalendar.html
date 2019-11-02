@@ -1,0 +1,67 @@
+<div class="cal_operation">
+	<div class="month_last " data-opt="month_click" data-date = '<%= datas.last_month %>' title="<%= datas.last_month %>" > < </div>
+	<div class="month_show"> <span id="cal_date"><%= datas.date %></span> 月 </div>
+	<div class="month_next " data-opt="month_click" data-date = '<%= datas.next_month %>' title="<%= datas.next_month %>" > > </div>
+</div>
+
+<div class="cal_lg">
+
+	<div class="cal_head">
+		<div>日</div>
+		<div>一</div>
+		<div>二</div>
+		<div>三</div>
+		<div>四</div>
+		<div>五</div>
+		<div>六</div>
+	</div>
+
+	<div class="cal_body">
+
+		<% var now_date = new Date().format('yyyy-MM-dd') %>
+		<% var line_num = (parseInt(datas.week_month_day1) + parseInt(datas.month_days) + (6 - parseInt(datas.week_month_day30)))/7 %>
+		<% for(var i=1 ; i <= datas.week_month_day1; i++) { %>
+			<div class="day_click cal_none "><%= ++ datas.last_month_days %></div>
+		<% } %>
+
+		<% var models = datas.models %>
+		<% for(var i in models) { %>
+			
+			<% 
+				var data = models[i].attributes;
+				var full_date = data['date'];
+				var pass = data.date.replace(/-/g,'') <=  now_date.replace(/-/g,'');
+			 %>
+
+				<div class="day_click <%= full_date == now_date ? 'cal_today' : '' %>" <%= pass ? 'data-opt="day_click"' :'' %> data-index="<%= i %>" data-date="<%= full_date %>">
+					<strong><%= +i+1 %></strong>
+					<br>
+					<span>
+						<% if(data.status == 0){ %> 					
+							<span class="cal_mark_rest" >
+								<center>休</center>
+							</span>
+						<% } %>
+						<center class="cal_mark">
+							<% if(pass ) { %>
+								<% switch(data.status) { case 1: %>
+									<span class="cal_mark_normal"></span>
+								  <% break; case 2: %>
+									<span class="cal_mark_no_clock"></span>
+								  <% break; case 3: %>
+									<span class="cal_mark_leaved"></span> 
+								<% } %>
+							<% } %>
+						</center>
+					</span>
+				</div>
+
+		<% } %>
+		
+		<% var line_plus = (6 - line_num)*7+7 %>
+		<% for(var i = 1 ; i < line_plus - datas.week_month_day30; i++) { %>
+			<div class="day_click cal_none"><%= i %></div>
+		<% } %>
+
+	</div>
+</div>

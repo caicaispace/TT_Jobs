@@ -1,0 +1,52 @@
+form|&|
+<form class="form-horizontal">
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label"><span class="form-must">*</span>标题 :</label>
+        <div class="col-sm-4">
+            <input name="title" type="text" class="form-control" data-validation="must" placeholder="" value="<%= data.title || '' %>">
+        </div>
+        <div class="col-sm-6"></div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">状态 :</label>
+        <div class="col-sm-4">
+            <% var i, status, num = 0 , status_hash = {1:'启用', 0:'禁用'}%>
+            <% for(i in status_hash){ %>
+            <% status = status_hash[i] %>
+            <label class="radio-inline">
+                <input type="radio" name="status" value="<%= i %>"
+                <%=
+                data && data['status'] == i
+                    ? 'checked'
+                    : num == 0
+                        ? 'checked'
+                        : ''
+                %>
+                ><%= status %>
+            </label>
+            <% num += 1 %>
+            <% } %>
+        </div>
+        <div class="col-sm-6"></div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label"><span class="form-must">*</span>权限 :</label>
+        <div class="col-sm-4">
+            <select id='rules' name="rules[]" multiple='multiple'>
+                <% var i, rule, num = 0 %>
+                <% for(i in rule_list){ %>
+                <% rule = rule_list[i] %>
+                <option value='<%= rule.id %>' <% if(data.rules != void 0){ %><%= data.rules.split(',').indexOf(''+rule.id) > -1 ? 'selected' : '' %><% } %>><%= rule.title %></option>
+                <% } %>
+            </select>
+        </div>
+        <div class="col-sm-6"></div>
+    </div>
+
+</form>
+||&&||
+other|&|
+<div></div>

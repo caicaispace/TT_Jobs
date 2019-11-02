@@ -1,0 +1,10 @@
+*/.DS_Store
+*.DS_Store
+.idea
+.vscode
+.idea/modules.xml
+.idea/workspace.xml
+.idea/vcs.xml
+vendor/*
+composer.lock
+sftp-config.json

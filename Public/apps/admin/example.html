@@ -1,0 +1,150 @@
+<select class="form-control form-control-3" data-validation="must" name="start_day_type">
+  <% var i, type, num = 0, hashs = APP.hashs.out.day_type;  %>
+  <% for(i in hashs){ %>
+  <% type = hashs[i] %>
+	  <option value="<%= i %>" 
+            <%=
+                (data && data['type'] == i) || num == 0
+                    ? 'selected' 
+                    : ''
+            %>
+	  ><%= type %> </option>
+    <% num += 1 %>
+  <% } %>
+</select>
+
+
+  <div class="form-group">
+    <label class="col-sm-4 control-label"><span class="form-must">*</span>微信管理员 :</label>
+    <div class="col-sm-8">
+      <% var i, num = 0 %>
+      <% for(i in contacts){ %>
+        <label class="radio-inline checkbox-c">
+            <input type="checkbox" name="user_id[]" value="<%= contacts[i].id %>" 
+                <%=
+                    data && data['user_id'].indexOf( ',' + contacts[i].id +',') > -1
+                        ? 'checked' 
+                        : ''
+                %>
+            > <%= contacts[i].name %>
+        </label>
+        <% num += 1 %>
+      <% } %>
+    </div>
+  </div>
+
+
+
+  <div></div>
+||&&||
+<form class="form-horizontal">
+
+  <div class="form-group">
+    <label class="col-sm-4 control-label"><span class="form-must">*</span>姓名 :</label>
+    <div class="col-sm-8">
+        <input name="name" type="text" class="form-control" data-validation="must" placeholder="姓名" value="<%= data['name'] || '' %>" >
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-sm-4 control-label"><span class="form-must">*</span>帐号 :</label>
+    <div class="col-sm-8">
+        <input name="userid" type="text" class="form-control" data-validation="must" placeholder="成员唯一标识，不可更改，不支持中文" value="<%= data['userid'] || '' %>" <%= data['userid'] ? 'disabled' : '' %> >
+    </div>
+  </div>
+
+
+  <div class="form-group">
+    <label class="col-sm-4 control-label">微信号 :</label>
+    <div class="col-sm-8">
+        <input name="weixinid" type="text" class="form-control"  placeholder="允许员工扫描的微信匹配关注" value="<%= data['weixinid'] || '' %>" <%= data['weixinid'] ? 'disabled' : '' %> >
+    </div>
+  </div>
+
+
+  <div class="form-group">
+    <label class="col-sm-4 control-label"><span class="form-must">*</span>所属部门 :</label>
+    <div class="col-sm-8">
+      <select class="form-control" name="department">
+        <% for(var i in department) { %>
+          <% var level = department[i].level, name = department[i].name %>
+          <option value="<%= department[i].id %>" <%= department[i].id == data['department'] ? 'selected' : '' %> > <%= level > 1 ? '&nbsp;&nbsp;&nbsp;&nbsp;'.strRepeat(level) + name : name %> </option>
+        <% } %>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-sm-4 control-label">职位 :</label>
+    <div class="col-sm-8">
+        <input name="position" type="text" class="form-control" placeholder="职位" value="<%= data['position'] || '' %>" >
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-sm-4 control-label"><span class="form-must">*</span>电话 :</label>
+    <div class="col-sm-8">
+        <input name="mobile" type="number" class="form-control" data-validation="phone" placeholder="电话" value="<%= data['mobile'] || '' %>" >
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-sm-4 control-label">性别 :</label>
+    <div class="col-sm-8">
+      <% var i, gender, num = 0 %>
+      <% for(i in APP.hashs.gender){ %>
+      <% gender = APP.hashs.gender[i] %>
+        <label class="radio-inline">
+            <input type="radio" name="gender" value="<%= i %>"
+                <%=
+                    data && data['gender'] == i
+                        ? 'checked'
+                        : num == 0
+                            ? 'checked'
+                            : ''
+                %>
+            ><%= gender %>
+        </label>
+        <% num += 1 %>
+      <% } %>
+    </div>
+  </div>
+
+    <div class="form-group">
+        <label class="col-sm-4 control-label"><span class="form-must">*</span>邮箱 :</label>
+        <div class="col-sm-8">
+            <input name="email" type="text" class="form-control" data-validation="email" placeholder="邮箱" value="<%= data['email'] || '' %>" >
+        </div>
+    </div>
+
+  <div class="form-group">
+    <label class="col-sm-4 control-label"><span class="form-must">*</span>绑定流程 :</label>
+    <div class="col-sm-8">
+      <select class="form-control" name="process_id">
+        <% for(var i in process) { %>
+          <%  title = process[i].title %>
+          <option value="<%= process[i].id %>" <%= process[i].id == data['process_id'] ? 'selected' : '' %> > <%= title %> </option>
+        <% } %>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-sm-4 control-label"><span class="form-must">*</span>绑定指纹 :</label>
+    <div class="col-sm-8">
+        <input name="finger_id" type="text" class="form-control" data-validation="must" placeholder="请绑定指纹" value="<%= data['finger_id'] || '' %>" disabled >
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-sm-4 control-label"></label>
+    <div class="col-sm-8">
+        <% if(data['finger_id']) { %>
+            <button type="button" class="btn btn-success">重新绑定指纹</button>
+        <% }else{ %>
+            <button type="button" class="btn btn-info">绑定指纹</button>
+        <% } %>
+    </div>
+  </div>
+
+</form>

@@ -1,0 +1,35 @@
+<div></div>
+||&&||
+<% if(isHeader){ %>
+<div class="panel panel-default">
+	<div class="panel-body an-sc-bo">
+		<% if( needDelete ) { %>
+			<div class="btn-group" role="group" aria-label="...">
+				<button type="button" class="btn btn-outline btn-danger" data-id="deletes"><span class="glyphicon glyphicon-trash"></span> 删除</button>
+			</div>
+		<% } %>
+
+		<div id="custom-options" class="btn-group" ></div>
+
+		<div class="pull-right" id="right-options"></div>
+
+	</div>
+</div>
+<% } %>
+<div class="table-responsive">
+	<table class="table table-condensed table-bordered table-hover table-<%= color %> <%= loadMore ? 'table-show-more' : '' %>" >
+		<thead>
+			<%= isCheck ? '<th class="text-center tr-checked-all" ><input type="checkbox" data-id="tr-checked-all" /></th>' : '' %>
+			<% for(var i in fields){ %>
+				<th class="text-center" width="<%= width[i] != void 0 ?  width[i] : '' %>" > <%= fields[i] %> </th>
+			<% } %>
+			<% if(o_field){ %>
+				<th class="text-center" width="<%= width['other_field'] != void 0 ? width['other_field'] : ''  %>" ><%= o_field %></th>
+			<% } %>
+		</thead>
+		<tbody></tbody>
+	</table>
+	<% if(loadMore){ %>
+		<button class="btn btn-white btn-sm btn-block table-show-more-button">加载更多</button>
+	<% } %>
+</div>

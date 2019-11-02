@@ -1,0 +1,22 @@
+<div class="select-tag">
+	<input data-id="data-input" type="hidden" name="id" value="">
+	<div class="panel panel-default">
+		<div class="panel-heading text-right"><span data-id="show-add-list" class="glyphicon glyphicon-plus show-add-list" title="添加"></span></div>
+		<div class="panel-body" data-id="default-list"></div>
+	</div>
+	<div data-id="add-list"></div>
+</div>
+||&&||
+
+	<% for(var i in default_data ) { if( !default_data.hasOwnProperty(i) ) continue; %>
+		<span class="select-tag-list" data-id="select-reduce" data-list-no="<%= i %>" ><img src="<%= default_data[i].avatar_mediaid ||　APP.hashs.img.portrait %>" alt="..." class="img-circle img-width-20"> <span><%= default_data[i].name %></span> </span>
+	<% } %>
+ 
+||&&||
+<div class="panel panel-red">
+	<div class="panel-body">
+		<% for(var i in data) { if( !data.hasOwnProperty(i) ) continue; %>
+  			<span class="select-tag-list" data-id="select-add" data-list-no="<%= i %>" ><img src="<%= data[i].avatar_mediaid ||　APP.hashs.img.portrait %>" alt="..." class="img-circle img-width-20"> <span><%= data[i].name %></span> </span>
+  		<% } %>
+	</div>
+</div>

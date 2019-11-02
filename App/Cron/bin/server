@@ -1,0 +1,6 @@
+#!/usr/bin/env php
+<?php
+ini_set("display_errors", "On");
+$path = explode('/', realpath(__DIR__ . '/../'));
+defined('APP_NAME') or define('APP_NAME', end($path));
+require_once dirname(__FILE__).'/../../../Core/server';
