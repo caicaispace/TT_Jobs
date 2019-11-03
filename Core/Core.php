@@ -99,7 +99,7 @@ class Core
         $loader = AutoLoader::getInstance();
         $loader->addNamespace("Core", "Core");
         $loader->addNamespace("Common", "App/Common");
-        $loader->addNamespace(APP_NAME, 'App/' . APP_NAME);
+        $loader->addNamespace('App', 'App');
         //添加系统依赖组件
         $loader->addNamespace("FastRoute", "Core/Vendor/FastRoute");
         $loader->addNamespace("SuperClosure", "Core/Vendor/SuperClosure");

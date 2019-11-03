@@ -24,6 +24,7 @@
 
 
 require_once 'Core.php';
+
 $server = \Core\Core::getInstance()->frameWorkInitialize();
 
 function commandParser()
@@ -124,10 +125,10 @@ _.------------------------------------------------------------------._
         $conf->setConf("SERVER.CONFIG.user", $options['user']);
     }
     echo 'user                  ' . get_current_user() . "\n";
-    if (isset($options['group'])) {
-        $conf->setConf("SERVER.CONFIG.group", $options['group']);
-    }
-    echo 'user group            ' . $conf->getConf('SERVER.CONFIG.group') . "\n";
+//    if (isset($options['group'])) {
+//        $conf->setConf("SERVER.CONFIG.group", $options['group']);
+//    }
+//    echo 'user group            ' . $conf->getConf('SERVER.CONFIG.group') . "\n";
     if (isset($options['cpuAffinity'])) {
         $conf->setConf("SERVER.CONFIG.open_cpu_affinity", true);
     }
@@ -237,7 +238,7 @@ function help($options)
         case 'start':
         {
             echo "------------ 启动命令 ------------\n";
-            echo "执行php App/bin/swoole_server start 即可启动服务。启动可选参数为:\n";
+            echo "执行php App/bin/server start 即可启动服务。启动可选参数为:\n";
             echo "--d                       是否以系统守护模式运行\n";
             echo "--p-portNumber            指定服务监听端口\n";
             echo "--pid-fileName            指定服务PID存储文件\n";
@@ -252,7 +253,7 @@ function help($options)
         case 'stop':
         {
             echo "------------ 停止命令 ------------\n";
-            echo "执行php App/bin/swoole_server stop 即可启动服务。启动可选参数为:\n";
+            echo "执行php App/bin/server stop 即可启动服务。启动可选参数为:\n";
             echo "--pid-fileName        指定服务PID存储文件\n";
             echo "--f                   强制停止服务\n";
             break;
@@ -260,7 +261,7 @@ function help($options)
         case 'reload':
         {
             echo "------------ 重启命令 ------------\n";
-            echo "执行php App/bin/swoole_server reload 即可启动服务。启动可选参数为:\n";
+            echo "执行php App/bin/server reload 即可启动服务。启动可选参数为:\n";
             echo "--pid-fileName        指定服务PID存储文件\n";
             echo "--pid-all             是否重启所有进程，默认true\n";
             break;

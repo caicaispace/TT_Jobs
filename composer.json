@@ -14,10 +14,8 @@
     "ext-pcntl": "*",
     "ext-inotify": "*",
     "ext-posix": "*",
-    "phpdr.net/php-curlmulti": "^4.1",
     "dragonmantank/cron-expression": "1.*",
     "topthink/think-orm": "1.*",
-    "topthink/think-template": "1.*",
     "topthink/think-validate": "1.*"
   },
   "require-dev": {

@@ -21,11 +21,11 @@ use FastRoute\Dispatcher\GroupCountBased;
 class Dispatcher
 {
     protected static $selfInstance;
-    protected $fastRouterDispatcher;
-    protected $controllerPool = [];
-    protected $useControllerPool = FALSE;
-    protected $controllerMap = [];
-    protected $serverParamMap = [];
+    protected        $fastRouterDispatcher;
+    protected        $controllerPool    = [];
+    protected        $useControllerPool = false;
+    protected        $controllerMap     = [];
+    protected        $serverParamMap    = [];
 
     static function getInstance()
     {
@@ -46,9 +46,9 @@ class Dispatcher
             return;
         }
         $httpMethod = Request::getInstance()->getMethod();
-        $pathInfo  = UrlParser::pathInfo();
-        $routeInfo = $this->doFastRouter($pathInfo, $httpMethod);
-        if ($routeInfo !== FALSE) {
+        $pathInfo   = UrlParser::pathInfo();
+        $routeInfo  = $this->doFastRouter($pathInfo, $httpMethod);
+        if ($routeInfo !== false) {
             switch ($routeInfo[0]) {
                 case \FastRoute\Dispatcher::NOT_FOUND:
                     // ... 404 NdoDispatcherot Found
@@ -61,7 +61,7 @@ class Dispatcher
                     $vars    = $routeInfo[2];
                     if (is_callable($handler)) {
                         call_user_func_array($handler, $vars);
-                    } else if (is_string($handler)) {
+                    } elseif (is_string($handler)) {
                         $data = Request::getInstance()->getRequestParam();
                         Request::getInstance()->withQueryParams($vars + $data);
                         $pathInfo = UrlParser::pathInfo($handler);
@@ -90,7 +90,7 @@ class Dispatcher
                 $this->controllerMap = [];
             }
             $list               = explode("/", $pathInfo);
-            $controllerPath     = APP_NAME . "\\Controller";
+            $controllerPath     = 'App\\' . APP_NAME . "\\Controller";
             $appName            = null;
             $controllerName     = null;
             $actionName         = null;
@@ -112,7 +112,7 @@ class Dispatcher
                     }
                     if (is_numeric(end($list))) {
                         $this->serverParamMap[$pathInfo] = ['id' => (int)array_pop($list)];
-                        if ($httpMethod == 'GET' ) {
+                        if ($httpMethod == 'GET') {
                             $actionName = 'info';
                         }
                         Request::getInstance()->setServerParam('id', $this->serverParamMap[$pathInfo]['id']);
@@ -122,7 +122,7 @@ class Dispatcher
                 }
                 if (class_exists($controllerPath . $className)) {
                     //尝试获取该class后的actionName
-                    if (NULL === $actionName) {
+                    if (null === $actionName) {
                         $actionName = empty($list[$i]) ? 'index' : $list[$i];
                     }
                     $finalClass = $controllerPath . $className;
@@ -189,7 +189,7 @@ class Dispatcher
         if ($this->fastRouterDispatcher instanceof GroupCountBased) {
             return $this->fastRouterDispatcher->dispatch($requestMethod, $pathInfo);
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -206,7 +206,7 @@ class Dispatcher
             }
         } catch (\Exception $exception) {
             //没有设置路由
-            $this->fastRouterDispatcher = FALSE;
+            $this->fastRouterDispatcher = false;
         }
     }
 

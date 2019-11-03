@@ -1,9 +1,9 @@
 
 # TT Jobs
 
-基于 swoole 开发的定时管理系统
+基于 [Swoole](https://www.swoole.com/) 定时管理系统 (Power by **EasySwoole© v1.0**)
 
-## 界面
+## UI
 
 ![home](home.png)
 
@@ -11,6 +11,7 @@
 
 - php >= 5.6
 - swoole >= 1.9.23
+- inotify >= *
 
 ## 配置
 
@@ -33,6 +34,11 @@ php App/Cron/bin/server start --d
 ```
 
 浏览器访问 http://localhost:9501
+
+```
+admin: admin    # 管理员
+demo: demo      # demo
+```
 
 ## 注意事项
 

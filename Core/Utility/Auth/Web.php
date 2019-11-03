@@ -11,6 +11,9 @@ namespace Core\Utility\Auth;
 use Core\Http\SessionFacade as Session;
 use Core\conf\Config;
 use think\Db;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
 
 /*
     权限认证类
@@ -121,9 +124,9 @@ class Web
      * @param string        $relation  如果为 'or' 表示满足任一条规则即通过验证;如果为 'and'则表示需满足所有规则才能通过验证
      * @param string        $mode      执行check的模式
      * @return bool                    通过验证返回true;失败返回false
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     public function check($name, $uid, $type, $relation = 'or', $mode = 'url')
     {
@@ -142,14 +145,13 @@ class Web
         }
         $list = [];
         if ($mode === 'url') {
-            $REQUEST = unserialize(strtolower(serialize(\Core\Http\Request::getInstance()->getRequestParam())));
+            $request = unserialize(strtolower(serialize(\Core\Http\Request::getInstance()->getRequestParam())));
         }
-
         foreach ($authList as $auth) {
             $query = preg_replace('/^.+\?/U', '', $auth);
             if ($mode === 'url' && $query != $auth) {
                 parse_str($query, $param); // 解析规则中的param
-                $intersect = array_intersect_assoc($REQUEST, $param);
+                $intersect = array_intersect_assoc($request, $param);
                 $auth      = preg_replace('/\?.*$/U', '', $auth);
                 if (in_array($auth, $name) && $intersect == $param) {
                     $list[] = $auth;
@@ -174,9 +176,9 @@ class Web
     /**
      * @param int $uid
      * @return array|bool array(array('uid'=>'用户id','group_id'=>'用户组id','title'=>'用户组名称','rules'=>'用户组拥有的规则id,多个,号隔开'))
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     public function getGroups($uid)
     {
@@ -193,6 +195,7 @@ class Web
             ->join($this->_config['auth_group'] . ' g', "a.group_id = g.id")
             ->field('uid,group_id,title,rules')
             ->select();
+
         $groups[$uid] = $user_groups ?: [];
         return $groups[$uid];
     }
@@ -201,9 +204,9 @@ class Web
      * @param $uid
      * @param $type
      * @return array|mixed
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     protected function getAuthList($uid, $type)
     {
@@ -275,9 +278,9 @@ class Web
     /**
      * @param $uid
      * @return mixed
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     protected function getUserInfo($uid)
     {

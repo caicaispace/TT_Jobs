@@ -9,6 +9,7 @@ use Core\AutoLoader;
 
 /**
  * Class Event
+ *
  * @package Core\Conf
  */
 class Event extends AEvent
@@ -21,7 +22,7 @@ class Event extends AEvent
     function initialize()
     {
         date_default_timezone_set('Asia/Shanghai');
-        $className           = APP_NAME . '\Conf\SwooleEvent';
+        $className           = 'App\\' . APP_NAME . '\\Conf\\SwooleEvent';
         $this->extendedEvent = new $className;
     }
 
