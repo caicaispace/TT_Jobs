@@ -90,7 +90,7 @@ class Dispatcher
                 $this->controllerMap = [];
             }
             $list               = explode("/", $pathInfo);
-            $controllerPath     = 'App\\' . APP_NAME . "\\Controller";
+            $controllerPath     = '\\App\\' . APP_NAME . "\\Controller";
             $appName            = null;
             $controllerName     = null;
             $actionName         = null;

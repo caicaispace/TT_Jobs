@@ -8,6 +8,7 @@
 
 namespace App\Jobs\Dispatcher;
 
+use Core\Component\Error\Trigger;
 use Core\Swoole\Memory\TableManager;
 use Core\Component\Logger;
 use Core\Utility\SnowFlake;
@@ -118,7 +119,12 @@ class Tasks
                 if ($task["status"] == TasksLoad::TASK_STOP) {
                     continue;
                 }
-                $jobs      = CronExpression::factory($task["cron_spec"]);
+                try {
+                    $jobs = CronExpression::factory($task["cron_spec"]);
+                } catch (\Exception $e) {
+                    Trigger::exception($e);
+                    continue;
+                }
                 $runMinute = $jobs->getNextRunDate()->format('YmdHi');
                 $runTime   = $jobs->getNextRunDate()->getTimestamp();
                 $nowTime   = time();

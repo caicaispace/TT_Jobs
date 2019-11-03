@@ -71,13 +71,12 @@ class onHttpDispatcher
             return;
         }
         $path = explode('\\', $targetControllerClass);
-        if (count($path) >= 3 && $path[2] == 'Index') {
+        if (count($path) >= 4 && $path[3] == 'Index') {
             return;
         }
+
         $accessPath = $targetControllerClass . '\\' . $action;
-        $accessData = empty($request->getPostData())
-            ? ''
-            : json_encode($request->getPostData(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $accessData = $request->getSwooleRequest()->rawContent();
 
         $data = [
             'uid'         => $authSession['id'],

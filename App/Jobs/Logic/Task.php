@@ -11,6 +11,7 @@ namespace App\Jobs\Logic;
 use Core\AbstractInterface\ALogic;
 use App\Jobs\Model\Task as Model;
 use App\Jobs\Dispatcher\Tasks as JobsTasks;
+use Cron\CronExpression;
 
 /**
  * Class Task
@@ -74,11 +75,16 @@ class Task extends ALogic
 
     function create()
     {
-        if (!$responseData = $this->request()->getData()) {
+        if (!$requestData = $this->request()->getData()) {
             return $this->response()->error();
         }
+        try {
+            CronExpression::factory($requestData["cron_spec"]);
+        } catch (\Exception $e) {
+            return $this->response()->error('时间表达式格式错误！<br>' . " ( {$e->getMessage()} )");
+        }
         $model = new Model;
-        if (!$ret = $model->save($responseData)) {
+        if (!$ret = $model->save($requestData)) {
             return $this->response()->error();
         }
         $responseData = $model->toArray();
@@ -95,7 +101,14 @@ class Task extends ALogic
         if (!$requestData = $this->request()->getData()) {
             return $this->response()->error();
         }
-        if (!$model = Model::get($id)) {
+        if (isset($requestData['cron_spec'])) {
+            try {
+                CronExpression::factory($requestData["cron_spec"]);
+            } catch (\Exception $e) {
+                return $this->response()->error('时间表达式格式错误！<br>' . " ( {$e->getMessage()} )");
+            }
+        }
+        if (!$model = (new Model)->get($id)) {
             return $this->response()->error();
         }
         if ($model->getAttr('user_id')) {
@@ -133,7 +146,7 @@ class Task extends ALogic
         if (!$id = $this->request()->getId()) {
             return;
         }
-        if (!$model = Model::get($id)) {
+        if (!$model = (new Model)->get($id)) {
             return;
         }
         $data = $model->toArray();
