@@ -19,9 +19,9 @@ CREATE TABLE IF NOT EXISTS `jobs_admin` (
 -- 正在导出表  jobs.jobs_admin 的数据：~2 rows (大约)
 DELETE FROM `jobs_admin`;
 /*!40000 ALTER TABLE `jobs_admin` DISABLE KEYS */;
-INSERT INTO `jobs_admin` (`id`, `username`, `password`, `email`, `salt`, `last_login`, `last_ip`, `status`, `create_at`, `update_at`) VALUES
-	(1, 'admin', '21232f297a57a5a743894a0e4a801fc3', '', '', 1531147072, 3232243201, 1, 0, 1531243580),
-	(2, 'demo', 'fe01ce2a7fbac8fafaed7c982a04e229', 'test@test.com', '', 13333333333, 3232243201, 1, 1531641360, 1531755647);
+INSERT INTO `jobs_admin` (`id`, `username`, `zh_username`, `password`, `email`, `salt`, `last_login`, `last_ip`, `status`, `create_at`, `update_at`) VALUES
+	(1, 'admin', 'admin','21232f297a57a5a743894a0e4a801fc3', '', '', 1531147072, 3232243201, 1, 0, 1531243580),
+	(2, 'demo', 'demo','fe01ce2a7fbac8fafaed7c982a04e229', 'test@test.com', '', 13333333333, 3232243201, 1, 1531641360, 1531755647);
 /*!40000 ALTER TABLE `jobs_admin` ENABLE KEYS */;
 
 -- 导出  表 jobs.jobs_auth_access_log 结构

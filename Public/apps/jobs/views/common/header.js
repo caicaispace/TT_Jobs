@@ -40,7 +40,6 @@ define(['backbone', 'mu/cache', 'mu/common'],
 
             render: function () {
                 this.tpl();
-                console.log(window.APP.session)
                 var html = _.template(this._tpl.init)({session: window.APP.session});
                 this.$el.html(html);
                 this.$insertDOM.html(this.el);
