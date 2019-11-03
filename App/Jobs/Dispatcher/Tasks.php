@@ -148,7 +148,8 @@ class Tasks
         $taskIds     = [];
         $LoadTaskIds = [];
         $loadTasks   = TasksLoad::getInstance()->getTasks();
-        $count       = $this->_table->count();
+
+        $count = $this->_table->count();
         if ($count > 0) {
             $minute = date("YmdHi");
             foreach ($this->_table as $id => $task) {

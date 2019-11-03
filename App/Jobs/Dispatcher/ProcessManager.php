@@ -39,12 +39,14 @@ class ProcessManager
     function __construct()
     {
         TableManager::getInstance()->add(
-            self::SWOOLE_TABLE_NAME, [
-            'pid' => [
-                'type' => \swoole_table::TYPE_INT,
-                'size' => 10,
+            self::SWOOLE_TABLE_NAME,
+            [
+                'pid' => [
+                    'type' => \swoole_table::TYPE_INT,
+                    'size' => 10,
+                ],
             ],
-        ], 256
+            256
         );
         $this->_table = TableManager::getInstance()->get(self::SWOOLE_TABLE_NAME);
     }
@@ -61,7 +63,7 @@ class ProcessManager
     public function addProcess($key, $processName, $processClass, $onFinish, array $args = [])
     {
         if (Server::SERVER_NOT_START === Server::getInstance()->isStart()) {
-            trigger_error("you can not add a process {$processName}.{$processClass} after server start");
+            trigger_error("you can't add a process {$processName}.{$processClass} after server start");
             return false;
         }
         $md5Key = $this->_generateKey($key);
@@ -74,7 +76,7 @@ class ProcessManager
                 return false;
             }
         } else {
-            trigger_error("you can not add the same name process : {$processName}.{$processClass}");
+            trigger_error("you can't add the same name process : {$processName}.{$processClass}");
             return false;
         }
     }
@@ -148,8 +150,7 @@ class ProcessManager
      */
     public function setProcess($key, $process)
     {
-        $key                      = $this->_generateKey($key);
-        $this->_processList[$key] = $process;
+        $this->_processList[$this->_generateKey($key)] = $process;
     }
 
     /**
