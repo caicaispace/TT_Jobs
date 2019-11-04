@@ -40,7 +40,8 @@ class AutoReload
     function __construct($serverPid = null)
     {
         if (!extension_loaded('inotify')) {
-            exit("Please install inotify extension.\n");
+            return false;
+//            exit("Please install inotify extension.\n");
         }
         $this->_serverPid = $serverPid;
 //        if (\posix_kill($serverPid, 0) === FALSE) {
