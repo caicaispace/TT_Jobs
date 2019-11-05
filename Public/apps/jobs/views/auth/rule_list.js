@@ -105,8 +105,7 @@ define(['backbone', 'mu/cache', 'mu/common', 'com/table'],
             search: function () {
                 this._get.first = 1;
                 this._get.page = 1;
-                var search = this.$('input[name=search]').val();
-                this._get.search = search;
+                this._get.search = this.$('input[name=search]').val();
                 this._col.fetch({data: this._get, reset: true});
                 delete this._get.search;
                 return false;

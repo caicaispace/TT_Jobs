@@ -92,8 +92,7 @@ define(['backbone', 'mu/cache', 'mu/common', 'com/table'],
             search: function () {
                 this._get.first = 1;
                 this._get.page = 1;
-                var search = this.$('input[name=search]').val();
-                this._get.search = search;
+                this._get.search = this.$('input[name=search]').val();
                 this._col.fetch({data: this._get, reset: true});
                 delete this._get.search;
                 return false;
@@ -128,16 +127,16 @@ define(['backbone', 'mu/cache', 'mu/common', 'com/table'],
             disabled: function (param) {
                 var model = param.model || '';
                 var status = model.get('status');
-                var title = status == 1 ? '禁用' : '启用';
+                var title = parseInt(status) === 1 ? '禁用' : '启用';
                 common.confirm({
                     title: model.get('name'),
                     content: '确认' + title + '此商品？',
                     callback: _.bind(function (state) {
-                        if (state == false) {
+                        if (state === false) {
                             return;
                         }
                         model.save(
-                            {status: status == 1 ? 2 : 1},
+                            {status: parseInt(status) === 1 ? 2 : 1},
                             {wait: true, patch: true}
                         );
                     }, this),

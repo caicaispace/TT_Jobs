@@ -27,7 +27,7 @@ define(['backbone', 'mu/cache', 'enquire', 'store'],
                 this.$el.html(this.res[0]);
                 this.$el.appendTo('#sidebar');
                 this._cache();
-                if (store.get('sidebar') == 'hide')
+                if (store.get('sidebar') === 'hide')
                     this.toggle('hide');
                 this.enquirejs();
                 return this;
@@ -46,7 +46,7 @@ define(['backbone', 'mu/cache', 'enquire', 'store'],
                 $this.parent('li').toggleClass('dropdown-open');
                 $siblings.children('.dropdown').nextAll().slideUp(100);
                 $siblings.removeClass();
-                if (store.get('sidebar') == 'hide')
+                if (store.get('sidebar') === 'hide')
                     this.toggle(false);
             },
 
@@ -56,7 +56,7 @@ define(['backbone', 'mu/cache', 'enquire', 'store'],
                 var $menus = $sidebar.find('ul li');
                 var $menus_title = $menus.has('a i').find('a span');
                 $menus.children('a').nextAll().hide();
-                if (store.get('sidebar') == 'show' || status == 'hide') {
+                if (store.get('sidebar') === 'show' || status === 'hide') {
                     $page_wrapper.css({'margin-left': 50});
                     $sidebar.width(50);
                     $menus_title.hide();
