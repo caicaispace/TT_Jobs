@@ -60,6 +60,7 @@ sudo make install
 ## TODO
 
 - [ ] 全局常量
+- [ ] 一键迁移 crontab
 
 ## v2.0 TODO
 
