@@ -117,7 +117,7 @@ class ProcessManager
     /**
      * @param $key
      *
-     * @return mixed|null
+     * @return Process|null
      */
     public function getProcessByKey($key)
     {

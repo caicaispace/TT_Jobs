@@ -19,7 +19,7 @@ use Common\Process as ProcessTest;
  *
  * @package Jobs\Controller\Jobs
  */
-class Process extends Controller
+class TestProcess extends Controller
 {
     protected static $processName = 'swoole_process_test';
     private          $counter     = 0;

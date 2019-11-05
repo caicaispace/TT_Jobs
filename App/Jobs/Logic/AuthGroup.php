@@ -10,6 +10,7 @@ namespace App\Jobs\Logic;
 
 use Core\AbstractInterface\ALogic;
 use App\Jobs\Model\AuthGroup as Model;
+use Exception;
 
 class AuthGroup extends ALogic
 {
@@ -36,7 +37,7 @@ class AuthGroup extends ALogic
         }
         try {
             $ret = $model->select();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->response()
                 ->setMsg($e->getMessage())
                 ->error();
@@ -54,7 +55,7 @@ class AuthGroup extends ALogic
         if (!$id = $this->request()->getId()) {
             return $this->response()->error();
         }
-        if (!$model = Model::get($id)) {
+        if (!$model = (new Model)->get($id)) {
             return $this->response()->error();
         }
         $responseData = $model->toArray();
@@ -86,7 +87,7 @@ class AuthGroup extends ALogic
         if (!$requestData = $this->request()->getData()) {
             return $this->response()->error();
         }
-        if (!$model = Model::get($id)) {
+        if (!$model = (new Model)->get($id)) {
             return $this->response()->error();
         }
         if (!$ret = $model->save($requestData)) {
@@ -101,7 +102,7 @@ class AuthGroup extends ALogic
         if (!$id = $this->request()->getId()) {
             return $this->response()->error();
         }
-        if (!$model = Model::get($id)) {
+        if (!$model = (new Model)->get($id)) {
             return $this->response()->error();
         }
         $model->setAttr('is_del', Model::DELETED);

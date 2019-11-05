@@ -9,6 +9,9 @@
 namespace App\Jobs\Model;
 
 use Core\AbstractInterface\AModel as Model;
+use Core\Component\Error\Trigger;
+use Core\Component\Logger;
+use Exception;
 
 /**
  * Class Admin
@@ -19,8 +22,8 @@ class Admin extends Model
 {
     protected $autoWriteTimestamp = true;
 
-    const DELETED   = 1;
-    const UN_DELETE = 0;
+    const DELETED    = 1;
+    const UN_DELETED = 0;
 
     /**
      * @var array
@@ -38,12 +41,11 @@ class Admin extends Model
             try {
                 if (
                     ($this->getData('password') != '')
-                    and
-                    ($this->getData('password') != $this->getSnapshotData('password'))
+                    and ($this->getData('password') != $this->getSnapshotData('password'))
                 ) {
                     $this->_restPassword();
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
 
             }
         });
@@ -66,18 +68,18 @@ class Admin extends Model
     /**
      * @param null $field
      *
-     * @return array|bool
+     * @return array|null
      */
     function getSnapshotData($field = null)
     {
         if (empty($this->snapshotData)) {
-            return false;
+            return null;
         }
         if (null === $field) {
             return $this->snapshotData;
         }
         if (false === isset($this->snapshotData[$field])) {
-            return false;
+            return null;
         }
         return $this->snapshotData[$field];
     }
@@ -88,8 +90,8 @@ class Admin extends Model
             if ($this->getData('password')) {
                 $this->setAttr('password', md5($this->getData('password')));
             }
-        } catch (\Exception $e) {
-
+        } catch (Exception $e) {
+            Trigger::exception($e);
         }
     }
 }

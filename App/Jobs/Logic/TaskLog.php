@@ -10,6 +10,7 @@ namespace App\Jobs\Logic;
 
 use Core\AbstractInterface\ALogic;
 use App\Jobs\Model\TaskLog as Model;
+use Exception;
 
 class TaskLog extends ALogic
 {
@@ -37,7 +38,7 @@ class TaskLog extends ALogic
         }
         try {
             $ret = $model->select();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->response()
                 ->setMsg($e->getMessage())
                 ->error();

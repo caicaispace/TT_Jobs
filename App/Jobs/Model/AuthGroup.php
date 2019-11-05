@@ -19,5 +19,6 @@ use Core\AbstractInterface\AModel as Model;
  */
 class AuthGroup extends Model
 {
-
+    const DELETED     = 1;
+    const NOT_DELETED = 0;
 }

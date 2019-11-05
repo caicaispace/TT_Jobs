@@ -10,6 +10,7 @@ namespace App\Jobs\Logic;
 
 use Core\AbstractInterface\ALogic;
 use App\Jobs\Model\AuthAccessLog as Model;
+use Exception;
 
 /**
  * Class AuthAccessLog
@@ -41,7 +42,7 @@ class AuthAccessLog extends ALogic
         }
         try {
             $ret = $model->select();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->response()
                 ->setMsg($e->getMessage())
                 ->error();
@@ -58,7 +59,7 @@ class AuthAccessLog extends ALogic
         if (!$id = $this->request()->getId()) {
             return $this->response()->error();
         }
-        if (!$model = Model::get($id)) {
+        if (!$model = (new Model)->get($id)) {
             return $this->response()->error();
         }
         $responseData = $model->toArray();

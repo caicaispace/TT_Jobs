@@ -10,6 +10,7 @@ namespace App\Jobs\Logic;
 
 use Core\AbstractInterface\ALogic;
 use App\Jobs\Model\AuthGroupAccess as Model;
+use Exception;
 
 /**
  * Class AuthGroupAccess
@@ -30,7 +31,7 @@ class AuthGroupAccess extends ALogic
         }
         try {
             $model = (new Model())->field('group_concat(`group_id`) as groups')->where('uid', $id)->find();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->response()->error($e->getMessage());
         }
         $responseData = $model->toArray();
@@ -85,7 +86,7 @@ class AuthGroupAccess extends ALogic
         }
         try {
             (new Model)->where('uid', $uid)->delete();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->response()->error($e->getMessage());
         }
         if (!$ret = (new Model)->insertAll($requestData)) {

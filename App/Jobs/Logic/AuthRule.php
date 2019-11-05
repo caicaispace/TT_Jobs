@@ -53,7 +53,7 @@ class AuthRule extends ALogic
         if (!$id = $this->request()->getId()) {
             return $this->response()->error();
         }
-        if (!$model = Model::get($id)) {
+        if (!$model = (new Model)->get($id)) {
             return $this->response()->error();
         }
         $responseData = $model->toArray();
@@ -85,7 +85,7 @@ class AuthRule extends ALogic
         if (!$requestData = $this->request()->getData()) {
             return $this->response()->error();
         }
-        if (!$model = Model::get($id)) {
+        if (!$model = (new Model)->get($id)) {
             return $this->response()->error();
         }
         if (!$ret = $model->save($requestData)) {
@@ -100,7 +100,7 @@ class AuthRule extends ALogic
         if (!$id = $this->request()->getId()) {
             return $this->response()->error();
         }
-        if (!$model = Model::get($id)) {
+        if (!$model = (new Model)->get($id)) {
             return $this->response()->error();
         }
         $model->setAttr('is_del', Model::DELETED);

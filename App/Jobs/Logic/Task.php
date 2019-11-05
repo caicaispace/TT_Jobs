@@ -64,7 +64,7 @@ class Task extends ALogic
         if (!$id = $this->request()->getId()) {
             return $this->response()->error();
         }
-        if (!$model = Model::get($id)) {
+        if (!$model = (new Model)->get($id)) {
             return $this->response()->error();
         }
         $responseData = $model->toArray();

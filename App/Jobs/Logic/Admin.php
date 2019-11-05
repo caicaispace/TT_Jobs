@@ -11,6 +11,7 @@ namespace App\Jobs\Logic;
 use Core\AbstractInterface\ALogic;
 use App\Jobs\Model\Admin as Model;
 use App\Jobs\Model\AuthGroupAccess as AuthGroupAccessModel;
+use Exception;
 
 /**
  * Class Admin
@@ -42,7 +43,7 @@ class Admin extends ALogic
         }
         try {
             $ret = $model->select();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->response()
                 ->setMsg($e->getMessage())
                 ->error();
@@ -65,7 +66,7 @@ class Admin extends ALogic
         if (!$id = $this->request()->getId()) {
             return $this->response()->error();
         }
-        if (!$model = Model::get($id)) {
+        if (!$model = (new Model)->get($id)) {
             return $this->response()->error();
         }
         $responseData = $model->toArray();
@@ -97,14 +98,14 @@ class Admin extends ALogic
         if (!$requestData = $this->request()->getData()) {
             return $this->response()->error();
         }
-        if (!$model = Model::get($id)) {
+        if (!$model = (new Model)->get($id)) {
             return $this->response()->error();
         }
         try {
             if (!$ret = $model->save($requestData)) {
                 return $this->response()->error();
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->response()->error($e->getMessage());
         }
         return $this->response()
@@ -116,7 +117,7 @@ class Admin extends ALogic
         if (!$id = $this->request()->getId()) {
             return $this->response()->error();
         }
-        if (!$model = Model::get($id)) {
+        if (!$model = (new Model)->get($id)) {
             return $this->response()->error();
         }
         $model->setAttr('is_del', Model::DELETED);
