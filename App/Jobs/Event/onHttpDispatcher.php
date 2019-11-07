@@ -39,6 +39,7 @@ class onHttpDispatcher
         if ($authSession && $authSession['username'] == 'admin') {
             return true;
         }
+        $targetControllerClass = ltrim($targetControllerClass,'\\');
         $path = explode('\\', $targetControllerClass);
         if (count($path) >= 4 && $path[3] == 'Index') { // 首页不检测权限
             return true;

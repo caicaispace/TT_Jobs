@@ -33,7 +33,10 @@ class SwooleEvent extends AEvent
             version_compare(phpversion('swoole'), '4.2.9', '>')
             and !extension_loaded('swoole_async')
         ) {
-            exit('请安装 swoole async 模块 或降级 swoole 至 4.2.9 及以下版本');
+            echo "---------------------------------------------------------------\n";
+            echo "请安装 swoole async 模块 或降级 swoole 至 4.2.9 及以下版本\n";
+            echo "---------------------------------------------------------------\n";
+            exit();
         }
     }
 
