@@ -40,6 +40,7 @@ class Task extends ALogic
         }
         if ($search = $this->request()->getExtend('search')) {
             $model = $model->whereLike('task_name', "%{$search}%");
+            $model = $model->whereLike('command', "%{$search}%", 'OR');
         }
         /* 排序 */
         if ($order = $this->request()->getOrder()) {
