@@ -1,13 +1,7 @@
 
 # TT Jobs
 
-基于 [Swoole](https://www.swoole.com/) 定时管理系统 (Power by **EasySwoole© v1.0**)
-
-微信交流群
-
-![weixin](wx.jpg)
-
-QQ 交流群 686265693 
+基于 [Swoole](https://www.swoole.com/) 定时管理系统
 
 ## UI
 
