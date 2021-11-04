@@ -1,26 +1,32 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node;
 
 use PhpParser\NodeAbstract;
 
 class NullableType extends NodeAbstract
 {
-    /** @var string|Name Type */
+    /** @var Name|string Type */
     public $type;
 
     /**
      * Constructs a nullable type (wrapping another type).
      *
-     * @param string|Name $type       Type
-     * @param array       $attributes Additional attributes
+     * @param Name|string $type Type
+     * @param array $attributes Additional attributes
      */
-    public function __construct($type, array $attributes = array()) {
+    public function __construct($type, array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->type = $type;
     }
 
-    public function getSubNodeNames() {
-        return array('type');
+    public function getSubNodeNames()
+    {
+        return ['type'];
     }
 }

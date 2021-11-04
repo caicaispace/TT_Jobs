@@ -1,15 +1,12 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/11/22
- * Time: 下午9:58
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\Version;
-
 
 abstract class ARegister
 {
-    abstract function register(VersionList $versionList);
+    abstract public function register(VersionList $versionList);
 }

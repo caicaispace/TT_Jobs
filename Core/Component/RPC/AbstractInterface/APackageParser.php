@@ -1,23 +1,20 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/23
- * Time: 下午3:45
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\RPC\AbstractInterface;
-
 
 use Core\Component\RPC\Common\Package;
 use Core\Component\Socket\Client\TcpClient;
 
 abstract class APackageParser
 {
-    abstract function decode(Package $result, TcpClient $client, $rawData);
+    abstract public function decode(Package $result, TcpClient $client, $rawData);
 
     /*
      * must return string
      */
-    abstract function encode(Package $res);
+    abstract public function encode(Package $res);
 }

@@ -1,34 +1,30 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/7/17
- * Time: 0:28:45
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Controller\Jobs;
 
-use Core\AbstractInterface\ARESTController as Controller;
 use App\Jobs\Logic\AuthAccessLog as Logic;
+use Core\AbstractInterface\ARESTController as Controller;
 
 /**
- * Class AuthAccessLog
- *
- * @package Jobs\Controller\Jobs
+ * Class AuthAccessLog.
  */
 class AuthAccessLog extends Controller
 {
-    function GET_index()
+    public function GET_index()
     {
-        $logic = new Logic;
+        $logic = new Logic();
         $logic->request()->setPage($this->getPageData());
         $logic->request()->setOrder(['id DESC']);
-        if ('admin' != $this->request()->session()->get('auth')['username']) {
+        if ($this->request()->session()->get('auth')['username'] != 'admin') {
             $uid = $this->request()->session()->get('auth')['id'];
             $logic->request()->setWhere(["uid = {$uid}"]);
         }
         $ret = $logic->call('getList');
-        if (!$ret->getStatus()) {
+        if (! $ret->getStatus()) {
             $this->json()->error($ret->getMsg());
             return;
         }
@@ -48,16 +44,16 @@ class AuthAccessLog extends Controller
             ->response();
     }
 
-    function GET_info()
+    public function GET_info()
     {
-        if (!$id = $this->request()->getServerParam('id')) {
+        if (! $id = $this->request()->getServerParam('id')) {
             $this->response()->write('操作失败');
             return;
         }
-        $authGroupLogic = new Logic;
+        $authGroupLogic = new Logic();
         $authGroupLogic->request()->setId($id);
         $ret = $authGroupLogic->call('getInfo');
-        if (!$ret->getStatus()) {
+        if (! $ret->getStatus()) {
             $this->json()->error($ret->getMsg());
             return;
         }
@@ -67,16 +63,16 @@ class AuthAccessLog extends Controller
             ->response();
     }
 
-    function POST_index()
+    public function POST_index()
     {
-        if (!$requestData = $this->request()->getPostData()) {
+        if (! $requestData = $this->request()->getPostData()) {
             $this->json()->error();
             return;
         }
-        $logic = new Logic;
+        $logic = new Logic();
         $logic->request()->setData($requestData);
         $ret = $logic->call('create');
-        if (!$ret->getStatus()) {
+        if (! $ret->getStatus()) {
             $this->json()->error($ret->getMsg());
             return;
         }
@@ -87,18 +83,15 @@ class AuthAccessLog extends Controller
             ->response();
     }
 
-    function PUT_index()
+    public function PUT_index()
     {
-
     }
 
-    function PATCH_index()
+    public function PATCH_index()
     {
-
     }
 
-    function DELETE_index()
+    public function DELETE_index()
     {
-
     }
 }

@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/1/31
- * Time: 下午12:33
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Swoole;
-
 
 use Closure;
 
@@ -21,25 +18,23 @@ class Timer
         $microSeconds 最大不得超过 86400000 毫秒
      */
     /**
-     * @param int     $microSeconds
-     * @param Closure $func
-     * @param null    $args
+     * @param int $microSeconds
+     * @param null $args
      *
      * @return int
      */
-    static function loop($microSeconds, Closure $func, $args = null)
+    public static function loop($microSeconds, Closure $func, $args = null)
     {
         return Server::getInstance()->getServer()->tick($microSeconds, $func, $args);
     }
 
     /**
-     * @param int     $microSeconds
-     * @param Closure $func
-     * @param null    $args
+     * @param int $microSeconds
+     * @param null $args
      *
      * @return int
      */
-    static function delay($microSeconds, Closure $func, $args = null)
+    public static function delay($microSeconds, Closure $func, $args = null)
     {
         return Server::getInstance()->getServer()->after($microSeconds, $func, $args);
     }
@@ -47,7 +42,7 @@ class Timer
     /**
      * @param int $timerId
      */
-    static function clear($timerId)
+    public static function clear($timerId)
     {
         Server::getInstance()->getServer()->clearTimer($timerId);
     }

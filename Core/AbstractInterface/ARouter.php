@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\AbstractInterface;
 
 use Core\Http\Request;
@@ -12,27 +16,27 @@ abstract class ARouter
 {
     protected $isCache = false;
     protected $cacheFile;
-    private   $routeCollector;
+    private $routeCollector;
 
-    function __construct()
+    public function __construct()
     {
         $this->routeCollector = new RouteCollector(new Std(), new GroupCountBased());
         $this->register($this->routeCollector);
     }
 
-    abstract function register(RouteCollector $routeCollector);
+    abstract public function register(RouteCollector $routeCollector);
 
-    function getRouteCollector()
+    public function getRouteCollector()
     {
         return $this->routeCollector;
     }
 
-    function request()
+    public function request()
     {
         return Request::getInstance();
     }
 
-    function response()
+    public function response()
     {
         return Response::getInstance();
     }

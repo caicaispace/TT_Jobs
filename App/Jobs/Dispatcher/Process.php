@@ -1,19 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/6/13
- * Time: 23:06
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Dispatcher;
 
 use Core\Swoole\Memory\TableManager;
 
 /**
- * Class Process
- *
- * @package Jobs\Dispatcher
+ * Class Process.
  */
 class Process
 {
@@ -26,12 +22,11 @@ class Process
     /**
      * Process constructor.
      *
-     * @param string   $key
-     * @param string   $processName
+     * @param string $key
+     * @param string $processName
      * @param callable $onFinish
-     * @param array    $args
      */
-    function __construct($key, $processName, $onFinish, array $args)
+    public function __construct($key, $processName, $onFinish, array $args)
     {
         $pid = \swoole_async::exec($processName, [$this, 'onFinish']);
 
@@ -45,14 +40,14 @@ class Process
     }
 
     /**
-     * @return int|null
+     * @return null|int
      */
-    function getPid()
+    public function getPid()
     {
         return $this->_pid;
     }
 
-    function getProcessKey()
+    public function getProcessKey()
     {
         return $this->_key;
     }
@@ -60,7 +55,7 @@ class Process
     /**
      * @return string
      */
-    function getProcessName()
+    public function getProcessName()
     {
         return $this->_processName;
     }
@@ -68,7 +63,7 @@ class Process
     /**
      * @return array
      */
-    function getArgs()
+    public function getArgs()
     {
         return $this->_args;
     }
@@ -76,9 +71,9 @@ class Process
     /**
      * @param $key
      *
-     * @return mixed|null
+     * @return null|mixed
      */
-    function getArg($key)
+    public function getArg($key)
     {
         return isset($this->_args[$key])
             ? $this->_args[$key]
@@ -89,16 +84,16 @@ class Process
      * @param $result
      * @param $status
      */
-    function onFinish($result, $status)
+    public function onFinish($result, $status)
     {
         call_user_func($this->_onFinish, $result, $status, $this->_args);
     }
 
     /**
-     * @param string      $str
+     * @param string $str
      * @param array|mixed ...$args
      */
-    function onReceive($str, ...$args)
+    public function onReceive($str, ...$args)
     {
     }
 }

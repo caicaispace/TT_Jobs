@@ -1,22 +1,23 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace FastRoute\Dispatcher;
 
 use FastRoute\Dispatcher;
 
-abstract class RegexBasedAbstract implements Dispatcher {
+abstract class RegexBasedAbstract implements Dispatcher
+{
     /** @var mixed[][] */
     protected $staticRouteMap = [];
 
     /** @var mixed[] */
     protected $variableRouteData = [];
 
-    /**
-     * @return mixed[]
-     */
-    protected abstract function dispatchVariableRoute($routeData, $uri);
-
-    public function dispatch($httpMethod, $uri) {
+    public function dispatch($httpMethod, $uri)
+    {
         if (isset($this->staticRouteMap[$httpMethod][$uri])) {
             $handler = $this->staticRouteMap[$httpMethod][$uri];
             return [self::FOUND, $handler, []];
@@ -79,8 +80,14 @@ abstract class RegexBasedAbstract implements Dispatcher {
         // If there are no allowed methods the route simply does not exist
         if ($allowedMethods) {
             return [self::METHOD_NOT_ALLOWED, $allowedMethods];
-        } else {
-            return [self::NOT_FOUND];
         }
+        return [self::NOT_FOUND];
     }
+
+    /**
+     * @param mixed $routeData
+     * @param mixed $uri
+     * @return mixed[]
+     */
+    abstract protected function dispatchVariableRoute($routeData, $uri);
 }

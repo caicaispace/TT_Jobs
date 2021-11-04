@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser;
 
 class Comment implements \JsonSerializable
@@ -11,13 +15,14 @@ class Comment implements \JsonSerializable
     /**
      * Constructs a comment node.
      *
-     * @param string $text         Comment text (including comment delimiters like /*)
-     * @param int    $startLine    Line number the comment started on
-     * @param int    $startFilePos File offset the comment started on
+     * @param string $text Comment text (including comment delimiters like /*)
+     * @param int $startLine Line number the comment started on
+     * @param int $startFilePos File offset the comment started on
      */
-    public function __construct($text, $startLine = -1, $startFilePos = -1) {
-        $this->text = $text;
-        $this->line = $startLine;
+    public function __construct($text, $startLine = -1, $startFilePos = -1)
+    {
+        $this->text    = $text;
+        $this->line    = $startLine;
         $this->filePos = $startFilePos;
     }
 
@@ -26,7 +31,18 @@ class Comment implements \JsonSerializable
      *
      * @return string The comment text (including comment delimiters like /*)
      */
-    public function getText() {
+    public function __toString()
+    {
+        return $this->text;
+    }
+
+    /**
+     * Gets the comment text.
+     *
+     * @return string The comment text (including comment delimiters like /*)
+     */
+    public function getText()
+    {
         return $this->text;
     }
 
@@ -35,7 +51,8 @@ class Comment implements \JsonSerializable
      *
      * @return int Line number
      */
-    public function getLine() {
+    public function getLine()
+    {
         return $this->line;
     }
 
@@ -44,17 +61,9 @@ class Comment implements \JsonSerializable
      *
      * @return int File offset
      */
-    public function getFilePos() {
+    public function getFilePos()
+    {
         return $this->filePos;
-    }
-
-    /**
-     * Gets the comment text.
-     *
-     * @return string The comment text (including comment delimiters like /*)
-     */
-    public function __toString() {
-        return $this->text;
     }
 
     /**
@@ -67,13 +76,15 @@ class Comment implements \JsonSerializable
      *
      * @return mixed|string
      */
-    public function getReformattedText() {
-        $text = trim($this->text);
+    public function getReformattedText()
+    {
+        $text       = trim($this->text);
         $newlinePos = strpos($text, "\n");
-        if (false === $newlinePos) {
+        if ($newlinePos === false) {
             // Single line comments don't need further processing
             return $text;
-        } elseif (preg_match('((*BSR_ANYCRLF)(*ANYCRLF)^.*(?:\R\s+\*.*)+$)', $text)) {
+        }
+        if (preg_match('((*BSR_ANYCRLF)(*ANYCRLF)^.*(?:\R\s+\*.*)+$)', $text)) {
             // Multi line comment of the type
             //
             //     /*
@@ -83,7 +94,8 @@ class Comment implements \JsonSerializable
             //
             // is handled by replacing the whitespace sequences before the * by a single space
             return preg_replace('(^\s+\*)m', ' *', $this->text);
-        } elseif (preg_match('(^/\*\*?\s*[\r\n])', $text) && preg_match('(\n(\s*)\*/$)', $text, $matches)) {
+        }
+        if (preg_match('(^/\*\*?\s*[\r\n])', $text) && preg_match('(\n(\s*)\*/$)', $text, $matches)) {
             // Multi line comment of the type
             //
             //    /*
@@ -95,7 +107,8 @@ class Comment implements \JsonSerializable
             // */ on all lines. So if the last line is "    */", then "    " is removed at the
             // start of all lines.
             return preg_replace('(^' . preg_quote($matches[1]) . ')m', '', $text);
-        } elseif (preg_match('(^/\*\*?\s*(?!\s))', $text, $matches)) {
+        }
+        if (preg_match('(^/\*\*?\s*(?!\s))', $text, $matches)) {
             // Multi line comment of the type
             //
             //     /* Some text.
@@ -114,8 +127,21 @@ class Comment implements \JsonSerializable
         return $text;
     }
 
-    private function getShortestWhitespacePrefixLen($str) {
-        $lines = explode("\n", $str);
+    public function jsonSerialize()
+    {
+        // Technically not a node, but we make it look like one anyway
+        $type = $this instanceof Comment\Doc ? 'Comment_Doc' : 'Comment';
+        return [
+            'nodeType' => $type,
+            'text'     => $this->text,
+            'line'     => $this->line,
+            'filePos'  => $this->filePos,
+        ];
+    }
+
+    private function getShortestWhitespacePrefixLen($str)
+    {
+        $lines             = explode("\n", $str);
         $shortestPrefixLen = INF;
         foreach ($lines as $line) {
             preg_match('(^\s*)', $line, $matches);
@@ -125,16 +151,5 @@ class Comment implements \JsonSerializable
             }
         }
         return $shortestPrefixLen;
-    }
-
-    public function jsonSerialize() {
-        // Technically not a node, but we make it look like one anyway
-        $type = $this instanceof Comment\Doc ? 'Comment_Doc' : 'Comment';
-        return [
-            'nodeType' => $type,
-            'text' => $this->text,
-            'line' => $this->line,
-            'filePos' => $this->filePos,
-        ];
     }
 }

@@ -1,46 +1,43 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/1/23
- * Time: 上午12:44
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\Http;
 
-
-use Core\Conf\Config;
-use Core\Conf\Event;
 use Core\AbstractInterface\ABaseController as Controller;
 use Core\AbstractInterface\ARouter;
 use Core\Component\Di;
 use Core\Component\SysConst;
+use Core\Conf\Config;
+use Core\Conf\Event;
 use Core\Http\Message\Status;
 use FastRoute\Dispatcher\GroupCountBased;
 
 class Dispatcher
 {
     protected static $selfInstance;
-    protected        $fastRouterDispatcher;
-    protected        $controllerPool    = [];
-    protected        $useControllerPool = false;
-    protected        $controllerMap     = [];
-    protected        $serverParamMap    = [];
+    protected $fastRouterDispatcher;
+    protected $controllerPool    = [];
+    protected $useControllerPool = false;
+    protected $controllerMap     = [];
+    protected $serverParamMap    = [];
 
-    static function getInstance()
+    public function __construct()
     {
-        if (!isset(self::$selfInstance)) {
+        $this->useControllerPool = Config::getInstance()->getConf('CONTROLLER_POOL');
+    }
+
+    public static function getInstance()
+    {
+        if (! isset(self::$selfInstance)) {
             self::$selfInstance = new Dispatcher();
         }
         return self::$selfInstance;
     }
 
-    function __construct()
-    {
-        $this->useControllerPool = Config::getInstance()->getConf("CONTROLLER_POOL");
-    }
-
-    function dispatch()
+    public function dispatch()
     {
         if (Response::getInstance()->isEndResponse()) {
             return;
@@ -74,7 +71,7 @@ class Dispatcher
             return;
         }
         //去除为fastRouter预留的左边斜杠
-        $pathInfo = ltrim($pathInfo, "/");
+        $pathInfo = ltrim($pathInfo, '/');
         if (isset($this->controllerMap[$pathInfo])) {
             $finalClass = $this->controllerMap[$pathInfo]['finalClass'];
             $actionName = $this->controllerMap[$pathInfo]['actionName'];
@@ -89,8 +86,8 @@ class Dispatcher
             if (count($this->controllerMap) > 50000) {
                 $this->controllerMap = [];
             }
-            $list               = explode("/", $pathInfo);
-            $controllerPath     = '\\App\\' . APP_NAME . "\\Controller";
+            $list               = explode('/', $pathInfo);
+            $controllerPath     = '\\App\\' . APP_NAME . '\\Controller';
             $appName            = null;
             $controllerName     = null;
             $actionName         = null;
@@ -102,7 +99,7 @@ class Dispatcher
             $maxDepth = count($list) < $controllerMaxDepth ? count($list) : $controllerMaxDepth;
             while ($maxDepth > 0) {
                 $className = '';
-                for ($i = 0; $i < $maxDepth; $i++) {
+                for ($i = 0; $i < $maxDepth; ++$i) {
                     if (strstr($list[$i], '_')) {
                         $words    = explode('_', $list[$i]);
                         $list[$i] = '';
@@ -111,39 +108,39 @@ class Dispatcher
                         }
                     }
                     if (is_numeric(end($list))) {
-                        $this->serverParamMap[$pathInfo] = ['id' => (int)array_pop($list)];
+                        $this->serverParamMap[$pathInfo] = ['id' => (int) array_pop($list)];
                         if ($httpMethod == 'GET') {
                             $actionName = 'info';
                         }
                         Request::getInstance()->setServerParam('id', $this->serverParamMap[$pathInfo]['id']);
                     }
                     $controllerName = ucfirst($list[$i]);
-                    $className      = $className . "\\" . $controllerName;//为一级控制器Index服务
+                    $className      = $className . '\\' . $controllerName; //为一级控制器Index服务
                 }
                 if (class_exists($controllerPath . $className)) {
                     //尝试获取该class后的actionName
-                    if (null === $actionName) {
+                    if ($actionName === null) {
                         $actionName = empty($list[$i]) ? 'index' : $list[$i];
                     }
                     $finalClass = $controllerPath . $className;
                     break;
-                } else {
-                    //尝试搜搜index控制器
-                    $controllerName = 'Index';
-                    $temp           = $className . "\\" . $controllerName;
-                    if (class_exists($controllerPath . $temp)) {
-                        $finalClass = $controllerPath . $temp;
-                        //尝试获取该class后的actionName
-                        $actionName = empty($list[$i]) ? 'index' : $list[$i];
-                        break;
-                    }
                 }
-                $maxDepth--;
+                //尝试搜搜index控制器
+                $controllerName = 'Index';
+                $temp           = $className . '\\' . $controllerName;
+                if (class_exists($controllerPath . $temp)) {
+                    $finalClass = $controllerPath . $temp;
+                    //尝试获取该class后的actionName
+                    $actionName = empty($list[$i]) ? 'index' : $list[$i];
+                    break;
+                }
+
+                --$maxDepth;
             }
             if (empty($finalClass)) {
                 //若无法匹配完整控制器   搜搜Index控制器是否存在
                 $controllerName = 'Index';
-                $finalClass     = $controllerPath . "\\" . $controllerName;
+                $finalClass     = $controllerPath . '\\' . $controllerName;
                 $actionName     = empty($list[0]) ? 'index' : $list[0];
             }
             $this->controllerMap[$pathInfo]['finalClass'] = $finalClass;
@@ -155,20 +152,20 @@ class Dispatcher
                 if (isset($this->controllerPool[$finalClass])) {
                     $controller = $this->controllerPool[$finalClass];
                 } else {
-                    $controller                        = new $finalClass;
+                    $controller                        = new $finalClass();
                     $this->controllerPool[$finalClass] = $controller;
                 }
             } else {
-                $controller = new $finalClass;
+                $controller = new $finalClass();
             }
             if ($controller instanceof Controller) {
                 Event::getInstance()->onDispatcher(Request::getInstance(), Response::getInstance(), $finalClass, $actionName);
-                if (Status::CODE_FORBIDDEN === Response::getInstance()->getStatusCode()) { // 用作权限验证
+                if (Response::getInstance()->getStatusCode() === Status::CODE_FORBIDDEN) { // 用作权限验证
                     Response::getInstance()->withStatus(Status::CODE_OK);
                     return;
                 }
                 //预防在进控制器之前已经被拦截处理
-                if (!Response::getInstance()->isEndResponse()) {
+                if (! Response::getInstance()->isEndResponse()) {
                     $controller->__call($actionName, null);
                 }
             } else {
@@ -177,20 +174,19 @@ class Dispatcher
             }
         } else {
             Response::getInstance()->withStatus(Status::CODE_NOT_FOUND);
-            trigger_error("default controller Index not implement");
+            trigger_error('default controller Index not implement');
         }
     }
 
     private function doFastRouter($pathInfo, $requestMethod)
     {
-        if (!isset($this->fastRouterDispatcher)) {
+        if (! isset($this->fastRouterDispatcher)) {
             $this->intRouterInstance();
         }
         if ($this->fastRouterDispatcher instanceof GroupCountBased) {
             return $this->fastRouterDispatcher->dispatch($requestMethod, $pathInfo);
-        } else {
-            return false;
         }
+        return false;
     }
 
     private function intRouterInstance()
@@ -199,7 +195,7 @@ class Dispatcher
             /*
              * if exit Router class in App directory
              */
-            $ref    = new \ReflectionClass(APP_NAME . "\\Router");
+            $ref    = new \ReflectionClass(APP_NAME . '\\Router');
             $router = $ref->newInstance();
             if ($router instanceof ARouter) {
                 $this->fastRouterDispatcher = new GroupCountBased($router->getRouteCollector()->getData());
@@ -209,5 +205,4 @@ class Dispatcher
             $this->fastRouterDispatcher = false;
         }
     }
-
 }

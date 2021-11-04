@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Expr;
 
 use PhpParser\Node\Expr;
@@ -9,23 +13,25 @@ class Instanceof_ extends Expr
 {
     /** @var Expr Expression */
     public $expr;
-    /** @var Name|Expr Class name */
+    /** @var Expr|Name Class name */
     public $class;
 
     /**
      * Constructs an instanceof check node.
      *
-     * @param Expr      $expr       Expression
-     * @param Name|Expr $class      Class name
-     * @param array     $attributes Additional attributes
+     * @param Expr $expr Expression
+     * @param Expr|Name $class Class name
+     * @param array $attributes Additional attributes
      */
-    public function __construct(Expr $expr, $class, array $attributes = array()) {
+    public function __construct(Expr $expr, $class, array $attributes = [])
+    {
         parent::__construct($attributes);
-        $this->expr = $expr;
+        $this->expr  = $expr;
         $this->class = $class;
     }
 
-    public function getSubNodeNames() {
-        return array('expr', 'class');
+    public function getSubNodeNames()
+    {
+        return ['expr', 'class'];
     }
 }

@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\AbstractInterface;
-
 
 interface IExceptionHandler
 {
-    function handler(\Exception $exception);
+    public function handler(\Exception $exception);
 
-    function display(\Exception $exception);
+    public function display(\Exception $exception);
 
-    function log(\Exception $exception);
+    public function log(\Exception $exception);
 }

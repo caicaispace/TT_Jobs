@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Expr;
 
 use PhpParser\Node\Expr;
@@ -12,15 +16,17 @@ class PostDec extends Expr
     /**
      * Constructs a post decrement node.
      *
-     * @param Expr  $var        Variable
+     * @param Expr $var Variable
      * @param array $attributes Additional attributes
      */
-    public function __construct(Expr $var, array $attributes = array()) {
+    public function __construct(Expr $var, array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->var = $var;
     }
 
-    public function getSubNodeNames() {
-        return array('var');
+    public function getSubNodeNames()
+    {
+        return ['var'];
     }
 }

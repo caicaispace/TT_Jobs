@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Expr;
 
 use PhpParser\Node\Expr;
@@ -16,19 +20,21 @@ class ArrayItem extends Expr
     /**
      * Constructs an array item node.
      *
-     * @param Expr      $value      Value
-     * @param null|Expr $key        Key
-     * @param bool      $byRef      Whether to assign by reference
-     * @param array     $attributes Additional attributes
+     * @param Expr $value Value
+     * @param null|Expr $key Key
+     * @param bool $byRef Whether to assign by reference
+     * @param array $attributes Additional attributes
      */
-    public function __construct(Expr $value, Expr $key = null, $byRef = false, array $attributes = array()) {
+    public function __construct(Expr $value, Expr $key = null, $byRef = false, array $attributes = [])
+    {
         parent::__construct($attributes);
-        $this->key = $key;
+        $this->key   = $key;
         $this->value = $value;
         $this->byRef = $byRef;
     }
 
-    public function getSubNodeNames() {
-        return array('key', 'value', 'byRef');
+    public function getSubNodeNames()
+    {
+        return ['key', 'value', 'byRef'];
     }
 }

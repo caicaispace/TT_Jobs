@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser;
 
 use PhpParser\Node\Expr\Include_;
@@ -24,27 +28,30 @@ class NodeDumper
      *
      * @param array $options Options (see description)
      */
-    public function __construct(array $options = []) {
-        $this->dumpComments = !empty($options['dumpComments']);
-        $this->dumpPositions = !empty($options['dumpPositions']);
+    public function __construct(array $options = [])
+    {
+        $this->dumpComments  = ! empty($options['dumpComments']);
+        $this->dumpPositions = ! empty($options['dumpPositions']);
     }
 
     /**
      * Dumps a node or array.
      *
-     * @param array|Node  $node Node or array to dump
-     * @param string|null $code Code corresponding to dumped AST. This only needs to be passed if
+     * @param array|Node $node Node or array to dump
+     * @param null|string $code Code corresponding to dumped AST. This only needs to be passed if
      *                          the dumpPositions option is enabled and the dumping of node offsets
      *                          is desired.
      *
      * @return string Dumped value
      */
-    public function dump($node, $code = null) {
+    public function dump($node, $code = null)
+    {
         $this->code = $code;
         return $this->dumpRecursive($node);
     }
 
-    protected function dumpRecursive($node) {
+    protected function dumpRecursive($node)
+    {
         if ($node instanceof Node) {
             $r = $node->getType();
             if ($this->dumpPositions && null !== $p = $this->dumpPosition($node)) {
@@ -55,19 +62,19 @@ class NodeDumper
             foreach ($node->getSubNodeNames() as $key) {
                 $r .= "\n    " . $key . ': ';
 
-                $value = $node->$key;
-                if (null === $value) {
+                $value = $node->{$key};
+                if ($value === null) {
                     $r .= 'null';
-                } elseif (false === $value) {
+                } elseif ($value === false) {
                     $r .= 'false';
-                } elseif (true === $value) {
+                } elseif ($value === true) {
                     $r .= 'true';
                 } elseif (is_scalar($value)) {
-                    if ('flags' === $key || 'newModifier' === $key) {
+                    if ($key === 'flags' || $key === 'newModifier') {
                         $r .= $this->dumpFlags($value);
-                    } else if ('type' === $key && $node instanceof Include_) {
+                    } elseif ($key === 'type' && $node instanceof Include_) {
                         $r .= $this->dumpIncludeType($value);
-                    } else if ('type' === $key
+                    } elseif ($key === 'type'
                             && ($node instanceof Use_ || $node instanceof UseUse || $node instanceof GroupUse)) {
                         $r .= $this->dumpUseType($value);
                     } else {
@@ -87,11 +94,11 @@ class NodeDumper
             foreach ($node as $key => $value) {
                 $r .= "\n    " . $key . ': ';
 
-                if (null === $value) {
+                if ($value === null) {
                     $r .= 'null';
-                } elseif (false === $value) {
+                } elseif ($value === false) {
                     $r .= 'false';
-                } elseif (true === $value) {
+                } elseif ($value === true) {
                     $r .= 'true';
                 } elseif (is_scalar($value)) {
                     $r .= $value;
@@ -108,7 +115,8 @@ class NodeDumper
         return $r . "\n)";
     }
 
-    protected function dumpFlags($flags) {
+    protected function dumpFlags($flags)
+    {
         $strs = [];
         if ($flags & Class_::MODIFIER_PUBLIC) {
             $strs[] = 'MODIFIER_PUBLIC';
@@ -131,12 +139,12 @@ class NodeDumper
 
         if ($strs) {
             return implode(' | ', $strs) . ' (' . $flags . ')';
-        } else {
-            return $flags;
         }
+        return $flags;
     }
 
-    protected function dumpIncludeType($type) {
+    protected function dumpIncludeType($type)
+    {
         $map = [
             Include_::TYPE_INCLUDE      => 'TYPE_INCLUDE',
             Include_::TYPE_INCLUDE_ONCE => 'TYPE_INCLUDE_ONCE',
@@ -144,13 +152,14 @@ class NodeDumper
             Include_::TYPE_REQUIRE_ONCE => 'TYPE_REQURE_ONCE',
         ];
 
-        if (!isset($map[$type])) {
+        if (! isset($map[$type])) {
             return $type;
         }
         return $map[$type] . ' (' . $type . ')';
     }
 
-    protected function dumpUseType($type) {
+    protected function dumpUseType($type)
+    {
         $map = [
             Use_::TYPE_UNKNOWN  => 'TYPE_UNKNOWN',
             Use_::TYPE_NORMAL   => 'TYPE_NORMAL',
@@ -158,36 +167,38 @@ class NodeDumper
             Use_::TYPE_CONSTANT => 'TYPE_CONSTANT',
         ];
 
-        if (!isset($map[$type])) {
+        if (! isset($map[$type])) {
             return $type;
         }
         return $map[$type] . ' (' . $type . ')';
     }
 
-    protected function dumpPosition(Node $node) {
-        if (!$node->hasAttribute('startLine') || !$node->hasAttribute('endLine')) {
+    protected function dumpPosition(Node $node)
+    {
+        if (! $node->hasAttribute('startLine') || ! $node->hasAttribute('endLine')) {
             return null;
         }
 
         $start = $node->getAttribute('startLine');
-        $end = $node->getAttribute('endLine');
+        $end   = $node->getAttribute('endLine');
         if ($node->hasAttribute('startFilePos') && $node->hasAttribute('endFilePos')
-            && null !== $this->code
+            && $this->code !== null
         ) {
             $start .= ':' . $this->toColumn($this->code, $node->getAttribute('startFilePos'));
-            $end .= ':' . $this->toColumn($this->code, $node->getAttribute('endFilePos'));
+            $end   .= ':' . $this->toColumn($this->code, $node->getAttribute('endFilePos'));
         }
-        return "[$start - $end]";
+        return "[{$start} - {$end}]";
     }
 
     // Copied from Error class
-    private function toColumn($code, $pos) {
+    private function toColumn($code, $pos)
+    {
         if ($pos > strlen($code)) {
             throw new \RuntimeException('Invalid position information');
         }
 
         $lineStartPos = strrpos($code, "\n", $pos - strlen($code));
-        if (false === $lineStartPos) {
+        if ($lineStartPos === false) {
             $lineStartPos = -1;
         }
 

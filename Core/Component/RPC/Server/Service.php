@@ -1,11 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/23
- * Time: 下午3:48
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\Component\RPC\Server;
 
 class Service

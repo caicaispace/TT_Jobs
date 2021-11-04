@@ -1,27 +1,28 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/6/15
- * Time: 下午1:44
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Http\Message;
-
 
 class ServerRequest extends Request
 {
-    private $attributes = [];
+    private $attributes   = [];
     private $cookieParams = [];
     private $parsedBody;
     private $queryParams = [];
     private $serverParams;
     private $uploadedFiles = [];
 
-    function __construct(
-        $method = 'GET', Uri $uri = null, array $headers = null, Stream $body = null, $protocolVersion = '1.1', $serverParams = array()
-    )
-    {
+    public function __construct(
+        $method = 'GET',
+        Uri $uri = null,
+        array $headers = null,
+        Stream $body = null,
+        $protocolVersion = '1.1',
+        $serverParams = []
+    ) {
         $this->serverParams = $serverParams;
         parent::__construct($method, $uri, $headers, $body, $protocolVersion);
     }
@@ -39,10 +40,10 @@ class ServerRequest extends Request
 
     public function getServerParam($key = null)
     {
-        if (null === $key) {
+        if ($key === null) {
             return null;
         }
-        if (false === isset($this->serverParams[$key])) {
+        if (isset($this->serverParams[$key]) === false) {
             return null;
         }
         return $this->serverParams[$key];
@@ -52,13 +53,11 @@ class ServerRequest extends Request
     {
         if ($name === null) {
             return $this->cookieParams;
-        } else {
-            if (isset($this->cookieParams[$name])) {
-                return $this->cookieParams[$name];
-            } else {
-                return null;
-            }
         }
+        if (isset($this->cookieParams[$name])) {
+            return $this->cookieParams[$name];
+        }
+        return null;
     }
 
     public function withCookieParams(array $cookies)
@@ -77,9 +76,8 @@ class ServerRequest extends Request
         $data = $this->getQueryParams();
         if (isset($data[$name])) {
             return $data[$name];
-        } else {
-            return null;
         }
+        return null;
     }
 
     public function withQueryParams(array $query)
@@ -97,9 +95,8 @@ class ServerRequest extends Request
     {
         if (isset($this->uploadedFiles[$name])) {
             return $this->uploadedFiles[$name];
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -117,12 +114,10 @@ class ServerRequest extends Request
         if ($name !== null) {
             if (isset($this->parsedBody[$name])) {
                 return $this->parsedBody[$name];
-            } else {
-                return null;
             }
-        } else {
-            return $this->parsedBody;
+            return null;
         }
+        return $this->parsedBody;
     }
 
     public function withParsedBody($data)
@@ -138,7 +133,7 @@ class ServerRequest extends Request
 
     public function getAttribute($name, $default = null)
     {
-        if (false === array_key_exists($name, $this->attributes)) {
+        if (array_key_exists($name, $this->attributes) === false) {
             return $default;
         }
         return $this->attributes[$name];
@@ -152,7 +147,7 @@ class ServerRequest extends Request
 
     public function withoutAttribute($name)
     {
-        if (false === array_key_exists($name, $this->attributes)) {
+        if (array_key_exists($name, $this->attributes) === false) {
             return $this;
         }
         unset($this->attributes[$name]);

@@ -1,5 +1,9 @@
 <?php
-/* product env */
+
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 return [
     'APP_NAME'               => APP_NAME,
     'SITE_DOMAIN'            => 'jobs.tt.com',
@@ -8,9 +12,9 @@ return [
     'APP_PUBLIC_DIR'         => ROOT . '/Public',
     'APP_SESSION_AUTO_START' => true,
     'APP_DEBUG'              => [
-        "ENABLE"        => false,
-        "LOG"           => 1,
-        "DISPLAY_ERROR" => 1,
+        'ENABLE'        => false,
+        'LOG'           => 1,
+        'DISPLAY_ERROR' => 1,
     ],
     'TEMPLATE'               => [
         'view_path'    => ROOT . '/App/' . APP_NAME . '/View/', // 模板文件目录
@@ -19,26 +23,26 @@ return [
         'tpl_deny_php' => false, // 默认模板引擎是否禁用PHP原生代码
     ],
     'SWOOLE'                 => [
-        "SERVER" => [
-            "LISTEN"          => "0.0.0.0",
+        'SERVER' => [
+            'LISTEN'          => '0.0.0.0',
             'PORT'            => 9501,
-            "SERVER_NAME"     => "jobs",
-            "RUN_MODE"        => SWOOLE_PROCESS,    //不建议更改此项
-            "CONTROLLER_POOL" => true,              //web或web socket模式有效
-            "SERVER_TYPE"     => \Core\Swoole\Config::SERVER_TYPE_WEB,
-            "SESSION_NAME"    => 'SESSION_NAME',
-            "CONFIG"          => [
+            'SERVER_NAME'     => 'jobs',
+            'RUN_MODE'        => SWOOLE_PROCESS,    //不建议更改此项
+            'CONTROLLER_POOL' => true,              //web或web socket模式有效
+            'SERVER_TYPE'     => \Core\Swoole\Config::SERVER_TYPE_WEB,
+            'SESSION_NAME'    => 'SESSION_NAME',
+            'CONFIG'          => [
                 'enable_static_handler' => true,
                 'document_root'         => ROOT . '/Public',
                 'worker_num'            => 4,
                 'task_worker_num'       => 4,
-                "task_max_request"      => 10,
+                'task_max_request'      => 10,
                 'max_request'           => 5000,
                 'debug_mode'            => 0,
             ],
         ],
     ],
-    /**
+    /*
      * databases
      */
     'DATABASE'               => [

@@ -1,49 +1,46 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yangcai
- * Date: 2018/5/16
- * Time: 19:02
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\AbstractInterface;
 
-use Core\Vendor\Tools\LogicResponse;
 use Core\Vendor\Tools\LogicRequest;
+use Core\Vendor\Tools\LogicResponse;
 
 abstract class ALogic
 {
-
     protected $request;
     protected $response;
 
-    function __construct()
+    public function __construct()
     {
         $this->request  = LogicRequest::getInstance();
         $this->response = LogicResponse::getInstance();
     }
 
-    abstract function getList();
+    abstract public function getList();
 
-    abstract function getInfo();
+    abstract public function getInfo();
 
-    abstract function create();
+    abstract public function create();
 
-    abstract function update();
+    abstract public function update();
 
-    abstract function delete();
+    abstract public function delete();
 
-    function request()
+    public function request()
     {
         return $this->request;
     }
 
-    function response()
+    public function response()
     {
         return $this->response;
     }
 
-    function actionNotFound($actionName)
+    public function actionNotFound($actionName)
     {
         return $this->response()->error($actionName . ' method not found');
     }
@@ -53,23 +50,23 @@ abstract class ALogic
      *
      * @return LogicResponse
      */
-    function call($actionName)
+    public function call($actionName)
     {
-        if (!method_exists($this, $actionName)) {
+        if (! method_exists($this, $actionName)) {
             return $this->actionNotFound($actionName);
         }
         $eventActions = ['getList', 'getInfo', 'create', 'update', 'delete'];
         if (\in_array($actionName, $eventActions, true)) {
             $eventBeforeActionName = '_EVENT_before' . ucfirst($actionName);
             if (method_exists($this, $eventBeforeActionName)) {
-                $this->$eventBeforeActionName();
+                $this->{$eventBeforeActionName}();
             }
         }
-        $response = $this->$actionName();
+        $response = $this->{$actionName}();
         if (\in_array($actionName, $eventActions, true)) {
             $eventAfterActionName = '_EVENT_after' . ucfirst($actionName);
             if (method_exists($this, $eventAfterActionName)) {
-                $this->$eventAfterActionName();
+                $this->{$eventAfterActionName}();
             }
         }
         return $response;

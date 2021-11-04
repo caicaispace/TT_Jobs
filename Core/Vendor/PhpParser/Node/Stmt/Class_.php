@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Stmt;
 
 use PhpParser\Error;
@@ -7,16 +11,16 @@ use PhpParser\Node;
 
 class Class_ extends ClassLike
 {
-    const MODIFIER_PUBLIC    =  1;
-    const MODIFIER_PROTECTED =  2;
-    const MODIFIER_PRIVATE   =  4;
-    const MODIFIER_STATIC    =  8;
-    const MODIFIER_ABSTRACT  = 16;
-    const MODIFIER_FINAL     = 32;
+    public const MODIFIER_PUBLIC    =  1;
+    public const MODIFIER_PROTECTED =  2;
+    public const MODIFIER_PRIVATE   =  4;
+    public const MODIFIER_STATIC    =  8;
+    public const MODIFIER_ABSTRACT  = 16;
+    public const MODIFIER_FINAL     = 32;
 
-    const VISIBILITY_MODIFIER_MASK = 7; // 1 | 2 | 4
+    public const VISIBILITY_MODIFIER_MASK = 7; // 1 | 2 | 4
     /** @deprecated */
-    const VISIBILITY_MODIFER_MASK = self::VISIBILITY_MODIFIER_MASK;
+    public const VISIBILITY_MODIFER_MASK = self::VISIBILITY_MODIFIER_MASK;
 
     /** @var int Type */
     public $flags;
@@ -28,54 +32,62 @@ class Class_ extends ClassLike
     /** @deprecated Use $flags instead */
     public $type;
 
-    protected static $specialNames = array(
+    protected static $specialNames = [
         'self'   => true,
         'parent' => true,
         'static' => true,
-    );
+    ];
 
     /**
      * Constructs a class node.
      *
-     * @param string|null $name       Name
-     * @param array       $subNodes   Array of the following optional subnodes:
-     *                                'flags'      => 0      : Flags
-     *                                'extends'    => null   : Name of extended class
-     *                                'implements' => array(): Names of implemented interfaces
-     *                                'stmts'      => array(): Statements
-     * @param array       $attributes Additional attributes
+     * @param null|string $name Name
+     * @param array $subNodes Array of the following optional subnodes:
+     *                        'flags'      => 0      : Flags
+     *                        'extends'    => null   : Name of extended class
+     *                        'implements' => array(): Names of implemented interfaces
+     *                        'stmts'      => array(): Statements
+     * @param array $attributes Additional attributes
      */
-    public function __construct($name, array $subNodes = array(), array $attributes = array()) {
+    public function __construct($name, array $subNodes = [], array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->flags = isset($subNodes['flags']) ? $subNodes['flags']
             : (isset($subNodes['type']) ? $subNodes['type'] : 0);
-        $this->type = $this->flags;
-        $this->name = $name;
-        $this->extends = isset($subNodes['extends']) ? $subNodes['extends'] : null;
-        $this->implements = isset($subNodes['implements']) ? $subNodes['implements'] : array();
-        $this->stmts = isset($subNodes['stmts']) ? $subNodes['stmts'] : array();
+        $this->type       = $this->flags;
+        $this->name       = $name;
+        $this->extends    = isset($subNodes['extends']) ? $subNodes['extends'] : null;
+        $this->implements = isset($subNodes['implements']) ? $subNodes['implements'] : [];
+        $this->stmts      = isset($subNodes['stmts']) ? $subNodes['stmts'] : [];
     }
 
-    public function getSubNodeNames() {
-        return array('flags', 'name', 'extends', 'implements', 'stmts');
+    public function getSubNodeNames()
+    {
+        return ['flags', 'name', 'extends', 'implements', 'stmts'];
     }
 
-    public function isAbstract() {
+    public function isAbstract()
+    {
         return (bool) ($this->flags & self::MODIFIER_ABSTRACT);
     }
 
-    public function isFinal() {
+    public function isFinal()
+    {
         return (bool) ($this->flags & self::MODIFIER_FINAL);
     }
 
-    public function isAnonymous() {
-        return null === $this->name;
+    public function isAnonymous()
+    {
+        return $this->name === null;
     }
 
     /**
      * @internal
+     * @param mixed $a
+     * @param mixed $b
      */
-    public static function verifyModifier($a, $b) {
+    public static function verifyModifier($a, $b)
+    {
         if ($a & self::VISIBILITY_MODIFIER_MASK && $b & self::VISIBILITY_MODIFIER_MASK) {
             throw new Error('Multiple access type modifiers are not allowed');
         }

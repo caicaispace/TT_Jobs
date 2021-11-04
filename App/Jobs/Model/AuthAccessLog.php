@@ -1,19 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/7/17
- * Time: 0:05:45
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Model;
 
 use Core\AbstractInterface\AModel as Model;
 
 /**
- * Class AuthAccessLog
- *
- * @package Jobs\Model
+ * Class AuthAccessLog.
  */
 class AuthAccessLog extends Model
 {

@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/6/14
- * Time: 下午12:32
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Http\Message;
-
 
 class Uri
 {
@@ -19,7 +16,7 @@ class Uri
     private $fragment;
     private $scheme;
 
-    function __construct($url = '')
+    public function __construct($url = '')
     {
         if ($url !== '') {
             $parts          = parse_url($url);
@@ -34,6 +31,26 @@ class Uri
                 $this->userInfo .= ':' . $parts['pass'];
             }
         }
+    }
+
+    public function __toString()
+    {
+        $uri = '';
+        // weak type checks to also accept null until we can add scalar type hints
+        if ($this->scheme != '') {
+            $uri .= $this->scheme . ':';
+        }
+        if ($this->getAuthority() != '' || $this->scheme === 'file') {
+            $uri .= '//' . $this->getAuthority();
+        }
+        $uri .= $this->path;
+        if ($this->query != '') {
+            $uri .= '?' . $this->query;
+        }
+        if ($this->fragment != '') {
+            $uri .= '#' . $this->fragment;
+        }
+        return $uri;
     }
 
     public function getScheme()
@@ -149,25 +166,5 @@ class Uri
         }
         $this->fragment = $fragment;
         return $this;
-    }
-
-    public function __toString()
-    {
-        $uri = '';
-        // weak type checks to also accept null until we can add scalar type hints
-        if ($this->scheme != '') {
-            $uri .= $this->scheme . ':';
-        }
-        if ($this->getAuthority() != '' || $this->scheme === 'file') {
-            $uri .= '//' . $this->getAuthority();
-        }
-        $uri .= $this->path;
-        if ($this->query != '') {
-            $uri .= '?' . $this->query;
-        }
-        if ($this->fragment != '') {
-            $uri .= '#' . $this->fragment;
-        }
-        return $uri;
     }
 }

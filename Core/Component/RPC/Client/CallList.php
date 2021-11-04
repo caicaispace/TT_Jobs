@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/23
- * Time: 下午5:38
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\RPC\Client;
-
 
 use Core\Component\RPC\Common\Package;
 
@@ -15,7 +12,7 @@ class CallList
 {
     private $taskList = [];
 
-    function addCall($serverName, $action, array $args = null, callable $successCall = null, callable $failCall = null)
+    public function addCall($serverName, $action, array $args = null, callable $successCall = null, callable $failCall = null)
     {
         $package = new Package();
         $package->setServerName($serverName);
@@ -25,7 +22,7 @@ class CallList
         return $this;
     }
 
-    function getTaskList()
+    public function getTaskList()
     {
         return $this->taskList;
     }

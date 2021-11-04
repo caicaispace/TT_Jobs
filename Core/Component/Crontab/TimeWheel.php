@@ -1,45 +1,42 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/6/20
- * Time: 0:30
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Common\Cron;
 
 use Core\Swoole\Memory\TableManager;
 use Core\Utility\SnowFlake;
 
 /**
- * Class TimeWheel
- * @package Common\Cron
+ * Class TimeWheel.
  */
 class TimeWheel
 {
-    const SWOOLE_TABLE_NAME = 'CRON_TIME_WHEEL';
-    const TASKS_SIZE = 1024;
-
-    private $_tableColumns = [
-        'id' => ['type' => \swoole_table::TYPE_STRING, 'size' => 11]
-    ];
+    public const SWOOLE_TABLE_NAME = 'CRON_TIME_WHEEL';
+    public const TASKS_SIZE        = 1024;
 
     protected static $instance;
 
-    static function getInstance()
-    {
-        if (!isset(self::$instance)) {
-            self::$instance = new static();
-        }
-        return self::$instance;
-    }
+    private $_tableColumns = [
+        'id' => ['type' => \swoole_table::TYPE_STRING, 'size' => 11],
+    ];
 
     public function __construct()
     {
-        for ($i = 1; $i <= 60; $i++) {
+        for ($i = 1; $i <= 60; ++$i) {
             $tableName = self::SWOOLE_TABLE_NAME . $i;
             TableManager::getInstance()->add($tableName, $this->_tableColumns, self::TASKS_SIZE);
         }
+    }
+
+    public static function getInstance()
+    {
+        if (! isset(self::$instance)) {
+            self::$instance = new static();
+        }
+        return self::$instance;
     }
 
     /**
@@ -72,7 +69,7 @@ class TimeWheel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function count()
     {
@@ -85,7 +82,7 @@ class TimeWheel
      */
     public function clear()
     {
-        for ($i = 1; $i <= 60; $i++) {
+        for ($i = 1; $i <= 60; ++$i) {
             $table = $this->_getTable($i);
             foreach ($table as $k => $v) {
                 $table->del($k);

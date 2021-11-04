@@ -1,23 +1,25 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/22
- * Time: 下午10:50
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Utility\Curl;
-
 
 class Cookie
 {
     private $name;
     private $value;
-    private $expire = 0;
-    private $path = '/';
-    private $domain = '';
-    private $secure = false;
+    private $expire   = 0;
+    private $path     = '/';
+    private $domain   = '';
+    private $secure   = false;
     private $httponly = false;
+
+    public function __toString()
+    {
+        return "{$this->name}={$this->value};";
+    }
 
     /**
      * @return mixed
@@ -130,10 +132,4 @@ class Cookie
     {
         $this->httponly = $httponly;
     }
-
-    function __toString()
-    {
-        return "{$this->name}={$this->value};";
-    }
-
 }

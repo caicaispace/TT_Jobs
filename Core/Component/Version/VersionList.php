@@ -1,26 +1,23 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/11/22
- * Time: 下午10:08
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\Version;
-
 
 class VersionList
 {
     private $list = [];
 
-    function add($name, callable $judge)
+    public function add($name, callable $judge)
     {
         $version           = new Version($name, $judge);
         $this->list[$name] = $version;
         return $version;
     }
 
-    function get($name)
+    public function get($name)
     {
         if (isset($this->list[$name])) {
             return $this->list[$name];
@@ -28,7 +25,7 @@ class VersionList
         return null;
     }
 
-    function all()
+    public function all()
     {
         return $this->list;
     }

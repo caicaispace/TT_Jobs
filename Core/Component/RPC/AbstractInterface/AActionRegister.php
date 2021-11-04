@@ -1,17 +1,14 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/23
- * Time: 下午4:21
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\RPC\AbstractInterface;
-
 
 use Core\Component\RPC\Common\ActionList;
 
 abstract class AActionRegister
 {
-    abstract function register(ActionList $actionList);
+    abstract public function register(ActionList $actionList);
 }

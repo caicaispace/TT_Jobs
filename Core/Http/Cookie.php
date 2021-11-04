@@ -1,16 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yangcai
- * Date: 2018/5/24
- * Time: 13:54
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\Http;
 
 use Core\Utility\Curl\Cookie as BaseCookie;
 
 class Cookie extends BaseCookie
 {
-
 }

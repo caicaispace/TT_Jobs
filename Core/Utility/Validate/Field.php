@@ -1,48 +1,44 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/9/3
- * Time: 下午9:37
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Utility\Validate;
-
 
 class Field
 {
-    protected $currentRule = null;
+    protected $currentRule;
     protected $rule = [];
-    protected $msg = [
-        '__default__' => null
+    protected $msg  = [
+        '__default__' => null,
     ];
 
-    function withMsg($msg)
+    public function withMsg($msg)
     {
         if (isset($this->currentRule)) {
             $this->msg[$this->currentRule] = $msg;
-            $this->currentRule = null;
+            $this->currentRule             = null;
         } else {
             $this->msg['__default__'] = $msg;
         }
         return $this;
     }
 
-    function withRule($rule, ...$arg)
+    public function withRule($rule, ...$arg)
     {
         $this->currentRule = $rule;
         $this->rule[$rule] = $arg;
         return $this;
     }
 
-    function getRule()
+    public function getRule()
     {
         return $this->rule;
     }
 
-    function getMsg()
+    public function getMsg()
     {
         return $this->msg;
     }
-
 }

@@ -1,22 +1,20 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/6/23
- * Time: 2:48:09
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Logic;
 
-use Core\AbstractInterface\ALogic;
 use App\Jobs\Model\TaskLog as Model;
+use Core\AbstractInterface\ALogic;
 use Exception;
 
 class TaskLog extends ALogic
 {
-    function getList()
+    public function getList()
     {
-        $model       = new Model;
+        $model       = new Model();
         $clone_model = clone $model;
         $model->where('id', '>', 0);
         /* 查询 */
@@ -50,26 +48,22 @@ class TaskLog extends ALogic
             ->success();
     }
 
-
-    function getInfo()
+    public function getInfo()
     {
         // TODO: Implement getInfo() method.
     }
 
-
-    function create()
+    public function create()
     {
         // TODO: Implement create() method.
     }
 
-
-    function update()
+    public function update()
     {
         // TODO: Implement update() method.
     }
 
-
-    function delete()
+    public function delete()
     {
         // TODO: Implement delete() method.
     }

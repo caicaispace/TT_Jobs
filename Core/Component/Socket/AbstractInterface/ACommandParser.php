@@ -1,19 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/21
- * Time: 下午5:49
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\Component\Socket\AbstractInterface;
 
-
-
-use Core\Component\RPC\Client\Client;
 use Core\Component\Socket\Common\Command;
 
 abstract class ACommandParser
 {
-    abstract function parser(Command $result, AClient $client, $rawData);
+    abstract public function parser(Command $result, AClient $client, $rawData);
 }

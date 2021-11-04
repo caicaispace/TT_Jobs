@@ -1,16 +1,22 @@
-<?php namespace SuperClosure\Analyzer;
+<?php
 
-use SuperClosure\Analyzer\Visitor\ThisDetectorVisitor;
-use SuperClosure\Exception\ClosureAnalysisException;
-use SuperClosure\Analyzer\Visitor\ClosureLocatorVisitor;
-use SuperClosure\Analyzer\Visitor\MagicConstantVisitor;
-use PhpParser\NodeTraverser;
-use PhpParser\PrettyPrinter\Standard as NodePrinter;
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
+namespace SuperClosure\Analyzer;
+
 use PhpParser\Error as ParserError;
+use PhpParser\Lexer\Emulative as EmulativeLexer;
+use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser as CodeParser;
 use PhpParser\ParserFactory;
-use PhpParser\Lexer\Emulative as EmulativeLexer;
+use PhpParser\PrettyPrinter\Standard as NodePrinter;
+use SuperClosure\Analyzer\Visitor\ClosureLocatorVisitor;
+use SuperClosure\Analyzer\Visitor\MagicConstantVisitor;
+use SuperClosure\Analyzer\Visitor\ThisDetectorVisitor;
+use SuperClosure\Exception\ClosureAnalysisException;
 
 /**
  * This is the AST based analyzer.
@@ -30,59 +36,20 @@ class AstAnalyzer extends ClosureAnalyzer
 
         // Make a second pass through the AST, but only through the closure's
         // nodes, to resolve any magic constants to literal values.
-        $traverser = new NodeTraverser;
+        $traverser = new NodeTraverser();
         $traverser->addVisitor(new MagicConstantVisitor($data['location']));
-        $traverser->addVisitor($thisDetector = new ThisDetectorVisitor);
-        $data['ast'] = $traverser->traverse([$data['ast']])[0];
+        $traverser->addVisitor($thisDetector = new ThisDetectorVisitor());
+        $data['ast']     = $traverser->traverse([$data['ast']])[0];
         $data['hasThis'] = $thisDetector->detected;
 
         // Bounce the updated AST down to a string representation of the code.
-        $data['code'] = (new NodePrinter)->prettyPrint([$data['ast']]);
-    }
-
-    /**
-     * Parses the closure's code and produces an abstract syntax tree (AST).
-     *
-     * @param array $data
-     *
-     * @throws ClosureAnalysisException if there is an issue finding the closure
-     */
-    private function locateClosure(array &$data)
-    {
-        try {
-            $locator = new ClosureLocatorVisitor($data['reflection']);
-            $fileAst = $this->getFileAst($data['reflection']);
-
-            $fileTraverser = new NodeTraverser;
-            $fileTraverser->addVisitor(new NameResolver);
-            $fileTraverser->addVisitor($locator);
-            $fileTraverser->traverse($fileAst);
-        } catch (ParserError $e) {
-            // @codeCoverageIgnoreStart
-            throw new ClosureAnalysisException(
-                'There was an error analyzing the closure code.', 0, $e
-            );
-            // @codeCoverageIgnoreEnd
-        }
-
-        $data['ast'] = $locator->closureNode;
-        if (!$data['ast']) {
-            // @codeCoverageIgnoreStart
-            throw new ClosureAnalysisException(
-                'The closure was not found within the abstract syntax tree.'
-            );
-            // @codeCoverageIgnoreEnd
-        }
-
-        $data['location'] = $locator->location;
+        $data['code'] = (new NodePrinter())->prettyPrint([$data['ast']]);
     }
 
     /**
      * Returns the variables that in the "use" clause of the closure definition.
      * These are referred to as the "used variables", "static variables", or
      * "closed upon variables", "context" of the closure.
-     *
-     * @param array $data
      */
     protected function determineContext(array &$data)
     {
@@ -90,7 +57,7 @@ class AstAnalyzer extends ClosureAnalyzer
         $refs = 0;
         $vars = array_map(function ($node) use (&$refs) {
             if ($node->byRef) {
-                $refs++;
+                ++$refs;
             }
             return $node->var;
         }, $data['ast']->uses);
@@ -108,8 +75,43 @@ class AstAnalyzer extends ClosureAnalyzer
     }
 
     /**
-     * @param \ReflectionFunction $reflection
+     * Parses the closure's code and produces an abstract syntax tree (AST).
      *
+     * @throws ClosureAnalysisException if there is an issue finding the closure
+     */
+    private function locateClosure(array &$data)
+    {
+        try {
+            $locator = new ClosureLocatorVisitor($data['reflection']);
+            $fileAst = $this->getFileAst($data['reflection']);
+
+            $fileTraverser = new NodeTraverser();
+            $fileTraverser->addVisitor(new NameResolver());
+            $fileTraverser->addVisitor($locator);
+            $fileTraverser->traverse($fileAst);
+        } catch (ParserError $e) {
+            // @codeCoverageIgnoreStart
+            throw new ClosureAnalysisException(
+                'There was an error analyzing the closure code.',
+                0,
+                $e
+            );
+            // @codeCoverageIgnoreEnd
+        }
+
+        $data['ast'] = $locator->closureNode;
+        if (! $data['ast']) {
+            // @codeCoverageIgnoreStart
+            throw new ClosureAnalysisException(
+                'The closure was not found within the abstract syntax tree.'
+            );
+            // @codeCoverageIgnoreEnd
+        }
+
+        $data['location'] = $locator->location;
+    }
+
+    /**
      * @throws ClosureAnalysisException
      *
      * @return \PhpParser\Node[]
@@ -117,12 +119,11 @@ class AstAnalyzer extends ClosureAnalyzer
     private function getFileAst(\ReflectionFunction $reflection)
     {
         $fileName = $reflection->getFileName();
-        if (!file_exists($fileName)) {
+        if (! file_exists($fileName)) {
             throw new ClosureAnalysisException(
                 "The file containing the closure, \"{$fileName}\" did not exist."
             );
         }
-
 
         return $this->getParser()->parse(file_get_contents($fileName));
     }
@@ -133,9 +134,9 @@ class AstAnalyzer extends ClosureAnalyzer
     private function getParser()
     {
         if (class_exists('PhpParser\ParserFactory')) {
-            return (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+            return (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         }
 
-        return new CodeParser(new EmulativeLexer);
+        return new CodeParser(new EmulativeLexer());
     }
 }

@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/11/22
- * Time: 下午9:52
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\Version;
-
 
 use Core\Http\Request;
 use Core\Http\UrlParser;
@@ -16,28 +13,28 @@ use FastRoute\Dispatcher;
 class Controller
 {
     private static $instance;
-    private $versionList = null;
+    private $versionList;
 
-    static function getInstance($versionRegisterClass)
+    public function __construct($versionRegisterClass)
     {
-        if (!isset(self::$instance)) {
+        $obj = new $versionRegisterClass();
+        if ($obj instanceof ARegister) {
+            $this->versionList = new VersionList();
+            $obj->register($this->versionList);
+        } else {
+            throw new \Exception("{$versionRegisterClass} is not a valid class of AbstractRegister");
+        }
+    }
+
+    public static function getInstance($versionRegisterClass)
+    {
+        if (! isset(self::$instance)) {
             self::$instance = new static($versionRegisterClass);
         }
         return self::$instance;
     }
 
-    function __construct($versionRegisterClass)
-    {
-        $obj = new $versionRegisterClass;
-        if ($obj instanceof ARegister) {
-            $this->versionList = new VersionList();
-            $obj->register($this->versionList);
-        } else {
-            throw  new \Exception("{$versionRegisterClass} is not a valid class of AbstractRegister");
-        }
-    }
-
-    function startController()
+    public function startController()
     {
         $list   = $this->versionList->all();
         $path   = UrlParser::pathInfo();
@@ -55,7 +52,7 @@ class Controller
                                 $vars    = $routeInfo[2];
                                 if (is_callable($handler)) {
                                     call_user_func_array($handler, $vars);
-                                } else if (is_string($handler)) {
+                                } elseif (is_string($handler)) {
                                     $data = Request::getInstance()->getRequestParam();
                                     Request::getInstance()->withQueryParams($vars + $data);
                                     $pathInfo = UrlParser::pathInfo($handler);

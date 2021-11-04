@@ -1,46 +1,39 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/7/9
- * Time: 0:31:07
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Event;
 
+use App\Jobs\Model\AuthAccessLog as AuthAccessLogModel;
 use Core\Http\Message\Status as HttpStatus;
 use Core\Http\Request;
 use Core\Http\Response;
 use Core\Utility\Auth\Web as Auth;
-use App\Jobs\Model\AuthAccessLog as AuthAccessLogModel;
-use function FastRoute\cachedDispatcher;
 
 /**
- * Class onHttpDispatcher
- *
- * @package Jobs\Event
+ * Class onHttpDispatcher.
  */
 class onHttpDispatcher
 {
     /**
-     * 权限检测
+     * 权限检测.
      *
-     * @param Request  $request
-     * @param Response $response
-     * @param string   $targetControllerClass
-     * @param string   $action
+     * @param string $targetControllerClass
+     * @param string $action
      *
      * @return bool
      */
-    static function auth(Request $request, Response $response, $targetControllerClass, $action)
+    public static function auth(Request $request, Response $response, $targetControllerClass, $action)
     {
 //        return true;
         $authSession = $request->session()->get('auth');
         if ($authSession && $authSession['username'] == 'admin') {
             return true;
         }
-        $targetControllerClass = ltrim($targetControllerClass,'\\');
-        $path = explode('\\', $targetControllerClass);
+        $targetControllerClass = ltrim($targetControllerClass, '\\');
+        $path                  = explode('\\', $targetControllerClass);
         if (count($path) >= 4 && $path[3] == 'Index') { // 首页不检测权限
             return true;
         }
@@ -48,7 +41,7 @@ class onHttpDispatcher
 //        $authCheckName = $path[2] . '\\' . $path[3] . '\\' . $action;
         $authCheckName = join('\\', array_slice($path, 0, 4));
         try {
-            if (false === (new Auth)->check($authCheckName, $authSession['id'], 'Jobs')) {
+            if ((new Auth())->check($authCheckName, $authSession['id'], 'Jobs') === false) {
                 self::_error($response);
                 return false;
             }
@@ -61,12 +54,10 @@ class onHttpDispatcher
     }
 
     /**
-     * @param Request  $request
-     * @param Response $response
-     * @param string   $targetControllerClass
-     * @param string   $action
+     * @param string $targetControllerClass
+     * @param string $action
      */
-    static function accessLog(Request $request, Response $response, $targetControllerClass, $action)
+    public static function accessLog(Request $request, Response $response, $targetControllerClass, $action)
     {
         if (null === $authSession = $request->session()->get('auth')) {
             return;
@@ -88,10 +79,7 @@ class onHttpDispatcher
         AuthAccessLogModel::create($data);
     }
 
-    /**
-     * @param Response $response
-     */
-    static private function _error(Response $response)
+    private static function _error(Response $response)
     {
         $response->writeJson(HttpStatus::CODE_FORBIDDEN, ['message' => '权限错误', 'status' => 0]);
     }

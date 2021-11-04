@@ -1,4 +1,10 @@
-<?php namespace SuperClosure;
+<?php
+
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
+namespace SuperClosure;
 
 use SuperClosure\Exception\ClosureUnserializationException;
 
@@ -11,9 +17,9 @@ interface SerializerInterface
      * Takes a Closure object, decorates it with a SerializableClosure object,
      * then performs the serialization.
      *
-     * @param \Closure $closure Closure to serialize.
+     * @param \Closure $closure closure to serialize
      *
-     * @return string Serialized closure.
+     * @return string serialized closure
      */
     public function serialize(\Closure $closure);
 
@@ -21,10 +27,10 @@ interface SerializerInterface
      * Takes a serialized closure, performs the unserialization, and then
      * extracts and returns a the Closure object.
      *
-     * @param string $serialized Serialized closure.
+     * @param string $serialized serialized closure
      *
-     * @throws ClosureUnserializationException if unserialization fails.
-     * @return \Closure Unserialized closure.
+     * @throws ClosureUnserializationException if unserialization fails
+     * @return \Closure unserialized closure
      */
     public function unserialize($serialized);
 
@@ -36,8 +42,8 @@ interface SerializerInterface
      * `$forSerialization` is true, then only data relevant to serializing the
      * closure is returned.
      *
-     * @param \Closure $closure          Closure to analyze.
-     * @param bool     $forSerialization Include only serialization data.
+     * @param \Closure $closure closure to analyze
+     * @param bool $forSerialization include only serialization data
      *
      * @return \Closure
      */

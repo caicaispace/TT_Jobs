@@ -1,27 +1,23 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/7/17
- * Time: 0:26:52
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Logic;
 
-use Core\AbstractInterface\ALogic;
 use App\Jobs\Model\AuthAccessLog as Model;
+use Core\AbstractInterface\ALogic;
 use Exception;
 
 /**
- * Class AuthAccessLog
- *
- * @package Jobs\Logic
+ * Class AuthAccessLog.
  */
 class AuthAccessLog extends ALogic
 {
-    function getList()
+    public function getList()
     {
-        $model = new Model;
+        $model = new Model();
         $model->where('id', '>', 0);
         /* 分页 */
         if ($page = $this->request()->getPage()) {
@@ -54,12 +50,12 @@ class AuthAccessLog extends ALogic
             ->success();
     }
 
-    function getInfo()
+    public function getInfo()
     {
-        if (!$id = $this->request()->getId()) {
+        if (! $id = $this->request()->getId()) {
             return $this->response()->error();
         }
-        if (!$model = (new Model)->get($id)) {
+        if (! $model = (new Model())->get($id)) {
             return $this->response()->error();
         }
         $responseData = $model->toArray();
@@ -68,13 +64,13 @@ class AuthAccessLog extends ALogic
             ->success();
     }
 
-    function create()
+    public function create()
     {
-        if (!$responseData = $this->request()->getData()) {
+        if (! $responseData = $this->request()->getData()) {
             return $this->response()->error();
         }
-        $model = new Model;
-        if (!$ret = $model->save($responseData)) {
+        $model = new Model();
+        if (! $ret = $model->save($responseData)) {
             return $this->response()->error();
         }
         $responseData = $model->toArray();
@@ -83,12 +79,11 @@ class AuthAccessLog extends ALogic
             ->success();
     }
 
-    function update()
+    public function update()
     {
-
     }
 
-    function delete()
+    public function delete()
     {
     }
 }

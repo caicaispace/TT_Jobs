@@ -1,11 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yangcai
- * Date: 2018/5/16
- * Time: 19:02
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\AbstractInterface;
 
 use think\Model;

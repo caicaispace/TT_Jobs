@@ -1,28 +1,24 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yangcai
- * Date: 2018/5/15
- * Time: 17:45
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Controller\Jobs;
 
+use App\Jobs\Logic\Task as Logic;
 use Core\AbstractInterface\ARESTController as Controller;
 use Core\Http\Message\Status;
 use Core\Swoole\Server;
-use App\Jobs\Logic\Task as Logic;
 
 /**
- * Class Task
- *
- * @package Jobs\Controller\Jobs
+ * Class Task.
  */
 class Task extends Controller
 {
-    function GET_index()
+    public function GET_index()
     {
-        $logic = new Logic;
+        $logic = new Logic();
         $logic->request()->setPage($this->getPageData());
         if ($groupId = $this->request()->getQueryParam('group_id')) {
             $logic->request()->setWhere(["group_id = {$groupId}"]);
@@ -32,7 +28,7 @@ class Task extends Controller
         }
         $logic->request()->setOrder(['id DESC']);
         $ret = $logic->call('getList');
-        if (!$ret->getStatus()) {
+        if (! $ret->getStatus()) {
             $this->json()->error($ret->getMsg());
             return;
         }
@@ -57,16 +53,16 @@ class Task extends Controller
             ->response();
     }
 
-    function POST_index()
+    public function POST_index()
     {
-        if (!$requestData = $this->request()->getPostData()) {
+        if (! $requestData = $this->request()->getPostData()) {
             $this->json()->error();
             return;
         }
-        $logic = new Logic;
+        $logic = new Logic();
         $logic->request()->setData($requestData);
         $ret = $logic->call('create');
-        if (!$ret->getStatus()) {
+        if (! $ret->getStatus()) {
             $this->json()->error($ret->getMsg());
             return;
         }
@@ -77,45 +73,45 @@ class Task extends Controller
             ->response();
     }
 
-    function PUT_Index()
+    public function PUT_Index()
     {
         $responseData = 'PUT';
         $this->response()->writeJson(Status::CODE_OK, $responseData);
     }
 
-    function PATCH_index()
+    public function PATCH_index()
     {
-        if (!$id = $this->request()->getServerParam('id')) {
+        if (! $id = $this->request()->getServerParam('id')) {
             $this->json()->error();
             return;
         }
-        if (!$requestData = $this->request()->getPostData()) {
+        if (! $requestData = $this->request()->getPostData()) {
             $this->json()->error();
             return;
         }
-        $logic = new Logic;
+        $logic = new Logic();
         $logic->request()->setId($id);
         $logic->request()->setData($requestData);
         $ret = $logic->call('update');
-        if (!$ret->getStatus()) {
+        if (! $ret->getStatus()) {
             $this->json()->error($ret->getMsg());
             return;
         }
         $this->json()->success();
     }
 
-    function DELETE_index()
+    public function DELETE_index()
     {
     }
 
-    function GET_runTest()
+    public function GET_runTest()
     {
-        if (!$command = $this->request()->getQueryParam('command')) {
+        if (! $command = $this->request()->getQueryParam('command')) {
             $this->json()->error();
             return;
         }
         $process = new \swoole_process(function (\swoole_process $process) use ($command) {
-            list($runPath, $filePath) = explode(' ', $command);
+            [$runPath, $filePath] = explode(' ', $command);
             $process->exec($runPath, [$filePath]);
         }, true, 2);
         $process->start();

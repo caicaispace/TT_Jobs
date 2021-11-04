@@ -1,38 +1,35 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/23
- * Time: 上午2:33
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Swoole\Pipe;
-
 
 class CommandList
 {
     private $list = [];
 
-    function add($command, callable $handler)
+    public function add($command, callable $handler)
     {
         $this->list[$command] = $handler;
         return $this;
     }
 
-    function setDefaultHandler(callable $handler)
+    public function setDefaultHandler(callable $handler)
     {
         $this->list['__DEFAULT__'] = $handler;
         return $this;
     }
 
-    function getHandler($command)
+    public function getHandler($command)
     {
         if (isset($this->list[$command])) {
             return $this->list[$command];
-        } elseif (isset($this->list['__DEFAULT__'])) {
-            return $this->list['__DEFAULT__'];
-        } else {
-            return NULL;
         }
+        if (isset($this->list['__DEFAULT__'])) {
+            return $this->list['__DEFAULT__'];
+        }
+        return null;
     }
 }

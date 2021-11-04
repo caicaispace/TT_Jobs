@@ -1,32 +1,27 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/7/10
- * Time: 23:21:50
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Logic;
 
-use Core\AbstractInterface\ALogic;
 use App\Jobs\Model\AuthGroupAccess as Model;
+use Core\AbstractInterface\ALogic;
 use Exception;
 
 /**
- * Class AuthGroupAccess
- *
- * @package Jobs\Logic
+ * Class AuthGroupAccess.
  */
 class AuthGroupAccess extends ALogic
 {
-
-    function getList()
+    public function getList()
     {
     }
 
-    function getInfo()
+    public function getInfo()
     {
-        if (!$id = $this->request()->getId()) {
+        if (! $id = $this->request()->getId()) {
             return $this->response()->error();
         }
         try {
@@ -40,12 +35,12 @@ class AuthGroupAccess extends ALogic
             ->success();
     }
 
-    function create()
+    public function create()
     {
-        if (!$requestData = $this->request()->getData()) {
+        if (! $requestData = $this->request()->getData()) {
             return $this->response()->error();
         }
-        if (!$uid = $this->request()->getExtend('uid')) {
+        if (! $uid = $this->request()->getExtend('uid')) {
             return $this->response()->error();
         }
         if (is_string($requestData['group_id'])) {
@@ -57,8 +52,8 @@ class AuthGroupAccess extends ALogic
                 ];
             }
         }
-        $model = new Model;
-        if (!$ret = $model->save($requestData)) {
+        $model = new Model();
+        if (! $ret = $model->save($requestData)) {
             return $this->response()->error();
         }
         $responseData = $model->toArray();
@@ -67,12 +62,12 @@ class AuthGroupAccess extends ALogic
             ->success();
     }
 
-    function update()
+    public function update()
     {
-        if (!$uid = $this->request()->getExtend('uid')) {
+        if (! $uid = $this->request()->getExtend('uid')) {
             return $this->response()->error();
         }
-        if (!$requestData = $this->request()->getData()) {
+        if (! $requestData = $this->request()->getData()) {
             return $this->response()->error();
         }
         if (is_string($requestData['group_id'])) {
@@ -85,18 +80,18 @@ class AuthGroupAccess extends ALogic
             }
         }
         try {
-            (new Model)->where('uid', $uid)->delete();
+            (new Model())->where('uid', $uid)->delete();
         } catch (Exception $e) {
             return $this->response()->error($e->getMessage());
         }
-        if (!$ret = (new Model)->insertAll($requestData)) {
+        if (! $ret = (new Model())->insertAll($requestData)) {
             return $this->response()->error();
         }
         return $this->response()
             ->success();
     }
 
-    function delete()
+    public function delete()
     {
     }
 }

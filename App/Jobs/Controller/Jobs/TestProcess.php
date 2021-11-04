@@ -1,47 +1,43 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/6/7
- * Time: 23:22
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Controller\Jobs;
 
+use Common\Process as ProcessTest;
 use Core\AbstractInterface\AHttpController as Controller;
 use Core\Http\Message\Status;
 use Core\Swoole\Process\ProcessManager;
 use Core\Swoole\Timer;
-use Common\Process as ProcessTest;
 
 /**
- * Class Process
- *
- * @package Jobs\Controller\Jobs
+ * Class Process.
  */
 class TestProcess extends Controller
 {
     protected static $processName = 'swoole_process_test';
-    private          $counter     = 0;
+    private $counter              = 0;
 
-    function go()
+    public function go()
     {
         go(function () {
-            $ret = \Swoole\Coroutine\System::exec("php " . ROOT . "/test.php " . __FILE__);
+            $ret = \Swoole\Coroutine\System::exec('php ' . ROOT . '/test.php ' . __FILE__);
             var_dump($ret);
         });
         go(function () {
-            $ret = \Swoole\Coroutine\System::exec("php " . ROOT . "/test.php " . __FILE__);
+            $ret = \Swoole\Coroutine\System::exec('php ' . ROOT . '/test.php ' . __FILE__);
             var_dump($ret);
         });
         go(function () {
-            $ret = \Swoole\Coroutine\System::exec("php " . ROOT . "/test.php " . __FILE__);
+            $ret = \Swoole\Coroutine\System::exec('php ' . ROOT . '/test.php ' . __FILE__);
             var_dump($ret);
         });
         $this->response()->writeJson(Status::CODE_OK, 'success');
     }
 
-    function start()
+    public function start()
     {
         ProcessManager::getInstance()->addProcess($this->processName, ProcessTest::class);
         $process = ProcessManager::getInstance()->getProcessByName($this->processName)->getProcess();
@@ -50,7 +46,7 @@ class TestProcess extends Controller
         $this->response()->write("process pid : {$pid}");
     }
 
-    function writeData()
+    public function writeData()
     {
         $data = 'processWriteData';
         $ret  = ProcessManager::getInstance()->writeByProcessName(self::$processName, $data);
@@ -58,21 +54,21 @@ class TestProcess extends Controller
         $this->response()->write("result : {$ret}");
     }
 
-    function getPid()
+    public function getPid()
     {
         $pid = $this->_getPid();
         $this->response()->write("result : {$pid}");
     }
 
-    function hasExit()
+    public function hasExit()
     {
         $result = $this->_hasExit();
         $this->response()->write("result : {$result}");
     }
 
-    function kill()
+    public function kill()
     {
-        if (!$pid = $this->_getPid()) {
+        if (! $pid = $this->_getPid()) {
             $this->response()->write("{$pid} :process dont find");
             return;
         }
@@ -82,7 +78,7 @@ class TestProcess extends Controller
         $this->response()->write("{$pid} :process has killed");
     }
 
-    function reboot()
+    public function reboot()
     {
         ProcessManager::getInstance()->reboot(self::$processName);
     }
@@ -90,7 +86,7 @@ class TestProcess extends Controller
     private function _hasExit()
     {
         $pid = $this->_getPid();
-        if (false === \swoole_process::kill($pid, 0)) {
+        if (\swoole_process::kill($pid, 0) === false) {
             return false;
         }
         return true;
@@ -98,10 +94,9 @@ class TestProcess extends Controller
 
     private function _getPid()
     {
-        if (!$process = ProcessManager::getInstance()->getProcessByName(self::$processName)) {
+        if (! $process = ProcessManager::getInstance()->getProcessByName(self::$processName)) {
             return null;
         }
-        $pid = $process->getPid();
-        return $pid;
+        return $process->getPid();
     }
 }

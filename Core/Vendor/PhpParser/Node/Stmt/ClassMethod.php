@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Stmt;
 
 use PhpParser\Node;
@@ -15,7 +19,7 @@ class ClassMethod extends Node\Stmt implements FunctionLike
     public $name;
     /** @var Node\Param[] Parameters */
     public $params;
-    /** @var null|string|Node\Name|Node\NullableType Return type */
+    /** @var null|Node\Name|Node\NullableType|string Return type */
     public $returnType;
     /** @var Node[] Statements */
     public $stmts;
@@ -26,69 +30,81 @@ class ClassMethod extends Node\Stmt implements FunctionLike
     /**
      * Constructs a class method node.
      *
-     * @param string      $name       Name
-     * @param array       $subNodes   Array of the following optional subnodes:
-     *                                'flags       => MODIFIER_PUBLIC: Flags
-     *                                'byRef'      => false          : Whether to return by reference
-     *                                'params'     => array()        : Parameters
-     *                                'returnType' => null           : Return type
-     *                                'stmts'      => array()        : Statements
-     * @param array       $attributes Additional attributes
+     * @param string $name Name
+     * @param array $subNodes Array of the following optional subnodes:
+     *                        'flags       => MODIFIER_PUBLIC: Flags
+     *                        'byRef'      => false          : Whether to return by reference
+     *                        'params'     => array()        : Parameters
+     *                        'returnType' => null           : Return type
+     *                        'stmts'      => array()        : Statements
+     * @param array $attributes Additional attributes
      */
-    public function __construct($name, array $subNodes = array(), array $attributes = array()) {
+    public function __construct($name, array $subNodes = [], array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->flags = isset($subNodes['flags']) ? $subNodes['flags']
             : (isset($subNodes['type']) ? $subNodes['type'] : 0);
-        $this->type = $this->flags;
-        $this->byRef = isset($subNodes['byRef'])  ? $subNodes['byRef']  : false;
-        $this->name = $name;
-        $this->params = isset($subNodes['params']) ? $subNodes['params'] : array();
+        $this->type       = $this->flags;
+        $this->byRef      = isset($subNodes['byRef']) ? $subNodes['byRef'] : false;
+        $this->name       = $name;
+        $this->params     = isset($subNodes['params']) ? $subNodes['params'] : [];
         $this->returnType = isset($subNodes['returnType']) ? $subNodes['returnType'] : null;
-        $this->stmts = array_key_exists('stmts', $subNodes) ? $subNodes['stmts'] : array();
+        $this->stmts      = array_key_exists('stmts', $subNodes) ? $subNodes['stmts'] : [];
     }
 
-    public function getSubNodeNames() {
-        return array('flags', 'byRef', 'name', 'params', 'returnType', 'stmts');
+    public function getSubNodeNames()
+    {
+        return ['flags', 'byRef', 'name', 'params', 'returnType', 'stmts'];
     }
 
-    public function returnsByRef() {
+    public function returnsByRef()
+    {
         return $this->byRef;
     }
 
-    public function getParams() {
+    public function getParams()
+    {
         return $this->params;
     }
 
-    public function getReturnType() {
+    public function getReturnType()
+    {
         return $this->returnType;
     }
 
-    public function getStmts() {
+    public function getStmts()
+    {
         return $this->stmts;
     }
 
-    public function isPublic() {
+    public function isPublic()
+    {
         return ($this->flags & Class_::MODIFIER_PUBLIC) !== 0
             || ($this->flags & Class_::VISIBILITY_MODIFIER_MASK) === 0;
     }
 
-    public function isProtected() {
+    public function isProtected()
+    {
         return (bool) ($this->flags & Class_::MODIFIER_PROTECTED);
     }
 
-    public function isPrivate() {
+    public function isPrivate()
+    {
         return (bool) ($this->flags & Class_::MODIFIER_PRIVATE);
     }
 
-    public function isAbstract() {
+    public function isAbstract()
+    {
         return (bool) ($this->flags & Class_::MODIFIER_ABSTRACT);
     }
 
-    public function isFinal() {
+    public function isFinal()
+    {
         return (bool) ($this->flags & Class_::MODIFIER_FINAL);
     }
 
-    public function isStatic() {
+    public function isStatic()
+    {
         return (bool) ($this->flags & Class_::MODIFIER_STATIC);
     }
 }

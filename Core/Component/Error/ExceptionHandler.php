@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/11/9
- * Time: 下午7:05
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\Error;
-
 
 use Core\AbstractInterface\IExceptionHandler;
 use Core\Component\Logger;
@@ -16,12 +13,11 @@ use Core\Http\Response;
 
 class ExceptionHandler implements IExceptionHandler
 {
-
-    function handler(\Exception $exception)
+    public function handler(\Exception $exception)
     {
     }
 
-    function display(\Exception $exception)
+    public function display(\Exception $exception)
     {
         if (Request::getInstance()) {
             Response::getInstance()->write(nl2br($exception->getMessage() . $exception->getTraceAsString()));
@@ -30,8 +26,8 @@ class ExceptionHandler implements IExceptionHandler
         }
     }
 
-    function log(\Exception $exception)
+    public function log(\Exception $exception)
     {
-        Logger::getInstance('error')->log($exception->getMessage() . " " . $exception->getTraceAsString());
+        Logger::getInstance('error')->log($exception->getMessage() . ' ' . $exception->getTraceAsString());
     }
 }

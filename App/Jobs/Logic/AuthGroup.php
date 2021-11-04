@@ -1,22 +1,20 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/6/27
- * Time: 22:12:11
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Logic;
 
-use Core\AbstractInterface\ALogic;
 use App\Jobs\Model\AuthGroup as Model;
+use Core\AbstractInterface\ALogic;
 use Exception;
 
 class AuthGroup extends ALogic
 {
-    function getList()
+    public function getList()
     {
-        $model = new Model;
+        $model = new Model();
         $model->where('id', '>', 0);
         /* 分页 */
         if ($page = $this->request()->getPage()) {
@@ -50,12 +48,12 @@ class AuthGroup extends ALogic
             ->success();
     }
 
-    function getInfo()
+    public function getInfo()
     {
-        if (!$id = $this->request()->getId()) {
+        if (! $id = $this->request()->getId()) {
             return $this->response()->error();
         }
-        if (!$model = (new Model)->get($id)) {
+        if (! $model = (new Model())->get($id)) {
             return $this->response()->error();
         }
         $responseData = $model->toArray();
@@ -64,13 +62,13 @@ class AuthGroup extends ALogic
             ->success();
     }
 
-    function create()
+    public function create()
     {
-        if (!$responseData = $this->request()->getData()) {
+        if (! $responseData = $this->request()->getData()) {
             return $this->response()->error();
         }
-        $model = new Model;
-        if (!$ret = $model->save($responseData)) {
+        $model = new Model();
+        if (! $ret = $model->save($responseData)) {
             return $this->response()->error();
         }
         $responseData = $model->toArray();
@@ -79,34 +77,34 @@ class AuthGroup extends ALogic
             ->success();
     }
 
-    function update()
+    public function update()
     {
-        if (!$id = $this->request()->getId()) {
+        if (! $id = $this->request()->getId()) {
             return $this->response()->error();
         }
-        if (!$requestData = $this->request()->getData()) {
+        if (! $requestData = $this->request()->getData()) {
             return $this->response()->error();
         }
-        if (!$model = (new Model)->get($id)) {
+        if (! $model = (new Model())->get($id)) {
             return $this->response()->error();
         }
-        if (!$ret = $model->save($requestData)) {
+        if (! $ret = $model->save($requestData)) {
             return $this->response()->error();
         }
         return $this->response()
             ->success();
     }
 
-    function delete()
+    public function delete()
     {
-        if (!$id = $this->request()->getId()) {
+        if (! $id = $this->request()->getId()) {
             return $this->response()->error();
         }
-        if (!$model = (new Model)->get($id)) {
+        if (! $model = (new Model())->get($id)) {
             return $this->response()->error();
         }
         $model->setAttr('is_del', Model::DELETED);
-        if (!$ret = $model->save()) {
+        if (! $ret = $model->save()) {
             return $this->response()->error();
         }
         return $this->response()

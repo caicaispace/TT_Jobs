@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/19
- * Time: 下午1:20
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\RPC\Common;
-
 
 use Core\Component\Spl\SplBean;
 
@@ -15,10 +12,10 @@ class Config extends SplBean
 {
     protected $host;
     protected $port;
-    protected $eof = '0x0d0x0a';
+    protected $eof                    = '0x0d0x0a';
     protected $heartBeatCheckInterval = 30;
-    protected $packageParserClass = DefaultPackageParser::class;
-    protected $connectTimeOut = 0.5;
+    protected $packageParserClass     = DefaultPackageParser::class;
+    protected $connectTimeOut         = 0.5;
 
     /**
      * @return float
@@ -35,7 +32,6 @@ class Config extends SplBean
     {
         $this->connectTimeOut = $connectTimeOut;
     }
-
 
     /**
      * @return string
@@ -120,5 +116,4 @@ class Config extends SplBean
     protected function initialize()
     {
     }
-
 }

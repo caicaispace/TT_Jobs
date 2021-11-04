@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/21
- * Time: 下午6:14
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\Socket\Common;
-
 
 class Command
 {
@@ -56,7 +53,7 @@ class Command
         return $this->client;
     }
 
-    function setClient($client)
+    public function setClient($client)
     {
         $this->client = $client;
     }

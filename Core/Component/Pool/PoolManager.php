@@ -1,48 +1,35 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yf
- * Date: 2018/5/3
- * Time: 下午1:21
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\Component\Pool;
 
-
-use Core\Conf\Config;
-use Core\Component\Pool\AbstractInterface\Pool;
 use Core\Component\Error\Trigger;
+use Core\Component\Pool\AbstractInterface\Pool;
+use Core\Conf\Config;
 use Core\Swoole\Memory\TableManager;
 use Swoole\Table;
 
 /**
- * Class PoolManager
- * @package Core\Component\Pool
+ * Class PoolManager.
  */
 class PoolManager
 {
-    private $poolTable = null;
-    private $poolClassList = [];
-    private $poolObjectList = [];
-
-    const TYPE_ONLY_WORKER = 1;
-    const TYPE_ONLY_TASK_WORKER = 2;
-    const TYPE_ALL_WORKER = 3;
+    public const TYPE_ONLY_WORKER      = 1;
+    public const TYPE_ONLY_TASK_WORKER = 2;
+    public const TYPE_ALL_WORKER       = 3;
 
     protected static $instance;
+    private $poolTable;
+    private $poolClassList  = [];
+    private $poolObjectList = [];
 
-    static function getInstance()
-    {
-        if (!isset(self::$instance)) {
-            self::$instance = new static();
-        }
-        return self::$instance;
-    }
-
-    function __construct()
+    public function __construct()
     {
         TableManager::getInstance()->add('__PoolManager', [
-            'createNum' => ['type' => Table::TYPE_INT, 'size' => 3]
+            'createNum' => ['type' => Table::TYPE_INT, 'size' => 3],
         ], 8192);
         $this->poolTable = TableManager::getInstance()->get('__PoolManager');
 
@@ -55,50 +42,10 @@ class PoolManager
     }
 
     /**
-     * @param string $class
-     * @param $minNum
-     * @param $maxNum
-     * @param int $type
-     * @return bool
-     */
-    function registerPool($class, $minNum, $maxNum, $type = self::TYPE_ONLY_WORKER)
-    {
-        try {
-            $ref = new \ReflectionClass($class);
-            if ($ref->isSubclassOf(Pool::class)) {
-                $this->poolClassList[$class] = [
-                    'min'  => $minNum,
-                    'max'  => $maxNum,
-                    'type' => $type
-                ];
-                return true;
-            } else {
-                Trigger::error($class . ' is not Pool class');
-            }
-        } catch (\Throwable $throwable) {
-            Trigger::error($throwable);
-        }
-        return false;
-    }
-
-    /**
-     * @param string $class
-     * @return Pool|null
-     */
-    function getPool($class)
-    {
-        if (isset($this->poolObjectList[$class])) {
-            return $this->poolObjectList[$class];
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * 为自定义进程预留
+     * 为自定义进程预留.
      * @param $workerId
      */
-    function __workerStartHook($workerId)
+    public function __workerStartHook($workerId)
     {
         $workerNum = Config::getInstance()->getConf('MAIN_SERVER.SETTING.worker_num');
         foreach ($this->poolClassList as $class => $item) {
@@ -106,7 +53,7 @@ class PoolManager
                 if ($workerId > ($workerNum - 1)) {
                     continue;
                 }
-            } else if ($item['type'] === self::TYPE_ONLY_TASK_WORKER) {
+            } elseif ($item['type'] === self::TYPE_ONLY_TASK_WORKER) {
                 if ($workerId <= ($workerNum - 1)) {
                     continue;
                 }
@@ -117,10 +64,56 @@ class PoolManager
         }
     }
 
+    public static function getInstance()
+    {
+        if (! isset(self::$instance)) {
+            self::$instance = new static();
+        }
+        return self::$instance;
+    }
+
+    /**
+     * @param string $class
+     * @param $minNum
+     * @param $maxNum
+     * @param int $type
+     * @return bool
+     */
+    public function registerPool($class, $minNum, $maxNum, $type = self::TYPE_ONLY_WORKER)
+    {
+        try {
+            $ref = new \ReflectionClass($class);
+            if ($ref->isSubclassOf(Pool::class)) {
+                $this->poolClassList[$class] = [
+                    'min'  => $minNum,
+                    'max'  => $maxNum,
+                    'type' => $type,
+                ];
+                return true;
+            }
+            Trigger::error($class . ' is not Pool class');
+        } catch (\Throwable $throwable) {
+            Trigger::error($throwable);
+        }
+        return false;
+    }
+
+    /**
+     * @param string $class
+     * @return null|Pool
+     */
+    public function getPool($class)
+    {
+        if (isset($this->poolObjectList[$class])) {
+            return $this->poolObjectList[$class];
+        }
+        return null;
+    }
+
     /**
      * @return null|\swoole_table
      */
-    function getPoolTable()
+    public function getPoolTable()
     {
         return $this->poolTable;
     }
@@ -134,5 +127,4 @@ class PoolManager
     {
         return substr(md5($class . $workerId), 8, 16);
     }
-
 }

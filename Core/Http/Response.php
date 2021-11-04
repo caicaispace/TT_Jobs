@@ -1,11 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/6/15
- * Time: 下午8:44
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\Http;
 
 use Core\Conf\Event;
@@ -17,16 +15,22 @@ use Core\Utility\Curl\Cookie;
 
 class Response extends HttpResponse
 {
-    const STATUS_NOT_END = 0;
-    const STATUS_LOGICAL_END = 1;
-    const STATUS_REAL_END = 2;
-    private $isEndResponse = 0;//1 逻辑end  2真实end
-    private $swoole_http_response = null;
-    private $session = null;
+    public const STATUS_NOT_END     = 0;
+    public const STATUS_LOGICAL_END = 1;
+    public const STATUS_REAL_END    = 2;
+    private $isEndResponse          = 0; //1 逻辑end  2真实end
+    private $swoole_http_response;
+    private $session;
 
     private static $instance;
 
-    static function getInstance(\swoole_http_response $response = null)
+    public function __construct(\swoole_http_response $response)
+    {
+        parent::__construct();
+        $this->swoole_http_response = $response;
+    }
+
+    public static function getInstance(\swoole_http_response $response = null)
     {
         if ($response !== null) {
             self::$instance = new Response($response);
@@ -34,18 +38,11 @@ class Response extends HttpResponse
         return self::$instance;
     }
 
-    function __construct(\swoole_http_response $response)
+    public function setDataSchema()
     {
-        parent::__construct();
-        $this->swoole_http_response = $response;
     }
 
-    function setDataSchema()
-    {
-
-    }
-
-    function end($realEnd = false)
+    public function end($realEnd = false)
     {
         if ($this->isEndResponse == self::STATUS_NOT_END) {
             Session::getInstance()->close();
@@ -75,7 +72,7 @@ class Response extends HttpResponse
                 );
             }
             $write = $this->getBody()->__toString();
-            if (!empty($write)) {
+            if (! empty($write)) {
                 $this->swoole_http_response->write($write);
             }
             $this->getBody()->close();
@@ -83,61 +80,59 @@ class Response extends HttpResponse
         }
     }
 
-    function isEndResponse()
+    public function isEndResponse()
     {
         return $this->isEndResponse;
     }
 
-    function write($obj)
+    public function write($obj)
     {
-        if (!$this->isEndResponse()) {
+        if (! $this->isEndResponse()) {
             if (is_object($obj)) {
-                if (method_exists($obj, "__toString")) {
+                if (method_exists($obj, '__toString')) {
                     $obj = $obj->__toString();
-                } else if (method_exists($obj, 'jsonSerialize')) {
+                } elseif (method_exists($obj, 'jsonSerialize')) {
                     $obj = json_encode($obj, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 } else {
                     $obj = var_export($obj, true);
                 }
-            } else if (is_array($obj)) {
+            } elseif (is_array($obj)) {
                 $obj = json_encode($obj, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
             }
             $this->getBody()->write($obj);
             return true;
-        } else {
-//            trigger_error("response has end");
-            return false;
         }
+//            trigger_error("response has end");
+        return false;
     }
 
-    function writeJson($statusCode = 200, $result = null, $msg = null)
+    public function writeJson($statusCode = 200, $result = null, $msg = null)
     {
-        if (!$this->isEndResponse()) {
+        if (! $this->isEndResponse()) {
             $data = $result;
             $this->getBody()->write(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
             $this->withHeader('Content-type', 'application/json;charset=utf-8');
             $this->withStatus($statusCode);
             return true;
-        } else {
-            trigger_error("response has end");
-            return false;
         }
+        trigger_error('response has end');
+        return false;
     }
 
-    function redirect($url, $status = Status::CODE_MOVED_TEMPORARILY)
+    public function redirect($url, $status = Status::CODE_MOVED_TEMPORARILY)
     {
-        if (!$this->isEndResponse()) {
+        if (! $this->isEndResponse()) {
             //仅支持header重定向  不做meta定向
             $this->withStatus($status);
             $this->withHeader('Location', $url);
         } else {
-            trigger_error("response has end");
+            trigger_error('response has end');
         }
     }
 
     public function setCookie($name, $value = null, $expire = null, $path = '/', $domain = '', $secure = false, $httponly = false)
     {
-        if (!$this->isEndResponse()) {
+        if (! $this->isEndResponse()) {
             $cookie = new Cookie();
             $cookie->setName($name);
             $cookie->setValue($value);
@@ -148,16 +143,15 @@ class Response extends HttpResponse
             $cookie->setHttponly($httponly);
             $this->withAddedCookie($cookie);
             return true;
-        } else {
-            trigger_error("response has end");
-            return false;
         }
+        trigger_error('response has end');
+        return false;
     }
 
-    function forward($pathTo, array $attribute =[])
+    public function forward($pathTo, array $attribute = [])
     {
         $pathTo = UrlParser::pathInfo($pathTo);
-        if (!$this->isEndResponse()) {
+        if (! $this->isEndResponse()) {
             if ($pathTo == UrlParser::pathInfo()) {
                 trigger_error("you can not forward a request in the same path : {$pathTo}");
             } else {
@@ -171,19 +165,19 @@ class Response extends HttpResponse
                 Dispatcher::getInstance()->dispatch();
             }
         } else {
-            trigger_error("response has end");
+            trigger_error('response has end');
         }
     }
 
-    function session()
+    public function session()
     {
-        if (!isset($this->session)) {
+        if (! isset($this->session)) {
             $this->session = new SessionResponse();
         }
         return $this->session;
     }
 
-    function getSwooleResponse()
+    public function getSwooleResponse()
     {
         return $this->swoole_http_response;
     }

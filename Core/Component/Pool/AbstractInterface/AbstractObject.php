@@ -1,23 +1,19 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2018/5/3
- * Time: 下午2:16
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\Pool\AbstractInterface;
-
 
 abstract class AbstractObject
 {
-    protected abstract function gc();
-
-    //使用后,free的时候会执行
-    abstract function initialize();
-
-    function __destruct()
+    public function __destruct()
     {
         $this->gc();
     }
+
+    //使用后,free的时候会执行
+    abstract public function initialize();
+    abstract protected function gc();
 }

@@ -1,48 +1,33 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/1/22
- * Time: 下午9:55
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\Swoole;
 
-
-use Core\Conf\Event;
-use Core\Swoole\Task\AAsyncTask;
 use Core\AbstractInterface\IHttpExceptionHandler;
 use Core\Component\Di;
 use Core\Component\Error\Trigger;
 use Core\Component\SuperClosure;
 use Core\Component\SysConst;
+use Core\Conf\Event;
 use Core\Http\Dispatcher;
 use Core\Http\Request;
 use Core\Http\Response;
 use Core\Swoole\Pipe\Dispatcher as PipeDispatcher;
+use Core\Swoole\Task\AAsyncTask;
 
 class Server
 {
-    const SERVER_NOT_START = 0;
-    const SERVER_STARTED   = 1;
+    public const SERVER_NOT_START = 0;
+    public const SERVER_STARTED   = 1;
 
     protected static $instance;
-    protected        $swooleServer;
-    protected        $isStart = self::SERVER_NOT_START;
+    protected $swooleServer;
+    protected $isStart = self::SERVER_NOT_START;
 
-    /*
-     * 仅仅用于获取一个服务实例
-     * @return Server
-     */
-    static function getInstance()
-    {
-        if (!isset(self::$instance)) {
-            self::$instance = new static();
-        }
-        return self::$instance;
-    }
-
-    function __construct()
+    public function __construct()
     {
         $conf = Config::getInstance();
         switch ($conf->getServerType()) {
@@ -69,12 +54,24 @@ class Server
                 );
                 break;
             default:
-                die('server type error');
+                exit('server type error');
                 break;
         }
     }
 
-    function isStart()
+    /*
+     * 仅仅用于获取一个服务实例
+     * @return Server
+     */
+    public static function getInstance()
+    {
+        if (! isset(self::$instance)) {
+            self::$instance = new static();
+        }
+        return self::$instance;
+    }
+
+    public function isStart()
     {
         return $this->isStart;
     }
@@ -82,7 +79,7 @@ class Server
     /*
      * 创建并启动一个swoole http server
      */
-    function startServer()
+    public function startServer()
     {
         $conf = Config::getInstance();
         $this->getServer()->set($conf->getWorkerSetting());
@@ -106,11 +103,11 @@ class Server
 
     /**
      * 用于获取 swoole_server 实例
-     * server启动后，在每个进程中获得的，均为当前自身worker的server（可以理解为进程克隆后独立运行）
+     * server启动后，在每个进程中获得的，均为当前自身worker的server（可以理解为进程克隆后独立运行）.
      *
      * @return \swoole_server
      */
-    function getServer()
+    public function getServer()
     {
         return $this->swooleServer;
     }
@@ -120,7 +117,7 @@ class Server
      */
     private function listenRequest()
     {
-        $this->getServer()->on("request", function (\swoole_http_request $request, \swoole_http_response $response) {
+        $this->getServer()->on('request', function (\swoole_http_request $request, \swoole_http_response $response) {
             $request2  = Request::getInstance($request);
             $response2 = Response::getInstance($response);
             try {
@@ -141,14 +138,14 @@ class Server
 
     private function workerStartEvent()
     {
-        $this->getServer()->on("workerStart", function (\swoole_server $server, $workerId) {
+        $this->getServer()->on('workerStart', function (\swoole_server $server, $workerId) {
             Event::getInstance()->onWorkerStart($server, $workerId);
         });
     }
 
     private function workerStopEvent()
     {
-        $this->getServer()->on("workerStop", function (\swoole_server $server, $workerId) {
+        $this->getServer()->on('workerStop', function (\swoole_server $server, $workerId) {
             Event::getInstance()->onWorkerStop($server, $workerId);
         });
     }
@@ -156,8 +153,8 @@ class Server
     private function onTaskEvent()
     {
         $num = Config::getInstance()->getTaskWorkerNum();
-        if (!empty($num)) {
-            $this->getServer()->on("task", function (\swoole_http_server $server, $taskId, $workerId, $taskObj) {
+        if (! empty($num)) {
+            $this->getServer()->on('task', function (\swoole_http_server $server, $taskId, $workerId, $taskObj) {
                 try {
                     if (is_string($taskObj) && class_exists($taskObj)) {
                         $taskObj = new $taskObj();
@@ -165,7 +162,8 @@ class Server
                     Event::getInstance()->onTask($server, $taskId, $workerId, $taskObj);
                     if ($taskObj instanceof AAsyncTask) {
                         return $taskObj->handler($server, $taskId, $workerId);
-                    } elseif ($taskObj instanceof SuperClosure) {
+                    }
+                    if ($taskObj instanceof SuperClosure) {
                         return $taskObj($server, $taskId);
                     }
                     return null;
@@ -179,18 +177,19 @@ class Server
     private function onFinish()
     {
         $num = Config::getInstance()->getTaskWorkerNum();
-        if (!empty($num)) {
-            $this->getServer()->on("finish", function (\swoole_server $server, $taskId, $taskObj) {
-                try {
-                    Event::getInstance()->onFinish($server, $taskId, $taskObj);
-                    //仅仅接受AbstractTask回调处理
-                    if ($taskObj instanceof AAsyncTask) {
-                        $taskObj->finishCallBack($server, $taskId, $taskObj->getDataForFinishCallBack());
+        if (! empty($num)) {
+            $this->getServer()->on(
+                'finish',
+                function (\swoole_server $server, $taskId, $taskObj) {
+                    try {
+                        Event::getInstance()->onFinish($server, $taskId, $taskObj);
+                        //仅仅接受AbstractTask回调处理
+                        if ($taskObj instanceof AAsyncTask) {
+                            $taskObj->finishCallBack($server, $taskId, $taskObj->getDataForFinishCallBack());
+                        }
+                    } catch (\Exception $exception) {
                     }
-                } catch (\Exception $exception) {
-
                 }
-            }
             );
         }
     }
@@ -202,21 +201,21 @@ class Server
 
     private function serverStartEvent()
     {
-        $this->getServer()->on("start", function (\swoole_server $server) {
+        $this->getServer()->on('start', function (\swoole_server $server) {
             Event::getInstance()->onStart($server);
         });
     }
 
     private function serverShutdownEvent()
     {
-        $this->getServer()->on("shutdown", function (\swoole_server $server) {
+        $this->getServer()->on('shutdown', function (\swoole_server $server) {
             Event::getInstance()->onShutdown($server);
         });
     }
 
     private function onMessage()
     {
-        $this->getServer()->on("message", function (\swoole_server $server, $frame) {
+        $this->getServer()->on('message', function (\swoole_server $server, $frame) {
             Event::getInstance()->onMessage($server, $frame);
         });
     }
@@ -231,7 +230,7 @@ class Server
      */
     private function workerErrorEvent()
     {
-        $this->getServer()->on("workererror", function (\swoole_server $server, $worker_id, $worker_pid, $exit_code) {
+        $this->getServer()->on('workererror', function (\swoole_server $server, $worker_id, $worker_pid, $exit_code) {
             Event::getInstance()->onWorkerError($server, $worker_id, $worker_pid, $exit_code);
         });
     }

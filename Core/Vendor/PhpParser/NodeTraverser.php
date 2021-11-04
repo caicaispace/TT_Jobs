@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser;
 
 class NodeTraverser implements NodeTraverserInterface
@@ -11,7 +15,7 @@ class NodeTraverser implements NodeTraverserInterface
      * For subsequent visitors enterNode() will still be called on the current
      * node and leaveNode() will also be invoked for the current node.
      */
-    const DONT_TRAVERSE_CHILDREN = 1;
+    public const DONT_TRAVERSE_CHILDREN = 1;
 
     /**
      * If NodeVisitor::enterNode() or NodeVisitor::leaveNode() returns
@@ -19,7 +23,7 @@ class NodeTraverser implements NodeTraverserInterface
      *
      * The afterTraverse() method will still be invoked.
      */
-    const STOP_TRAVERSAL = 2;
+    public const STOP_TRAVERSAL = 2;
 
     /**
      * If NodeVisitor::leaveNode() returns REMOVE_NODE for a node that occurs
@@ -28,7 +32,7 @@ class NodeTraverser implements NodeTraverserInterface
      * For subsequent visitors leaveNode() will still be invoked for the
      * removed node.
      */
-    const REMOVE_NODE = false;
+    public const REMOVE_NODE = false;
 
     /** @var NodeVisitor[] Visitors */
     protected $visitors;
@@ -39,8 +43,9 @@ class NodeTraverser implements NodeTraverserInterface
     /**
      * Constructs a node traverser.
      */
-    public function __construct() {
-        $this->visitors = array();
+    public function __construct()
+    {
+        $this->visitors = [];
     }
 
     /**
@@ -48,16 +53,16 @@ class NodeTraverser implements NodeTraverserInterface
      *
      * @param NodeVisitor $visitor Visitor to add
      */
-    public function addVisitor(NodeVisitor $visitor) {
+    public function addVisitor(NodeVisitor $visitor)
+    {
         $this->visitors[] = $visitor;
     }
 
     /**
      * Removes an added visitor.
-     *
-     * @param NodeVisitor $visitor
      */
-    public function removeVisitor(NodeVisitor $visitor) {
+    public function removeVisitor(NodeVisitor $visitor)
+    {
         foreach ($this->visitors as $index => $storedVisitor) {
             if ($storedVisitor === $visitor) {
                 unset($this->visitors[$index]);
@@ -73,7 +78,8 @@ class NodeTraverser implements NodeTraverserInterface
      *
      * @return Node[] Traversed array of nodes
      */
-    public function traverse(array $nodes) {
+    public function traverse(array $nodes)
+    {
         $this->stopTraversal = false;
 
         foreach ($this->visitors as $visitor) {
@@ -93,9 +99,10 @@ class NodeTraverser implements NodeTraverserInterface
         return $nodes;
     }
 
-    protected function traverseNode(Node $node) {
+    protected function traverseNode(Node $node)
+    {
         foreach ($node->getSubNodeNames() as $name) {
-            $subNode =& $node->$name;
+            $subNode = &$node->{$name};
 
             if (is_array($subNode)) {
                 $subNode = $this->traverseArray($subNode);
@@ -106,12 +113,12 @@ class NodeTraverser implements NodeTraverserInterface
                 $traverseChildren = true;
                 foreach ($this->visitors as $visitor) {
                     $return = $visitor->enterNode($subNode);
-                    if (self::DONT_TRAVERSE_CHILDREN === $return) {
+                    if ($return === self::DONT_TRAVERSE_CHILDREN) {
                         $traverseChildren = false;
-                    } else if (self::STOP_TRAVERSAL === $return) {
+                    } elseif ($return === self::STOP_TRAVERSAL) {
                         $this->stopTraversal = true;
                         break 2;
-                    } else if (null !== $return) {
+                    } elseif ($return !== null) {
                         $subNode = $return;
                     }
                 }
@@ -125,10 +132,11 @@ class NodeTraverser implements NodeTraverserInterface
 
                 foreach ($this->visitors as $visitor) {
                     $return = $visitor->leaveNode($subNode);
-                    if (self::STOP_TRAVERSAL === $return) {
+                    if ($return === self::STOP_TRAVERSAL) {
                         $this->stopTraversal = true;
                         break 2;
-                    } else if (null !== $return) {
+                    }
+                    if ($return !== null) {
                         if (is_array($return)) {
                             throw new \LogicException(
                                 'leaveNode() may only return an array ' .
@@ -144,8 +152,9 @@ class NodeTraverser implements NodeTraverserInterface
         return $node;
     }
 
-    protected function traverseArray(array $nodes) {
-        $doNodes = array();
+    protected function traverseArray(array $nodes)
+    {
+        $doNodes = [];
 
         foreach ($nodes as $i => &$node) {
             if (is_array($node)) {
@@ -157,12 +166,12 @@ class NodeTraverser implements NodeTraverserInterface
                 $traverseChildren = true;
                 foreach ($this->visitors as $visitor) {
                     $return = $visitor->enterNode($node);
-                    if (self::DONT_TRAVERSE_CHILDREN === $return) {
+                    if ($return === self::DONT_TRAVERSE_CHILDREN) {
                         $traverseChildren = false;
-                    } else if (self::STOP_TRAVERSAL === $return) {
+                    } elseif ($return === self::STOP_TRAVERSAL) {
                         $this->stopTraversal = true;
                         break 2;
-                    } else if (null !== $return) {
+                    } elseif ($return !== null) {
                         $node = $return;
                     }
                 }
@@ -177,24 +186,27 @@ class NodeTraverser implements NodeTraverserInterface
                 foreach ($this->visitors as $visitor) {
                     $return = $visitor->leaveNode($node);
 
-                    if (self::REMOVE_NODE === $return) {
-                        $doNodes[] = array($i, array());
+                    if ($return === self::REMOVE_NODE) {
+                        $doNodes[] = [$i, []];
                         break;
-                    } else if (self::STOP_TRAVERSAL === $return) {
+                    }
+                    if ($return === self::STOP_TRAVERSAL) {
                         $this->stopTraversal = true;
                         break 2;
-                    } elseif (is_array($return)) {
-                        $doNodes[] = array($i, $return);
+                    }
+                    if (is_array($return)) {
+                        $doNodes[] = [$i, $return];
                         break;
-                    } elseif (null !== $return) {
+                    }
+                    if ($return !== null) {
                         $node = $return;
                     }
                 }
             }
         }
 
-        if (!empty($doNodes)) {
-            while (list($i, $replace) = array_pop($doNodes)) {
+        if (! empty($doNodes)) {
+            while ([$i, $replace] = array_pop($doNodes)) {
                 array_splice($nodes, $i, 1, $replace);
             }
         }

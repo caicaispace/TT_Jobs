@@ -1,41 +1,38 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/9/5
- * Time: 下午12:29
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Utility\Validate;
-
 
 class Rule
 {
-    const ACTIVE_URL = 'ACTIVE_URL';
-    const ALPHA = 'ALPHA';
-    const BETWEEN = 'BETWEEN';
-    const BOOLEAN = 'BOOLEAN';
-    const DATE = 'DATE';
-    const DATE_AFTER = 'DATE_AFTER';
-    const DATE_BEFORE = 'DATE_BEFORE';
-    const DIFFERENT = 'DIFFERENT';
-    const FLOAT = 'FLOAT';
-    const IN = 'IN';
-    const INTEGER = 'INTEGER';
-    const IP = 'IP';
-    const ARRAY_ = 'ARRAY_';
-    const LEN = 'LEN';
-    const NOT_EMPTY = 'NOT_EMPTY';
-    const NOT_IN = 'NOT_IN';
-    const NUMERIC = 'NUMERIC';
-    const MAX = 'MAX';
-    const MAX_LEN = 'MAX_LEN';
-    const MIN = 'MIN';
-    const MIN_LEN = 'MIN_LEN';
-    const OPTIONAL = 'OPTIONAL';
-    const REGEX = 'REGEX';
-    const REQUIRED = 'REQUIRED';
-    const SAME = 'SAME';
-    const TIMESTAMP = 'TIMESTAMP';
-    const URL = 'URL';
+    public const ACTIVE_URL  = 'ACTIVE_URL';
+    public const ALPHA       = 'ALPHA';
+    public const BETWEEN     = 'BETWEEN';
+    public const BOOLEAN     = 'BOOLEAN';
+    public const DATE        = 'DATE';
+    public const DATE_AFTER  = 'DATE_AFTER';
+    public const DATE_BEFORE = 'DATE_BEFORE';
+    public const DIFFERENT   = 'DIFFERENT';
+    public const FLOAT       = 'FLOAT';
+    public const IN          = 'IN';
+    public const INTEGER     = 'INTEGER';
+    public const IP          = 'IP';
+    public const ARRAY_      = 'ARRAY_';
+    public const LEN         = 'LEN';
+    public const NOT_EMPTY   = 'NOT_EMPTY';
+    public const NOT_IN      = 'NOT_IN';
+    public const NUMERIC     = 'NUMERIC';
+    public const MAX         = 'MAX';
+    public const MAX_LEN     = 'MAX_LEN';
+    public const MIN         = 'MIN';
+    public const MIN_LEN     = 'MIN_LEN';
+    public const OPTIONAL    = 'OPTIONAL';
+    public const REGEX       = 'REGEX';
+    public const REQUIRED    = 'REQUIRED';
+    public const SAME        = 'SAME';
+    public const TIMESTAMP   = 'TIMESTAMP';
+    public const URL         = 'URL';
 }

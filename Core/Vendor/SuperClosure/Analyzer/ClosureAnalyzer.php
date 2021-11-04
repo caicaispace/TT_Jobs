@@ -1,4 +1,10 @@
-<?php namespace SuperClosure\Analyzer;
+<?php
+
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
+namespace SuperClosure\Analyzer;
 
 use SuperClosure\Exception\ClosureAnalysisException;
 
@@ -6,8 +12,6 @@ abstract class ClosureAnalyzer
 {
     /**
      * Analyzer a given closure.
-     *
-     * @param \Closure $closure
      *
      * @throws ClosureAnalysisException
      *
@@ -40,8 +44,6 @@ abstract class ClosureAnalyzer
      *
      * These variables are referred to as the "used variables", "static
      * variables", "closed upon variables", or "context" of the closure.
-     *
-     * @param array $data
      */
     abstract protected function determineContext(array &$data);
 
@@ -55,7 +57,7 @@ abstract class ClosureAnalyzer
 
     private function isClosureStatic(\Closure $closure)
     {
-        $closure = @$closure->bindTo(new \stdClass);
+        $closure = @$closure->bindTo(new \stdClass());
 
         if ($closure === null) {
             return true;

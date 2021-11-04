@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser;
 
 use PhpParser\Parser\Tokens;
@@ -27,21 +31,23 @@ class Lexer
      *                       'endTokenPos', 'startFilePos', 'endFilePos'. The option defaults to the
      *                       first three. For more info see getNextToken() docs.
      */
-    public function __construct(array $options = array()) {
+    public function __construct(array $options = [])
+    {
         // map from internal tokens to PhpParser tokens
         $this->tokenMap = $this->createTokenMap();
 
         // map of tokens to drop while lexing (the map is only used for isset lookup,
         // that's why the value is simply set to 1; the value is never actually used.)
         $this->dropTokens = array_fill_keys(
-            array(T_WHITESPACE, T_OPEN_TAG, T_COMMENT, T_DOC_COMMENT), 1
+            [T_WHITESPACE, T_OPEN_TAG, T_COMMENT, T_DOC_COMMENT],
+            1
         );
 
         // the usedAttributes member is a map of the used attribute names to a dummy
         // value (here "true")
-        $options += array(
-            'usedAttributes' => array('comments', 'startLine', 'endLine'),
-        );
+        $options += [
+            'usedAttributes' => ['comments', 'startLine', 'endLine'],
+        ];
         $this->usedAttributes = array_fill_keys($options['usedAttributes'], true);
     }
 
@@ -52,17 +58,18 @@ class Lexer
      * the getErrors() method.
      *
      * @param string $code The source code to lex
-     * @param ErrorHandler|null $errorHandler Error handler to use for lexing errors. Defaults to
+     * @param null|ErrorHandler $errorHandler Error handler to use for lexing errors. Defaults to
      *                                        ErrorHandler\Throwing
      */
-    public function startLexing($code, ErrorHandler $errorHandler = null) {
-        if (null === $errorHandler) {
+    public function startLexing($code, ErrorHandler $errorHandler = null)
+    {
+        if ($errorHandler === null) {
             $errorHandler = new ErrorHandler\Throwing();
         }
 
-        $this->code = $code; // keep the code around for __halt_compiler() handling
-        $this->pos  = -1;
-        $this->line =  1;
+        $this->code    = $code; // keep the code around for __halt_compiler() handling
+        $this->pos     = -1;
+        $this->line    =  1;
         $this->filePos = 0;
 
         // If inline HTML occurs without preceding code, treat it as if it had a leading newline.
@@ -75,127 +82,8 @@ class Lexer
         $this->tokens = @token_get_all($code);
         $this->handleErrors($errorHandler);
 
-        if (false !== $scream) {
+        if ($scream !== false) {
             ini_set('xdebug.scream', $scream);
-        }
-    }
-
-    protected function resetErrors() {
-        if (function_exists('error_clear_last')) {
-            error_clear_last();
-        } else {
-            // set error_get_last() to defined state by forcing an undefined variable error
-            set_error_handler(function() { return false; }, 0);
-            @$undefinedVariable;
-            restore_error_handler();
-        }
-    }
-
-    private function handleInvalidCharacterRange($start, $end, $line, ErrorHandler $errorHandler) {
-        for ($i = $start; $i < $end; $i++) {
-            $chr = $this->code[$i];
-            if ($chr === 'b' || $chr === 'B') {
-                // HHVM does not treat b" tokens correctly, so ignore these
-                continue;
-            }
-
-            if ($chr === "\0") {
-                // PHP cuts error message after null byte, so need special case
-                $errorMsg = 'Unexpected null byte';
-            } else {
-                $errorMsg = sprintf(
-                    'Unexpected character "%s" (ASCII %d)', $chr, ord($chr)
-                );
-            }
-
-            $errorHandler->handleError(new Error($errorMsg, [
-                'startLine' => $line,
-                'endLine' => $line,
-                'startFilePos' => $i,
-                'endFilePos' => $i,
-            ]));
-        }
-    }
-
-    private function isUnterminatedComment($token) {
-        return ($token[0] === T_COMMENT || $token[0] === T_DOC_COMMENT)
-            && substr($token[1], 0, 2) === '/*'
-            && substr($token[1], -2) !== '*/';
-    }
-
-    private function errorMayHaveOccurred() {
-        if (defined('HHVM_VERSION')) {
-            // In HHVM token_get_all() does not throw warnings, so we need to conservatively
-            // assume that an error occurred
-            return true;
-        }
-
-        $error = error_get_last();
-        return null !== $error
-            && false === strpos($error['message'], 'Undefined variable');
-    }
-
-    protected function handleErrors(ErrorHandler $errorHandler) {
-        if (!$this->errorMayHaveOccurred()) {
-            return;
-        }
-
-        // PHP's error handling for token_get_all() is rather bad, so if we want detailed
-        // error information we need to compute it ourselves. Invalid character errors are
-        // detected by finding "gaps" in the token array. Unterminated comments are detected
-        // by checking if a trailing comment has a "*/" at the end.
-
-        $filePos = 0;
-        $line = 1;
-        foreach ($this->tokens as $i => $token) {
-            $tokenValue = \is_string($token) ? $token : $token[1];
-            $tokenLen = \strlen($tokenValue);
-
-            if (substr($this->code, $filePos, $tokenLen) !== $tokenValue) {
-                // Something is missing, must be an invalid character
-                $nextFilePos = strpos($this->code, $tokenValue, $filePos);
-                $this->handleInvalidCharacterRange(
-                    $filePos, $nextFilePos, $line, $errorHandler);
-                $filePos = $nextFilePos;
-            }
-
-            $filePos += $tokenLen;
-            $line += substr_count($tokenValue, "\n");
-        }
-
-        if ($filePos !== \strlen($this->code)) {
-            if (substr($this->code, $filePos, 2) === '/*') {
-                // Unlike PHP, HHVM will drop unterminated comments entirely
-                $comment = substr($this->code, $filePos);
-                $errorHandler->handleError(new Error('Unterminated comment', [
-                    'startLine' => $line,
-                    'endLine' => $line + substr_count($comment, "\n"),
-                    'startFilePos' => $filePos,
-                    'endFilePos' => $filePos + \strlen($comment),
-                ]));
-
-                // Emulate the PHP behavior
-                $isDocComment = isset($comment[3]) && $comment[3] === '*';
-                $this->tokens[] = [$isDocComment ? T_DOC_COMMENT : T_COMMENT, $comment, $line];
-            } else {
-                // Invalid characters at the end of the input
-                $this->handleInvalidCharacterRange(
-                    $filePos, \strlen($this->code), $line, $errorHandler);
-            }
-            return;
-        }
-
-        if (count($this->tokens) > 0) {
-            // Check for unterminated comment
-            $lastToken = $this->tokens[count($this->tokens) - 1];
-            if ($this->isUnterminatedComment($lastToken)) {
-                $errorHandler->handleError(new Error('Unterminated comment', [
-                    'startLine' => $line - substr_count($lastToken[1], "\n"),
-                    'endLine' => $line,
-                    'startFilePos' => $filePos - \strlen($lastToken[1]),
-                    'endFilePos' => $filePos,
-                ]));
-            }
         }
     }
 
@@ -215,15 +103,16 @@ class Lexer
      *  * 'startFilePos'  => Offset into the code string of the first character that is part of the node.
      *  * 'endFilePos'    => Offset into the code string of the last character that is part of the node.
      *
-     * @param mixed $value           Variable to store token content in
+     * @param mixed $value Variable to store token content in
      * @param mixed $startAttributes Variable to store start attributes in
-     * @param mixed $endAttributes   Variable to store end attributes in
+     * @param mixed $endAttributes Variable to store end attributes in
      *
      * @return int Token id
      */
-    public function getNextToken(&$value = null, &$startAttributes = null, &$endAttributes = null) {
-        $startAttributes = array();
-        $endAttributes   = array();
+    public function getNextToken(&$value = null, &$startAttributes = null, &$endAttributes = null)
+    {
+        $startAttributes = [];
+        $endAttributes   = [];
 
         while (1) {
             if (isset($this->tokens[++$this->pos])) {
@@ -250,31 +139,31 @@ class Lexer
                     $this->filePos += 2;
                     $id = ord('"');
                 } else {
-                    $this->filePos += 1;
+                    ++$this->filePos;
                     $id = ord($token);
                 }
-            } elseif (!isset($this->dropTokens[$token[0]])) {
+            } elseif (! isset($this->dropTokens[$token[0]])) {
                 $value = $token[1];
-                $id = $this->tokenMap[$token[0]];
-                if (T_CLOSE_TAG === $token[0]) {
-                    $this->prevCloseTagHasNewline = false !== strpos($token[1], "\n");
-                } else if (T_INLINE_HTML === $token[0]) {
+                $id    = $this->tokenMap[$token[0]];
+                if ($token[0] === T_CLOSE_TAG) {
+                    $this->prevCloseTagHasNewline = strpos($token[1], "\n") !== false;
+                } elseif ($token[0] === T_INLINE_HTML) {
                     $startAttributes['hasLeadingNewline'] = $this->prevCloseTagHasNewline;
                 }
 
-                $this->line += substr_count($value, "\n");
+                $this->line    += substr_count($value, "\n");
                 $this->filePos += \strlen($value);
             } else {
-                if (T_COMMENT === $token[0] || T_DOC_COMMENT === $token[0]) {
+                if ($token[0] === T_COMMENT || $token[0] === T_DOC_COMMENT) {
                     if (isset($this->usedAttributes['comments'])) {
-                        $comment = T_DOC_COMMENT === $token[0]
+                        $comment = $token[0] === T_DOC_COMMENT
                             ? new Comment\Doc($token[1], $this->line, $this->filePos)
                             : new Comment($token[1], $this->line, $this->filePos);
                         $startAttributes['comments'][] = $comment;
                     }
                 }
 
-                $this->line += substr_count($token[1], "\n");
+                $this->line    += substr_count($token[1], "\n");
                 $this->filePos += \strlen($token[1]);
                 continue;
             }
@@ -305,7 +194,8 @@ class Lexer
      *
      * @return array Array of tokens in token_get_all() format
      */
-    public function getTokens() {
+    public function getTokens()
+    {
         return $this->tokens;
     }
 
@@ -314,14 +204,15 @@ class Lexer
      *
      * @return string Remaining text
      */
-    public function handleHaltCompiler() {
+    public function handleHaltCompiler()
+    {
         // text after T_HALT_COMPILER, still including ();
         $textAfter = substr($this->code, $this->filePos);
 
         // ensure that it is followed by ();
         // this simplifies the situation, by not allowing any comments
         // in between of the tokens.
-        if (!preg_match('~^\s*\(\s*\)\s*(?:;|\?>\r?\n?)~', $textAfter, $matches)) {
+        if (! preg_match('~^\s*\(\s*\)\s*(?:;|\?>\r?\n?)~', $textAfter, $matches)) {
             throw new Error('__HALT_COMPILER must be followed by "();"');
         }
 
@@ -330,6 +221,91 @@ class Lexer
 
         // return with (); removed
         return (string) substr($textAfter, strlen($matches[0])); // (string) converts false to ''
+    }
+
+    protected function resetErrors()
+    {
+        if (function_exists('error_clear_last')) {
+            error_clear_last();
+        } else {
+            // set error_get_last() to defined state by forcing an undefined variable error
+            set_error_handler(function () { return false; }, 0);
+            @$undefinedVariable;
+            restore_error_handler();
+        }
+    }
+
+    protected function handleErrors(ErrorHandler $errorHandler)
+    {
+        if (! $this->errorMayHaveOccurred()) {
+            return;
+        }
+
+        // PHP's error handling for token_get_all() is rather bad, so if we want detailed
+        // error information we need to compute it ourselves. Invalid character errors are
+        // detected by finding "gaps" in the token array. Unterminated comments are detected
+        // by checking if a trailing comment has a "*/" at the end.
+
+        $filePos = 0;
+        $line    = 1;
+        foreach ($this->tokens as $i => $token) {
+            $tokenValue = \is_string($token) ? $token : $token[1];
+            $tokenLen   = \strlen($tokenValue);
+
+            if (substr($this->code, $filePos, $tokenLen) !== $tokenValue) {
+                // Something is missing, must be an invalid character
+                $nextFilePos = strpos($this->code, $tokenValue, $filePos);
+                $this->handleInvalidCharacterRange(
+                    $filePos,
+                    $nextFilePos,
+                    $line,
+                    $errorHandler
+                );
+                $filePos = $nextFilePos;
+            }
+
+            $filePos += $tokenLen;
+            $line    += substr_count($tokenValue, "\n");
+        }
+
+        if ($filePos !== \strlen($this->code)) {
+            if (substr($this->code, $filePos, 2) === '/*') {
+                // Unlike PHP, HHVM will drop unterminated comments entirely
+                $comment = substr($this->code, $filePos);
+                $errorHandler->handleError(new Error('Unterminated comment', [
+                    'startLine'    => $line,
+                    'endLine'      => $line + substr_count($comment, "\n"),
+                    'startFilePos' => $filePos,
+                    'endFilePos'   => $filePos + \strlen($comment),
+                ]));
+
+                // Emulate the PHP behavior
+                $isDocComment   = isset($comment[3]) && $comment[3] === '*';
+                $this->tokens[] = [$isDocComment ? T_DOC_COMMENT : T_COMMENT, $comment, $line];
+            } else {
+                // Invalid characters at the end of the input
+                $this->handleInvalidCharacterRange(
+                    $filePos,
+                    \strlen($this->code),
+                    $line,
+                    $errorHandler
+                );
+            }
+            return;
+        }
+
+        if (count($this->tokens) > 0) {
+            // Check for unterminated comment
+            $lastToken = $this->tokens[count($this->tokens) - 1];
+            if ($this->isUnterminatedComment($lastToken)) {
+                $errorHandler->handleError(new Error('Unterminated comment', [
+                    'startLine'    => $line - substr_count($lastToken[1], "\n"),
+                    'endLine'      => $line,
+                    'startFilePos' => $filePos - \strlen($lastToken[1]),
+                    'endFilePos'   => $filePos,
+                ]));
+            }
+        }
     }
 
     /**
@@ -341,26 +317,27 @@ class Lexer
      *
      * @return array The token map
      */
-    protected function createTokenMap() {
-        $tokenMap = array();
+    protected function createTokenMap()
+    {
+        $tokenMap = [];
 
         // 256 is the minimum possible token number, as everything below
         // it is an ASCII value
         for ($i = 256; $i < 1000; ++$i) {
-            if (T_DOUBLE_COLON === $i) {
+            if ($i === T_DOUBLE_COLON) {
                 // T_DOUBLE_COLON is equivalent to T_PAAMAYIM_NEKUDOTAYIM
                 $tokenMap[$i] = Tokens::T_PAAMAYIM_NEKUDOTAYIM;
-            } elseif(T_OPEN_TAG_WITH_ECHO === $i) {
+            } elseif ($i === T_OPEN_TAG_WITH_ECHO) {
                 // T_OPEN_TAG_WITH_ECHO with dropped T_OPEN_TAG results in T_ECHO
                 $tokenMap[$i] = Tokens::T_ECHO;
-            } elseif(T_CLOSE_TAG === $i) {
+            } elseif ($i === T_CLOSE_TAG) {
                 // T_CLOSE_TAG is equivalent to ';'
                 $tokenMap[$i] = ord(';');
             } elseif ('UNKNOWN' !== $name = token_name($i)) {
-                if ('T_HASHBANG' === $name) {
+                if ($name === 'T_HASHBANG') {
                     // HHVM uses a special token for #! hashbang lines
                     $tokenMap[$i] = Tokens::T_INLINE_HTML;
-                } else if (defined($name = 'PhpParser\Parser\Tokens::' . $name)) {
+                } elseif (defined($name = 'PhpParser\Parser\Tokens::' . $name)) {
                     // Other tokens can be mapped directly
                     $tokenMap[$i] = constant($name);
                 }
@@ -377,5 +354,54 @@ class Lexer
         }
 
         return $tokenMap;
+    }
+
+    private function handleInvalidCharacterRange($start, $end, $line, ErrorHandler $errorHandler)
+    {
+        for ($i = $start; $i < $end; ++$i) {
+            $chr = $this->code[$i];
+            if ($chr === 'b' || $chr === 'B') {
+                // HHVM does not treat b" tokens correctly, so ignore these
+                continue;
+            }
+
+            if ($chr === "\0") {
+                // PHP cuts error message after null byte, so need special case
+                $errorMsg = 'Unexpected null byte';
+            } else {
+                $errorMsg = sprintf(
+                    'Unexpected character "%s" (ASCII %d)',
+                    $chr,
+                    ord($chr)
+                );
+            }
+
+            $errorHandler->handleError(new Error($errorMsg, [
+                'startLine'    => $line,
+                'endLine'      => $line,
+                'startFilePos' => $i,
+                'endFilePos'   => $i,
+            ]));
+        }
+    }
+
+    private function isUnterminatedComment($token)
+    {
+        return ($token[0] === T_COMMENT || $token[0] === T_DOC_COMMENT)
+            && substr($token[1], 0, 2) === '/*'
+            && substr($token[1], -2) !== '*/';
+    }
+
+    private function errorMayHaveOccurred()
+    {
+        if (defined('HHVM_VERSION')) {
+            // In HHVM token_get_all() does not throw warnings, so we need to conservatively
+            // assume that an error occurred
+            return true;
+        }
+
+        $error = error_get_last();
+        return $error !== null
+            && strpos($error['message'], 'Undefined variable') === false;
     }
 }

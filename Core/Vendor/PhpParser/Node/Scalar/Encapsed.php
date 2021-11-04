@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Scalar;
 
 use PhpParser\Node\Expr;
@@ -13,15 +17,17 @@ class Encapsed extends Scalar
     /**
      * Constructs an encapsed string node.
      *
-     * @param array $parts      Encaps list
+     * @param array $parts Encaps list
      * @param array $attributes Additional attributes
      */
-    public function __construct(array $parts, array $attributes = array()) {
+    public function __construct(array $parts, array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->parts = $parts;
     }
 
-    public function getSubNodeNames() {
-        return array('parts');
+    public function getSubNodeNames()
+    {
+        return ['parts'];
     }
 }

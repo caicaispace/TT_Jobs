@@ -1,23 +1,18 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/6/27
- * Time: 0:47:08
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Model;
 
 use Core\AbstractInterface\AModel as Model;
 
 /**
- * 权限
+ * 权限.
  *
  * Class AuthGroupAccess
- *
- * @package Jobs\Model
  */
 class AuthGroupAccess extends Model
 {
-
 }

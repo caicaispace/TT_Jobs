@@ -1,59 +1,41 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/4/29
- * Time: 下午1:54
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\Spl;
-
 
 use Core\Utility\Judge;
 
 abstract class SplBean implements \JsonSerializable
 {
-    private $__varList = [];
-    const FILTER_TYPE_NOT_NULL = 1;
-    const FILTER_TYPE_NOT_EMPTY = 2;
+    public const FILTER_TYPE_NOT_NULL  = 1;
+    public const FILTER_TYPE_NOT_EMPTY = 2;
+    private $__varList                 = [];
 
-    final function __construct($beanArray = [])
+    final public function __construct($beanArray = [])
     {
         $this->__varList = $this->allVarKeys();
         $this->arrayToBean($beanArray);
         $this->initialize();
     }
 
-    final protected function setDefault(&$property, $val)
-    {
-        $property = $val;
-        return $this;
-    }
-
-    final function jsonSerialize()
-    {
-        $data = array();
-        foreach ($this->__varList as $var) {
-            $data[$var] = $this->$var;
-        }
-        return $data;
-    }
-
-    function __toString()
+    public function __toString()
     {
         return json_encode($this->jsonSerialize(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
-    abstract protected function initialize();
-
-    private function allVarKeys()
+    final public function jsonSerialize()
     {
-        $data = get_class_vars(static::class);
-        unset($data['__varList']);
-        return array_keys($data);
+        $data = [];
+        foreach ($this->__varList as $var) {
+            $data[$var] = $this->{$var};
+        }
+        return $data;
     }
 
-    function toArray($filterType = false, array $columns = null)
+    public function toArray($filterType = false, array $columns = null)
     {
         if ($columns) {
             $data = $this->jsonSerialize();
@@ -63,24 +45,39 @@ abstract class SplBean implements \JsonSerializable
         }
         if ($filterType === self::FILTER_TYPE_NOT_NULL) {
             return array_filter($ret, function ($val) {
-                return !is_null($val);
+                return ! is_null($val);
             });
-        } else if ($filterType === self::FILTER_TYPE_NOT_EMPTY) {
+        } elseif ($filterType === self::FILTER_TYPE_NOT_EMPTY) {
             return array_filter($ret, function ($val) {
                 //0不为空
-                return !Judge::isEmpty($val);
+                return ! Judge::isEmpty($val);
             });
         } else {
             return $ret;
         }
     }
 
-    function arrayToBean(array $data)
+    public function arrayToBean(array $data)
     {
         $data = array_intersect_key($data, array_flip($this->__varList));
         foreach ($data as $var => $val) {
-            $this->$var = $val;
+            $this->{$var} = $val;
         }
         return $this;
+    }
+
+    final protected function setDefault(&$property, $val)
+    {
+        $property = $val;
+        return $this;
+    }
+
+    abstract protected function initialize();
+
+    private function allVarKeys()
+    {
+        $data = get_class_vars(static::class);
+        unset($data['__varList']);
+        return array_keys($data);
     }
 }

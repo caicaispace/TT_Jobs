@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Stmt;
 
 use PhpParser\Node\Stmt;
@@ -12,15 +16,17 @@ class Static_ extends Stmt
     /**
      * Constructs a static variables list node.
      *
-     * @param StaticVar[] $vars       Variable definitions
-     * @param array       $attributes Additional attributes
+     * @param StaticVar[] $vars Variable definitions
+     * @param array $attributes Additional attributes
      */
-    public function __construct(array $vars, array $attributes = array()) {
+    public function __construct(array $vars, array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->vars = $vars;
     }
 
-    public function getSubNodeNames() {
-        return array('vars');
+    public function getSubNodeNames()
+    {
+        return ['vars'];
     }
 }

@@ -1,15 +1,12 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/23
- * Time: 上午2:38
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Swoole\Pipe;
-
 
 abstract class ACommandRegister
 {
-    abstract function register(CommandList $commandList);
+    abstract public function register(CommandList $commandList);
 }

@@ -1,17 +1,14 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/23
- * Time: 下午2:45
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\Socket\AbstractInterface;
-
 
 use Core\Component\Socket\Common\CommandList;
 
 abstract class ACommandRegister
 {
-    abstract function register(CommandList $commandList);
+    abstract public function register(CommandList $commandList);
 }

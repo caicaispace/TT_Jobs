@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Builder;
 
 use PhpParser;
@@ -10,21 +14,22 @@ class Class_ extends Declaration
 {
     protected $name;
 
-    protected $extends = null;
-    protected $implements = array();
-    protected $flags = 0;
+    protected $extends;
+    protected $implements = [];
+    protected $flags      = 0;
 
-    protected $uses = array();
-    protected $constants = array();
-    protected $properties = array();
-    protected $methods = array();
+    protected $uses       = [];
+    protected $constants  = [];
+    protected $properties = [];
+    protected $methods    = [];
 
     /**
      * Creates a class builder.
      *
      * @param string $name Name of the class
      */
-    public function __construct($name) {
+    public function __construct($name)
+    {
         $this->name = $name;
     }
 
@@ -35,7 +40,8 @@ class Class_ extends Declaration
      *
      * @return $this The builder instance (for fluid interface)
      */
-    public function extend($class) {
+    public function extend($class)
+    {
         $this->extends = $this->normalizeName($class);
 
         return $this;
@@ -48,7 +54,8 @@ class Class_ extends Declaration
      *
      * @return $this The builder instance (for fluid interface)
      */
-    public function implement() {
+    public function implement()
+    {
         foreach (func_get_args() as $interface) {
             $this->implements[] = $this->normalizeName($interface);
         }
@@ -61,7 +68,8 @@ class Class_ extends Declaration
      *
      * @return $this The builder instance (for fluid interface)
      */
-    public function makeAbstract() {
+    public function makeAbstract()
+    {
         $this->setModifier(Stmt\Class_::MODIFIER_ABSTRACT);
 
         return $this;
@@ -72,7 +80,8 @@ class Class_ extends Declaration
      *
      * @return $this The builder instance (for fluid interface)
      */
-    public function makeFinal() {
+    public function makeFinal()
+    {
         $this->setModifier(Stmt\Class_::MODIFIER_FINAL);
 
         return $this;
@@ -81,22 +90,23 @@ class Class_ extends Declaration
     /**
      * Adds a statement.
      *
-     * @param Stmt|PhpParser\Builder $stmt The statement to add
+     * @param PhpParser\Builder|Stmt $stmt The statement to add
      *
      * @return $this The builder instance (for fluid interface)
      */
-    public function addStmt($stmt) {
+    public function addStmt($stmt)
+    {
         $stmt = $this->normalizeNode($stmt);
 
-        $targets = array(
+        $targets = [
             'Stmt_TraitUse'    => &$this->uses,
             'Stmt_ClassConst'  => &$this->constants,
             'Stmt_Property'    => &$this->properties,
             'Stmt_ClassMethod' => &$this->methods,
-        );
+        ];
 
         $type = $stmt->getType();
-        if (!isset($targets[$type])) {
+        if (! isset($targets[$type])) {
             throw new \LogicException(sprintf('Unexpected node of type "%s"', $type));
         }
 
@@ -110,12 +120,13 @@ class Class_ extends Declaration
      *
      * @return Stmt\Class_ The built class node
      */
-    public function getNode() {
-        return new Stmt\Class_($this->name, array(
-            'flags' => $this->flags,
-            'extends' => $this->extends,
+    public function getNode()
+    {
+        return new Stmt\Class_($this->name, [
+            'flags'      => $this->flags,
+            'extends'    => $this->extends,
             'implements' => $this->implements,
-            'stmts' => array_merge($this->uses, $this->constants, $this->properties, $this->methods),
-        ), $this->attributes);
+            'stmts'      => array_merge($this->uses, $this->constants, $this->properties, $this->methods),
+        ], $this->attributes);
     }
 }

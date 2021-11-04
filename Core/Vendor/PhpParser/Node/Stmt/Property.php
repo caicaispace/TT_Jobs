@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Stmt;
 
 use PhpParser\Node;
@@ -17,35 +21,41 @@ class Property extends Node\Stmt
     /**
      * Constructs a class property list node.
      *
-     * @param int                $flags      Modifiers
-     * @param PropertyProperty[] $props      Properties
-     * @param array              $attributes Additional attributes
+     * @param int $flags Modifiers
+     * @param PropertyProperty[] $props Properties
+     * @param array $attributes Additional attributes
      */
-    public function __construct($flags, array $props, array $attributes = array()) {
+    public function __construct($flags, array $props, array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->flags = $flags;
-        $this->type = $flags;
+        $this->type  = $flags;
         $this->props = $props;
     }
 
-    public function getSubNodeNames() {
-        return array('flags', 'props');
+    public function getSubNodeNames()
+    {
+        return ['flags', 'props'];
     }
 
-    public function isPublic() {
+    public function isPublic()
+    {
         return ($this->flags & Class_::MODIFIER_PUBLIC) !== 0
             || ($this->flags & Class_::VISIBILITY_MODIFIER_MASK) === 0;
     }
 
-    public function isProtected() {
+    public function isProtected()
+    {
         return (bool) ($this->flags & Class_::MODIFIER_PROTECTED);
     }
 
-    public function isPrivate() {
+    public function isPrivate()
+    {
         return (bool) ($this->flags & Class_::MODIFIER_PRIVATE);
     }
 
-    public function isStatic() {
+    public function isStatic()
+    {
         return (bool) ($this->flags & Class_::MODIFIER_STATIC);
     }
 }

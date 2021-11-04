@@ -1,25 +1,22 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/6/5
- * Time: 22:50
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Vendor\Tools;
-
 
 class LogicResponse
 {
-    protected $data   = null;
-    protected $page   = null;
+    protected $data;
+    protected $page;
     protected $msg    = 'success';
     protected $code   = 0;
     protected $status = true;
 
     private static $instance;
 
-    static function getInstance()
+    public static function getInstance()
     {
 //        if (!self::$instance) {
 //            self::$instance = new self();
@@ -28,9 +25,6 @@ class LogicResponse
         return new self();
     }
 
-    /**
-     * @return null
-     */
     public function getData()
     {
         return $this->data;
@@ -49,15 +43,13 @@ class LogicResponse
 
     /**
      * @param null $key
-     *
-     * @return null
      */
     public function getPage($key = null)
     {
-        if (null === $key) {
+        if ($key === null) {
             return $this->page;
         }
-        if (!isset($this->page[$key])) {
+        if (! isset($this->page[$key])) {
             return null;
         }
         return $this->page[$key];
@@ -74,9 +66,6 @@ class LogicResponse
         return $this;
     }
 
-    /**
-     * @return null
-     */
     public function getMsg()
     {
         return $this->msg;
@@ -133,17 +122,27 @@ class LogicResponse
 
     public function success($data = null, $msg = null, $code = null)
     {
-        if ($data) $this->setData($data);
-        if ($msg) $this->setMsg($msg);
-        if ($code) $this->setCode($code);
+        if ($data) {
+            $this->setData($data);
+        }
+        if ($msg) {
+            $this->setMsg($msg);
+        }
+        if ($code) {
+            $this->setCode($code);
+        }
         $this->setStatus(true);
         return $this->_send();
     }
 
     public function error($msg = 'error', $code = null)
     {
-        if ($msg) $this->setMsg($msg);
-        if ($code) $this->setCode($code);
+        if ($msg) {
+            $this->setMsg($msg);
+        }
+        if ($code) {
+            $this->setCode($code);
+        }
         $this->setStatus(false);
         return $this->_send();
     }

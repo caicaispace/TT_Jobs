@@ -1,32 +1,28 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yangcai
- * Date: 2018/6/27
- * Time: 18:45
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Controller\Jobs;
 
-use Core\AbstractInterface\ARESTController as Controller;
-use Core\Http\Message\Status;
 use App\Jobs\Logic\Admin as Logic;
 use App\Jobs\Logic\AuthGroupAccess as AuthGroupAccessLogic;
+use Core\AbstractInterface\ARESTController as Controller;
+use Core\Http\Message\Status;
 
 /**
- * Class Admin
- *
- * @package Jobs\Controller\Jobs
+ * Class Admin.
  */
 class Admin extends Controller
 {
-    function GET_index()
+    public function GET_index()
     {
-        $logic = new Logic;
+        $logic = new Logic();
         $logic->request()->setPage($this->getPageData());
         $logic->request()->setOrder(['id DESC']);
         $ret = $logic->call('getList');
-        if (!$ret->getStatus()) {
+        if (! $ret->getStatus()) {
             $this->json()->error($ret->getMsg());
             return;
         }
@@ -50,16 +46,16 @@ class Admin extends Controller
             ->response();
     }
 
-    function GET_info()
+    public function GET_info()
     {
-        if (!$id = $this->request()->getServerParam('id')) {
+        if (! $id = $this->request()->getServerParam('id')) {
             $this->response()->write('操作失败');
             return;
         }
-        $authGroupLogic = new AuthGroupAccessLogic;
+        $authGroupLogic = new AuthGroupAccessLogic();
         $authGroupLogic->request()->setId($id);
         $ret = $authGroupLogic->call('getInfo');
-        if (!$ret->getStatus()) {
+        if (! $ret->getStatus()) {
             $this->json()->error($ret->getMsg());
             return;
         }
@@ -69,26 +65,26 @@ class Admin extends Controller
             ->response();
     }
 
-    function POST_index()
+    public function POST_index()
     {
-        if (!$requestData = $this->request()->getPostData()) {
+        if (! $requestData = $this->request()->getPostData()) {
             $this->json()->error();
             return;
         }
-        $logic = new Logic;
+        $logic = new Logic();
         $logic->request()->setData($requestData);
         $ret = $logic->call('create');
-        if (!$ret->getStatus()) {
+        if (! $ret->getStatus()) {
             $this->json()->error($ret->getMsg());
             return;
         }
         $responseData = $ret->getData();
         if ($groups = $this->request()->getPostData('groups')) {
-            $authGroupLogic = new AuthGroupAccessLogic;
+            $authGroupLogic = new AuthGroupAccessLogic();
             $authGroupLogic->request()->setExtend(['uid' => $responseData['id']]);
             $authGroupLogic->request()->setData(['group_id' => $groups]);
             $ret = $authGroupLogic->call('update');
-            if (!$ret->getStatus()) {
+            if (! $ret->getStatus()) {
                 $this->json()->error($ret->getMsg());
                 return;
             }
@@ -99,36 +95,36 @@ class Admin extends Controller
             ->response();
     }
 
-    function PUT_index()
+    public function PUT_index()
     {
         $responseData = 'PUT';
         $this->response()->writeJson(Status::CODE_OK, $responseData);
     }
 
-    function PATCH_index()
+    public function PATCH_index()
     {
-        if (!$id = $this->request()->getServerParam('id')) {
+        if (! $id = $this->request()->getServerParam('id')) {
             $this->json()->error();
             return;
         }
-        if (!$requestData = $this->request()->getPostData()) {
+        if (! $requestData = $this->request()->getPostData()) {
             $this->json()->error();
             return;
         }
-        $logic = new Logic;
+        $logic = new Logic();
         $logic->request()->setId($id);
         $logic->request()->setData($requestData);
         $ret = $logic->call('update');
-        if (!$ret->getStatus()) {
+        if (! $ret->getStatus()) {
             $this->json()->error($ret->getMsg());
             return;
         }
         if ($groups = $this->request()->getPostData('groups')) {
-            $authGroupLogic = new AuthGroupAccessLogic;
+            $authGroupLogic = new AuthGroupAccessLogic();
             $authGroupLogic->request()->setExtend(['uid' => $id]);
             $authGroupLogic->request()->setData(['group_id' => $groups]);
             $ret = $authGroupLogic->call('update');
-            if (!$ret->getStatus()) {
+            if (! $ret->getStatus()) {
                 $this->json()->error($ret->getMsg());
                 return;
             }
@@ -136,16 +132,16 @@ class Admin extends Controller
         $this->json()->success();
     }
 
-    function DELETE_index()
+    public function DELETE_index()
     {
-        if (!$id = $this->request()->getServerParam('id')) {
+        if (! $id = $this->request()->getServerParam('id')) {
             $this->json()->error();
             return;
         }
-        $logic = new Logic;
+        $logic = new Logic();
         $logic->request()->setId($id);
         $ret = $logic->call('delete');
-        if (!$ret->getStatus()) {
+        if (! $ret->getStatus()) {
             $this->json()->error($ret->getMsg());
             return;
         }

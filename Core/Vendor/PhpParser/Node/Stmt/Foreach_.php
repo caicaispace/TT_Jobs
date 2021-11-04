@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Stmt;
 
 use PhpParser\Node;
@@ -20,24 +24,26 @@ class Foreach_ extends Node\Stmt
     /**
      * Constructs a foreach node.
      *
-     * @param Node\Expr $expr       Expression to iterate
-     * @param Node\Expr $valueVar   Variable to assign value to
-     * @param array     $subNodes   Array of the following optional subnodes:
-     *                              'keyVar' => null   : Variable to assign key to
-     *                              'byRef'  => false  : Whether to assign value by reference
-     *                              'stmts'  => array(): Statements
-     * @param array     $attributes Additional attributes
+     * @param Node\Expr $expr Expression to iterate
+     * @param Node\Expr $valueVar Variable to assign value to
+     * @param array $subNodes Array of the following optional subnodes:
+     *                        'keyVar' => null   : Variable to assign key to
+     *                        'byRef'  => false  : Whether to assign value by reference
+     *                        'stmts'  => array(): Statements
+     * @param array $attributes Additional attributes
      */
-    public function __construct(Node\Expr $expr, Node\Expr $valueVar, array $subNodes = array(), array $attributes = array()) {
+    public function __construct(Node\Expr $expr, Node\Expr $valueVar, array $subNodes = [], array $attributes = [])
+    {
         parent::__construct($attributes);
-        $this->expr = $expr;
-        $this->keyVar = isset($subNodes['keyVar']) ? $subNodes['keyVar'] : null;
-        $this->byRef = isset($subNodes['byRef']) ? $subNodes['byRef'] : false;
+        $this->expr     = $expr;
+        $this->keyVar   = isset($subNodes['keyVar']) ? $subNodes['keyVar'] : null;
+        $this->byRef    = isset($subNodes['byRef']) ? $subNodes['byRef'] : false;
         $this->valueVar = $valueVar;
-        $this->stmts = isset($subNodes['stmts']) ? $subNodes['stmts'] : array();
+        $this->stmts    = isset($subNodes['stmts']) ? $subNodes['stmts'] : [];
     }
 
-    public function getSubNodeNames() {
-        return array('expr', 'keyVar', 'byRef', 'valueVar', 'stmts');
+    public function getSubNodeNames()
+    {
+        return ['expr', 'keyVar', 'byRef', 'valueVar', 'stmts'];
     }
 }

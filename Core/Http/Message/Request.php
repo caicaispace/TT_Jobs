@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/6/14
- * Time: 下午12:25
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Http\Message;
-
 
 class Request extends Message
 {
@@ -15,10 +12,13 @@ class Request extends Message
     private $method;
     private $target;
 
-    function __construct(
-        $method = 'GET', Uri $uri = null, array $headers = null, Stream $body = null, $protocolVersion = '1.1'
-    )
-    {
+    public function __construct(
+        $method = 'GET',
+        Uri $uri = null,
+        array $headers = null,
+        Stream $body = null,
+        $protocolVersion = '1.1'
+    ) {
         $this->method = $method;
         if ($uri != null) {
             $this->uri = $uri;
@@ -28,7 +28,7 @@ class Request extends Message
 
     public function getRequestTarget()
     {
-        if (!empty($this->target)) {
+        if (! empty($this->target)) {
             return $this->target;
         }
         if ($this->uri instanceof Uri) {
@@ -40,7 +40,7 @@ class Request extends Message
                 $target .= '?' . $this->uri->getQuery();
             }
         } else {
-            $target = "/";
+            $target = '/';
         }
         return $target;
     }
@@ -73,9 +73,9 @@ class Request extends Message
             return $this;
         }
         $this->uri = $uri;
-        if (!$preserveHost) {
+        if (! $preserveHost) {
             $host = $this->uri->getHost();
-            if (!empty($host)) {
+            if (! empty($host)) {
                 if (($port = $this->uri->getPort()) !== null) {
                     $host .= ':' . $port;
                 }

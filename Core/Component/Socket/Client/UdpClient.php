@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/10
- * Time: 下午1:45
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\Socket\Client;
-
 
 use Core\Component\Socket\AbstractInterface\AClient;
 use Core\Component\Socket\Type;
@@ -83,7 +80,7 @@ class UdpClient extends AClient
         $this->port = $port;
     }
 
-    function initialize()
+    public function initialize()
     {
         $this->clientType = Type::UDP;
     }

@@ -1,24 +1,26 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/2/1
- * Time: 上午1:32
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component;
-
 
 use Core\AbstractInterface\ILoggerWriter;
 
 class Logger
 {
     private static $instance = [];
-    private $logCategory = 'default';
+    private $logCategory     = 'default';
 
-    static function getInstance($logCategory = 'default')
+    public function __construct($logCategory)
     {
-        if (!isset(self::$instance[$logCategory])) {
+        $this->logCategory = $logCategory;
+    }
+
+    public static function getInstance($logCategory = 'default')
+    {
+        if (! isset(self::$instance[$logCategory])) {
             //这样做纯属为了IDE提示
             $instance                     = new static($logCategory);
             self::$instance[$logCategory] = $instance;
@@ -28,12 +30,7 @@ class Logger
         return $instance;
     }
 
-    function __construct($logCategory)
-    {
-        $this->logCategory = $logCategory;
-    }
-
-    function log($obj)
+    public function log($obj)
     {
         $loggerWriter = Di::getInstance()->get(SysConst::LOGGER_WRITER);
         if ($loggerWriter instanceof ILoggerWriter) {
@@ -43,15 +40,15 @@ class Logger
             /*
              * default method to save log
              */
-            $str        = "time : " . date("y-m-d H:i:s") . " message: " . $obj . "\n";
-            $filePrefix = $this->logCategory . "_" . date('ym');
+            $str        = 'time : ' . date('y-m-d H:i:s') . ' message: ' . $obj . "\n";
+            $filePrefix = $this->logCategory . '_' . date('ym');
             $filePath   = Di::getInstance()->get(SysConst::LOG_DIRECTORY) . "/{$filePrefix}.log";
             file_put_contents($filePath, $str, FILE_APPEND | LOCK_EX);
         }
         return $this;
     }
 
-    function console($obj, $saveLog = 1)
+    public function console($obj, $saveLog = 1)
     {
         $obj = $this->objectToString($obj);
         echo $obj . "\n";
@@ -61,7 +58,7 @@ class Logger
         return $this;
     }
 
-    function printStackTrace()
+    public function printStackTrace()
     {
         $array = debug_backtrace();
         unset($array[0]);
@@ -69,20 +66,20 @@ class Logger
         foreach ($array as $row) {
             $html .= $row['file'] . ' <---> ' . $row['line'] . ' <---> ' . $row['function'] . PHP_EOL;
         }
-        print($html);
+        echo $html;
     }
 
     private function objectToString($obj)
     {
         if (is_object($obj)) {
-            if (method_exists($obj, "__toString")) {
+            if (method_exists($obj, '__toString')) {
                 $obj = $obj->__toString();
-            } else if (method_exists($obj, 'jsonSerialize')) {
+            } elseif (method_exists($obj, 'jsonSerialize')) {
                 $obj = json_encode($obj, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
             } else {
                 $obj = var_export($obj, true);
             }
-        } else if (is_array($obj)) {
+        } elseif (is_array($obj)) {
             $obj = json_encode($obj, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         }
         return $obj;

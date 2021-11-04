@@ -1,23 +1,20 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yangcai
- * Date: 2018/5/23
- * Time: 14:39
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Http;
-
 
 class SessionFacade
 {
     /**
-     * Set Session
+     * Set Session.
      * @param $name
      * @param $value
      * @return bool
      */
-    static function set($name, $value = null)
+    public static function set($name, $value = null)
     {
         $SessionInstance = Response::getInstance()->session();
         if (is_array($name)) {
@@ -35,44 +32,44 @@ class SessionFacade
     }
 
     /**
-     * Get Session
+     * Get Session.
      * @param $name
      * @param $default
-     * @return mixed|null
+     * @return null|mixed
      */
-    static function find($name, $default = null)
+    public static function find($name, $default = null)
     {
         $SessionInstance = Request::getInstance()->session();
         return $SessionInstance->get($name, $default);
     }
 
     /**
-     * Check Session exists
+     * Check Session exists.
      * @param $name
      * @return bool
      */
-    static function has($name)
+    public static function has($name)
     {
         return static::find($name, null) !== null;
     }
 
     /**
-     * Delete Session Values
+     * Delete Session Values.
      * @param $name
      * @return bool|int
      */
-    static function delete($name)
+    public static function delete($name)
     {
         $SessionInstance = Response::getInstance()->session();
         return $SessionInstance->set($name, null);
     }
 
     /**
-     * Clear Session
+     * Clear Session.
      */
-    static function clear()
+    public static function clear()
     {
-        $Response = Response::getInstance();
+        $Response        = Response::getInstance();
         $SessionInstance = $Response->session();
         $SessionInstance->destroy();
         $Response->setCookie($SessionInstance->sessionName(), null, 0);

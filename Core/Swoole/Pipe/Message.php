@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/23
- * Time: 上午2:25
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Swoole\Pipe;
-
 
 use Core\Component\Spl\SplBean;
 
@@ -48,9 +45,7 @@ class Message extends SplBean
         $this->message = $message;
     }
 
-
     protected function initialize()
     {
     }
-
 }

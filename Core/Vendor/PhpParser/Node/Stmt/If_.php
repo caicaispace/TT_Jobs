@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Stmt;
 
 use PhpParser\Node;
@@ -18,22 +22,24 @@ class If_ extends Node\Stmt
     /**
      * Constructs an if node.
      *
-     * @param Node\Expr $cond       Condition
-     * @param array     $subNodes   Array of the following optional subnodes:
-     *                              'stmts'   => array(): Statements
-     *                              'elseifs' => array(): Elseif clauses
-     *                              'else'    => null   : Else clause
-     * @param array     $attributes Additional attributes
+     * @param Node\Expr $cond Condition
+     * @param array $subNodes Array of the following optional subnodes:
+     *                        'stmts'   => array(): Statements
+     *                        'elseifs' => array(): Elseif clauses
+     *                        'else'    => null   : Else clause
+     * @param array $attributes Additional attributes
      */
-    public function __construct(Node\Expr $cond, array $subNodes = array(), array $attributes = array()) {
+    public function __construct(Node\Expr $cond, array $subNodes = [], array $attributes = [])
+    {
         parent::__construct($attributes);
-        $this->cond = $cond;
-        $this->stmts = isset($subNodes['stmts']) ? $subNodes['stmts'] : array();
-        $this->elseifs = isset($subNodes['elseifs']) ? $subNodes['elseifs'] : array();
-        $this->else = isset($subNodes['else']) ? $subNodes['else'] : null;
+        $this->cond    = $cond;
+        $this->stmts   = isset($subNodes['stmts']) ? $subNodes['stmts'] : [];
+        $this->elseifs = isset($subNodes['elseifs']) ? $subNodes['elseifs'] : [];
+        $this->else    = isset($subNodes['else']) ? $subNodes['else'] : null;
     }
 
-    public function getSubNodeNames() {
-        return array('cond', 'stmts', 'elseifs', 'else');
+    public function getSubNodeNames()
+    {
+        return ['cond', 'stmts', 'elseifs', 'else'];
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Stmt;
 
 use PhpParser\Node;
@@ -14,17 +18,19 @@ class Switch_ extends Node\Stmt
     /**
      * Constructs a case node.
      *
-     * @param Node\Expr $cond       Condition
-     * @param Case_[]   $cases      Case list
-     * @param array     $attributes Additional attributes
+     * @param Node\Expr $cond Condition
+     * @param Case_[] $cases Case list
+     * @param array $attributes Additional attributes
      */
-    public function __construct(Node\Expr $cond, array $cases, array $attributes = array()) {
+    public function __construct(Node\Expr $cond, array $cases, array $attributes = [])
+    {
         parent::__construct($attributes);
-        $this->cond = $cond;
+        $this->cond  = $cond;
         $this->cases = $cases;
     }
 
-    public function getSubNodeNames() {
-        return array('cond', 'cases');
+    public function getSubNodeNames()
+    {
+        return ['cond', 'cases'];
     }
 }

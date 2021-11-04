@@ -1,11 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/11/9
- * Time: 下午12:26
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\Http\Session;
 
 use Core\Component\IO\FileIO;
@@ -26,9 +24,8 @@ class SessionHandler implements \SessionHandlerInterface
             }
             $this->fileStream = null;
             return true;
-        } else {
-            return true;
         }
+        return true;
     }
 
     public function destroy($session_id)
@@ -63,29 +60,27 @@ class SessionHandler implements \SessionHandlerInterface
 
     public function read($session_id)
     {
-        if (!$this->fileStream) {
+        if (! $this->fileStream) {
             $this->saveFile   = $this->savePath . "/{$this->sessionName}_{$session_id}";
             $this->fileStream = new FileIO($this->saveFile);
         }
-        if (!$this->fileStream->getStreamResource()) {
+        if (! $this->fileStream->getStreamResource()) {
             return '';
-        } else {
-            $this->fileStream->lock();
-            return $this->fileStream->__toString();
         }
+        $this->fileStream->lock();
+        return $this->fileStream->__toString();
     }
 
     public function write($session_id, $session_data)
     {
-        if (!$this->fileStream) {
+        if (! $this->fileStream) {
             $this->fileStream = new FileIO($this->saveFile);
         }
-        if (!$this->fileStream->getStreamResource()) {
+        if (! $this->fileStream->getStreamResource()) {
             return false;
-        } else {
-            $this->fileStream->truncate();
-            $this->fileStream->rewind();
-            return $this->fileStream->write($session_data);
         }
+        $this->fileStream->truncate();
+        $this->fileStream->rewind();
+        return $this->fileStream->write($session_data);
     }
 }

@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/8/29
- * Time: 下午12:35
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Utility;
-
 
 class Judge
 {
@@ -20,25 +17,23 @@ class Judge
      *
      * 的问题
      */
-    static function isEqual($val, $val2)
+    public static function isEqual($val, $val2)
     {
         if ($val == $val2) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
-    static function isStrictEqual($val, $val2)
+    public static function isStrictEqual($val, $val2)
     {
         if ($val === $val2) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
-    static function isNull($val)
+    public static function isNull($val)
     {
         return is_null($val);
     }
@@ -46,63 +41,53 @@ class Judge
     /*
      * 注意  0不为空，为解决  php内0为空问题
      */
-    static function isEmpty($val)
+    public static function isEmpty($val)
     {
         if ($val === 0 || $val === '0') {
             return false;
-        } else {
-            return empty($val);
         }
+        return empty($val);
     }
 
     /*
      * 接受  0，1 true，false
      */
-    static function boolean($val, $strict = false)
+    public static function boolean($val, $strict = false)
     {
         if ($strict) {
             return is_bool($val);
-        } else {
-            if (is_bool($val) || $val == 0 || $val == 1) {
-                return true;
-            } else {
-                return false;
-            }
-
         }
+        if (is_bool($val) || $val == 0 || $val == 1) {
+            return true;
+        }
+        return false;
     }
 
-    static function isTrue($val, $strict = false)
+    public static function isTrue($val, $strict = false)
     {
         if ($strict) {
             if ($val === true) {
                 return true;
-            } else {
-                return false;
             }
-        } else {
-            if ($val == 1) {
-                return true;
-            } else {
-                return false;
-            }
+            return false;
         }
+        if ($val == 1) {
+            return true;
+        }
+        return false;
     }
 
-    static function isFalse($val, $strict = false)
+    public static function isFalse($val, $strict = false)
     {
         if ($strict) {
             if ($val === false) {
                 return true;
-            } else {
-                return false;
             }
-        } else {
-            if ($val == 0) {
-                return true;
-            } else {
-                return false;
-            }
+            return false;
         }
+        if ($val == 0) {
+            return true;
+        }
+        return false;
     }
 }

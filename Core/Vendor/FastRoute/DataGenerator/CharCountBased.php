@@ -1,24 +1,31 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace FastRoute\DataGenerator;
 
-class CharCountBased extends RegexBasedAbstract {
-    protected function getApproxChunkSize() {
+class CharCountBased extends RegexBasedAbstract
+{
+    protected function getApproxChunkSize()
+    {
         return 30;
     }
 
-    protected function processChunk($regexToRoutesMap) {
+    protected function processChunk($regexToRoutesMap)
+    {
         $routeMap = [];
-        $regexes = [];
+        $regexes  = [];
 
         $suffixLen = 0;
-        $suffix = '';
-        $count = count($regexToRoutesMap);
+        $suffix    = '';
+        $count     = count($regexToRoutesMap);
         foreach ($regexToRoutesMap as $regex => $route) {
-            $suffixLen++;
+            ++$suffixLen;
             $suffix .= "\t";
 
-            $regexes[] = '(?:' . $regex . '/(\t{' . $suffixLen . '})\t{' . ($count - $suffixLen) . '})';
+            $regexes[]         = '(?:' . $regex . '/(\t{' . $suffixLen . '})\t{' . ($count - $suffixLen) . '})';
             $routeMap[$suffix] = [$route->handler, $route->variables];
         }
 

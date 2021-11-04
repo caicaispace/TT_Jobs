@@ -1,26 +1,32 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser;
 
-use PhpParser\Comment;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Name;
 use PhpParser\Node\NullableType;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Stmt;
 
-abstract class BuilderAbstract implements Builder {
+abstract class BuilderAbstract implements Builder
+{
     /**
      * Normalizes a node: Converts builder objects to nodes.
      *
-     * @param Node|Builder $node The node to normalize
+     * @param Builder|Node $node The node to normalize
      *
      * @return Node The normalized node
      */
-    protected function normalizeNode($node) {
+    protected function normalizeNode($node)
+    {
         if ($node instanceof Builder) {
             return $node->getNode();
-        } elseif ($node instanceof Node) {
+        }
+        if ($node instanceof Node) {
             return $node;
         }
 
@@ -34,21 +40,23 @@ abstract class BuilderAbstract implements Builder {
      *
      * @return Name The normalized name
      */
-    protected function normalizeName($name) {
+    protected function normalizeName($name)
+    {
         if ($name instanceof Name) {
             return $name;
-        } elseif (is_string($name)) {
-            if (!$name) {
+        }
+        if (is_string($name)) {
+            if (! $name) {
                 throw new \LogicException('Name cannot be empty');
             }
 
             if ($name[0] == '\\') {
                 return new Name\FullyQualified(substr($name, 1));
-            } elseif (0 === strpos($name, 'namespace\\')) {
-                return new Name\Relative(substr($name, strlen('namespace\\')));
-            } else {
-                return new Name($name);
             }
+            if (strpos($name, 'namespace\\') === 0) {
+                return new Name\Relative(substr($name, strlen('namespace\\')));
+            }
+            return new Name($name);
         }
 
         throw new \LogicException('Name must be a string or an instance of PhpParser\Node\Name');
@@ -60,15 +68,17 @@ abstract class BuilderAbstract implements Builder {
      * In particular, builtin types are left as strings, custom types become Names and nullables
      * are wrapped in NullableType nodes.
      *
-     * @param Name|string|NullableType $type The type to normalize
+     * @param Name|NullableType|string $type The type to normalize
      *
-     * @return Name|string|NullableType The normalized type
+     * @return Name|NullableType|string The normalized type
      */
-    protected function normalizeType($type) {
-        if (!is_string($type)) {
-            if (!$type instanceof Name && !$type instanceof NullableType) {
+    protected function normalizeType($type)
+    {
+        if (! is_string($type)) {
+            if (! $type instanceof Name && ! $type instanceof NullableType) {
                 throw new \LogicException(
-                    'Type must be a string, or an instance of Name or NullableType');
+                    'Type must be a string, or an instance of Name or NullableType'
+                );
             }
             return $type;
         }
@@ -76,12 +86,12 @@ abstract class BuilderAbstract implements Builder {
         $nullable = false;
         if (strlen($type) > 0 && $type[0] === '?') {
             $nullable = true;
-            $type = substr($type, 1);
+            $type     = substr($type, 1);
         }
 
-        $builtinTypes = array(
-            'array', 'callable', 'string', 'int', 'float', 'bool', 'iterable', 'void', 'object'
-        );
+        $builtinTypes = [
+            'array', 'callable', 'string', 'int', 'float', 'bool', 'iterable', 'void', 'object',
+        ];
 
         $lowerType = strtolower($type);
         if (in_array($lowerType, $builtinTypes)) {
@@ -99,35 +109,42 @@ abstract class BuilderAbstract implements Builder {
 
     /**
      * Normalizes a value: Converts nulls, booleans, integers,
-     * floats, strings and arrays into their respective nodes
+     * floats, strings and arrays into their respective nodes.
      *
      * @param mixed $value The value to normalize
      *
      * @return Expr The normalized value
      */
-    protected function normalizeValue($value) {
+    protected function normalizeValue($value)
+    {
         if ($value instanceof Node) {
             return $value;
-        } elseif (is_null($value)) {
+        }
+        if (is_null($value)) {
             return new Expr\ConstFetch(
                 new Name('null')
             );
-        } elseif (is_bool($value)) {
+        }
+        if (is_bool($value)) {
             return new Expr\ConstFetch(
                 new Name($value ? 'true' : 'false')
             );
-        } elseif (is_int($value)) {
+        }
+        if (is_int($value)) {
             return new Scalar\LNumber($value);
-        } elseif (is_float($value)) {
+        }
+        if (is_float($value)) {
             return new Scalar\DNumber($value);
-        } elseif (is_string($value)) {
+        }
+        if (is_string($value)) {
             return new Scalar\String_($value);
-        } elseif (is_array($value)) {
-            $items = array();
+        }
+        if (is_array($value)) {
+            $items   = [];
             $lastKey = -1;
             foreach ($value as $itemKey => $itemValue) {
                 // for consecutive, numeric keys don't generate keys
-                if (null !== $lastKey && ++$lastKey === $itemKey) {
+                if ($lastKey !== null && ++$lastKey === $itemKey) {
                     $items[] = new Expr\ArrayItem(
                         $this->normalizeValue($itemValue)
                     );
@@ -141,9 +158,8 @@ abstract class BuilderAbstract implements Builder {
             }
 
             return new Expr\Array_($items);
-        } else {
-            throw new \LogicException('Invalid value');
         }
+        throw new \LogicException('Invalid value');
     }
 
     /**
@@ -153,14 +169,15 @@ abstract class BuilderAbstract implements Builder {
      *
      * @return Comment\Doc The normalized doc comment
      */
-    protected function normalizeDocComment($docComment) {
+    protected function normalizeDocComment($docComment)
+    {
         if ($docComment instanceof Comment\Doc) {
             return $docComment;
-        } else if (is_string($docComment)) {
-            return new Comment\Doc($docComment);
-        } else {
-            throw new \LogicException('Doc comment must be a string or an instance of PhpParser\Comment\Doc');
         }
+        if (is_string($docComment)) {
+            return new Comment\Doc($docComment);
+        }
+        throw new \LogicException('Doc comment must be a string or an instance of PhpParser\Comment\Doc');
     }
 
     /**
@@ -168,7 +185,8 @@ abstract class BuilderAbstract implements Builder {
      *
      * @param int $modifier Modifier to set
      */
-    protected function setModifier($modifier) {
+    protected function setModifier($modifier)
+    {
         Stmt\Class_::verifyModifier($this->flags, $modifier);
         $this->flags |= $modifier;
     }

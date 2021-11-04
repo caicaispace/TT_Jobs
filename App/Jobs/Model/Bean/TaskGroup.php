@@ -1,20 +1,15 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yangcai
- * Date: 2018/5/16
- * Time: 17:26
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace App\Jobs\Model\Bean;
-
 
 use Core\Component\Spl\SplBean;
 
 /**
- * Class TaskGroup
- *
- * @package Jobs\Model\Bean
+ * Class TaskGroup.
  */
 class TaskGroup extends SplBean
 {
@@ -25,11 +20,6 @@ class TaskGroup extends SplBean
     public $is_del;
     public $create_at;
     public $update_at;
-
-    protected function initialize()
-    {
-        // TODO: Implement initialize() method.
-    }
 
     /**
      * @return mixed
@@ -141,5 +131,10 @@ class TaskGroup extends SplBean
     public function setUpdateAt($update_at)
     {
         $this->update_at = $update_at;
+    }
+
+    protected function initialize()
+    {
+        // TODO: Implement initialize() method.
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Expr;
 
 use PhpParser\Node;
@@ -7,9 +11,9 @@ use PhpParser\Node\Expr;
 
 class StaticCall extends Expr
 {
-    /** @var Node\Name|Expr Class name */
+    /** @var Expr|Node\Name Class name */
     public $class;
-    /** @var string|Expr Method name */
+    /** @var Expr|string Method name */
     public $name;
     /** @var Node\Arg[] Arguments */
     public $args;
@@ -17,19 +21,21 @@ class StaticCall extends Expr
     /**
      * Constructs a static method call node.
      *
-     * @param Node\Name|Expr $class      Class name
-     * @param string|Expr    $name       Method name
-     * @param Node\Arg[]     $args       Arguments
-     * @param array          $attributes Additional attributes
+     * @param Expr|Node\Name $class Class name
+     * @param Expr|string $name Method name
+     * @param Node\Arg[] $args Arguments
+     * @param array $attributes Additional attributes
      */
-    public function __construct($class, $name, array $args = array(), array $attributes = array()) {
+    public function __construct($class, $name, array $args = [], array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->class = $class;
-        $this->name = $name;
-        $this->args = $args;
+        $this->name  = $name;
+        $this->args  = $args;
     }
 
-    public function getSubNodeNames() {
-        return array('class', 'name', 'args');
+    public function getSubNodeNames()
+    {
+        return ['class', 'name', 'args'];
     }
 }

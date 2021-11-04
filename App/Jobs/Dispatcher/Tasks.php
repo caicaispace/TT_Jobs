@@ -1,29 +1,26 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/6/18
- * Time: 3:45
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Dispatcher;
 
 use Core\Component\Error\Trigger;
-use Core\Swoole\Memory\TableManager;
 use Core\Component\Logger;
+use Core\Swoole\Memory\TableManager;
 use Core\Utility\SnowFlake;
 use Cron\CronExpression;
 
 /**
- *
- * Class Tasks
- *
- * @package Jobs\Dispatcher
+ * Class Tasks.
  */
 class Tasks
 {
-    const SWOOLE_TABLE_NAME = 'JOBS_TASKS';
-    const TASKS_SIZE        = 10240;
+    public const SWOOLE_TABLE_NAME = 'JOBS_TASKS';
+    public const TASKS_SIZE        = 10240;
+
+    protected static $instance;
 
     private $_table;
 
@@ -33,23 +30,21 @@ class Tasks
         'run_minute'      => ['type' => \swoole_table::TYPE_STRING, 'size' => 12],
         'run_status'      => ['type' => \swoole_table::TYPE_INT, 'size' => 2],
         'run_time_start'  => ['type' => \swoole_table::TYPE_INT, 'size' => 11],
-        "run_time_update" => ['type' => \swoole_table::TYPE_INT, 'size' => 11],
+        'run_time_update' => ['type' => \swoole_table::TYPE_INT, 'size' => 11],
     ];
 
-    protected static $instance;
-
-    static function getInstance()
-    {
-        if (!isset(self::$instance)) {
-            self::$instance = new static();
-        }
-        return self::$instance;
-    }
-
-    function __construct()
+    public function __construct()
     {
         TableManager::getInstance()->add(self::SWOOLE_TABLE_NAME, $this->_tableColumns, self::TASKS_SIZE);
         $this->_table = TableManager::getInstance()->get(self::SWOOLE_TABLE_NAME);
+    }
+
+    public static function getInstance()
+    {
+        if (! isset(self::$instance)) {
+            self::$instance = new static();
+        }
+        return self::$instance;
     }
 
     /**
@@ -57,27 +52,27 @@ class Tasks
      *
      * @return array
      */
-    function getTasks()
+    public function getTasks()
     {
         $data = [];
         if ($this->_table->count() <= 0) {
             return [];
         }
         $nowTime   = time();
-        $nowMinute = date("YmdHi");
+        $nowMinute = date('YmdHi');
         foreach ($this->_table as $k => $task) {
-            if (($nowMinute == $task["run_minute"]) && (TasksLoad::RUN_STATUS_NORMAL == $task["run_status"])) {
+            if (($nowMinute == $task['run_minute']) && ($task['run_status'] == TasksLoad::RUN_STATUS_NORMAL)) {
                 $data[$k] = [
-                    "id"              => $task['id'],
-                    "run_status"      => TasksLoad::RUN_STATUS_START,
-                    "run_time_update" => $nowTime,
+                    'id'              => $task['id'],
+                    'run_status'      => TasksLoad::RUN_STATUS_START,
+                    'run_time_update' => $nowTime,
                 ];
-                if (!isset($task['run_time_start'])) {
+                if (! isset($task['run_time_start'])) {
                     $data['run_time_start'] = $nowTime;
                 }
             }
         }
-        if (!empty($data)) {
+        if (! empty($data)) {
             foreach ($data as $k => $v) {
                 $this->_table->set($k, $v);
                 TasksLoad::getInstance()->getTasks()->set($v['id'], $v);
@@ -86,10 +81,7 @@ class Tasks
         return $data;
     }
 
-    /**
-     * @param array $data
-     */
-    function saveTask(array $data)
+    public function saveTask(array $data)
     {
         TasksLoad::getInstance()->addTask($data);
     }
@@ -97,7 +89,7 @@ class Tasks
     /**
      * @param $id
      */
-    function deleteTask($id)
+    public function deleteTask($id)
     {
         $name = TasksLoad::getInstance()->getTaskInfo($id)['task_name'];
         ProcessManager::getInstance()->removeProcessByKey($name);
@@ -109,18 +101,18 @@ class Tasks
      *
      * @return bool
      */
-    function checkTasks()
+    public function checkTasks()
     {
         $this->_cleanTasks();
         $this->_cleanProcess();
         $tasks = TasksLoad::getInstance()->getTasks();
         if ($tasks->count() > 0) {
             foreach ($tasks as $id => $task) {
-                if ($task["status"] == TasksLoad::TASK_STOP) {
+                if ($task['status'] == TasksLoad::TASK_STOP) {
                     continue;
                 }
                 try {
-                    $jobs = CronExpression::factory($task["cron_spec"]);
+                    $jobs = CronExpression::factory($task['cron_spec']);
                 } catch (\Exception $e) {
                     Trigger::exception($e);
                     continue;
@@ -132,13 +124,13 @@ class Tasks
                     continue;
                 }
                 if ($this->_table->count() > self::TASKS_SIZE) {
-                    Logger::getInstance()->log("checkTask fail ,because tasks size Max");
+                    Logger::getInstance()->log('checkTask fail ,because tasks size Max');
                     break;
                 }
                 $tableData = [
-                    "id"         => $id,
-                    "run_minute" => $runMinute,
-                    "run_status" => TasksLoad::RUN_STATUS_NORMAL,
+                    'id'         => $id,
+                    'run_minute' => $runMinute,
+                    'run_status' => TasksLoad::RUN_STATUS_NORMAL,
                 ];
                 $this->_table->set(SnowFlake::make(), $tableData);
             }
@@ -157,9 +149,10 @@ class Tasks
 
         $count = $this->_table->count();
         if ($count > 0) {
-            $minute = date("YmdHi");
+            $minute = date('YmdHi');
             foreach ($this->_table as $id => $task) {
-                if (in_array($task["run_status"],
+                if (in_array(
+                    $task['run_status'],
                     [
                         TasksLoad::RUN_STATUS_SUCCESS,
                         TasksLoad::RUN_STATUS_FAILED,
@@ -170,32 +163,32 @@ class Tasks
                     $taskIds[] = $id;
                     continue;
                 }
-                $info = $loadTasks->get($task["id"]);
-                if (!is_array($info) || !array_key_exists("timeout", $info)) {
+                $info = $loadTasks->get($task['id']);
+                if (! is_array($info) || ! array_key_exists('timeout', $info)) {
                     continue;
                 }
                 // 如果运行中的任务超过了阈值,则把超过1个小时没有响应的任务清除
-                if ($count > self::TASKS_SIZE && $task["run_status"] == TasksLoad::RUN_STATUS_TO_TASK_SUCCESS) {
-                    if (intval($minute) > intval($task["run_minute"]) + 60) {
+                if ($count > self::TASKS_SIZE && $task['run_status'] == TasksLoad::RUN_STATUS_TO_TASK_SUCCESS) {
+                    if (intval($minute) > intval($task['run_minute']) + 60) {
                         $taskIds[]     = $id;
-                        $LoadTaskIds[] = $task["id"];
+                        $LoadTaskIds[] = $task['id'];
                         continue;
                     }
                 }
                 // 如果该任务无超时设置,则不进行处理
-                if ($info["timeout"] <= 0) {
+                if ($info['timeout'] <= 0) {
                     continue;
                 }
                 // 到了超时时间
-                $timeout = intval($info["timeout"] / 60);
+                $timeout = intval($info['timeout'] / 60);
                 $timeout = $timeout > 1 ? $timeout : 1;
-                if (intval($minute) > intval($task["run_minute"]) + $timeout) {
+                if (intval($minute) > intval($task['run_minute']) + $timeout) {
                     $taskIds[] = $id;
-                    if ($task["run_status"] == TasksLoad::RUN_STATUS_START
-                        or $task["run_status"] == TasksLoad::RUN_STATUS_TO_TASK_SUCCESS
-                        or $task["run_status"] == TasksLoad::RUN_STATUS_ERROR
+                    if ($task['run_status'] == TasksLoad::RUN_STATUS_START
+                        or $task['run_status'] == TasksLoad::RUN_STATUS_TO_TASK_SUCCESS
+                        or $task['run_status'] == TasksLoad::RUN_STATUS_ERROR
                     ) {
-                        $LoadTaskIds[] = $task["id"];
+                        $LoadTaskIds[] = $task['id'];
                     }
                 }
             }
@@ -206,12 +199,12 @@ class Tasks
         }
         // 超时则把运行中的数量-1
         foreach ($LoadTaskIds as $tid) {
-            $loadTasks->decr($tid, "exec_count");
+            $loadTasks->decr($tid, 'exec_count');
         }
     }
 
     /**
-     * 清理 process
+     * 清理 process.
      */
     private function _cleanProcess()
     {

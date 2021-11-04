@@ -1,15 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yangcai
- * Date: 2018/6/19
- * Time: 18:46
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Dispatcher;
 
-use App\Jobs\Dispatcher\TasksLoad as JobsLoadTasks;
 use App\Jobs\Dispatcher\Tasks as JobsTasks;
+use App\Jobs\Dispatcher\TasksLoad as JobsLoadTasks;
 use App\Jobs\Model\Task as TaskModel;
 use App\Jobs\Model\TaskLog as TaskLogModel;
 use Core\Swoole\Timer;
@@ -17,54 +15,48 @@ use swoole_server;
 
 /**
  * 调度器
- *
- * Class Dispatcher
- *
- * @package Jobs\Dispatcher
+ * Class Dispatcher.
  */
 class Dispatcher
 {
+    protected static $instance;
     /**
      * @var swoole_server
      */
     private $_server;
 
     /**
-     * @var integer
+     * @var int
      */
     private $_workerId;
 
-    protected static $instance;
-
-    static function getInstance()
+    public function __construct()
     {
-        if (!isset(self::$instance)) {
+    }
+
+    public static function getInstance()
+    {
+        if (! isset(self::$instance)) {
             self::$instance = new static();
         }
         return self::$instance;
     }
 
-    function __construct()
-    {
-
-    }
-
     /**
-     * @param swoole_server $server
-     * @param int           $workerId
+     * @param int $workerId
      *
      * @return $this
      */
-    function setServer(swoole_server $server, $workerId)
+    public function setServer(swoole_server $server, $workerId)
     {
         $this->_server   = $server;
         $this->_workerId = $workerId;
         return $this;
     }
 
-    function dispatch()
+    public function dispatch()
     {
-        if (!$this->_server || !$this->_workerId) {
+        if (! $this->_server || ! $this->_workerId) {
             return;
         }
         if ($this->_workerId == 1) {
@@ -75,44 +67,7 @@ class Dispatcher
         }
     }
 
-    private function _checkTasks()
-    {
-        Timer::delay((60 - date("s")) * 1000, function () { /* 准点载入任务 */
-            JobsTasks::getInstance()->checkTasks();
-            $this->_server->tick(60000, function () {
-                JobsTasks::getInstance()->checkTasks();
-            });
-        });
-    }
-
-    private function _runTask()
-    {
-        Timer::loop(1000, function () {
-            $tasks = JobsTasks::getInstance()->getTasks();
-            if (empty($tasks)) {
-                return;
-            }
-            foreach ($tasks as $task) {
-                if (!$taskInfo = JobsLoadTasks::getInstance()->getTasks()->get($task['id'])) {
-                    continue;
-                }
-                if ($taskModel = (new TaskModel)->get($taskInfo['id'])) {
-                    $taskModel->setAttr('prev_time', time());
-                    $taskModel->setAttr('execute_times', $taskModel->getAttr('execute_times') + 1);
-                    $taskModel->save();
-                }
-                ProcessManager::getInstance()->addProcess(
-                    $taskInfo['task_name'],
-                    $taskInfo['command'],
-                    Process::class,
-                    [$this, '_taskOnFinish'],
-                    $taskInfo
-                );
-            }
-        });
-    }
-
-    function _taskOnFinish($result, $status, $taskInfo)
+    public function _taskOnFinish($result, $status, $taskInfo)
     {
 //        echo '-------------' . date('Y-m-d H:i:s') . '-------------' . PHP_EOL;
 //
@@ -133,5 +88,42 @@ class Dispatcher
             $taskLogModel->save();
             ProcessManager::getInstance()->removeProcessByKey($taskInfo['task_name']);
         }
+    }
+
+    private function _checkTasks()
+    {
+        Timer::delay((60 - date('s')) * 1000, function () { /* 准点载入任务 */
+            JobsTasks::getInstance()->checkTasks();
+            $this->_server->tick(60000, function () {
+                JobsTasks::getInstance()->checkTasks();
+            });
+        });
+    }
+
+    private function _runTask()
+    {
+        Timer::loop(1000, function () {
+            $tasks = JobsTasks::getInstance()->getTasks();
+            if (empty($tasks)) {
+                return;
+            }
+            foreach ($tasks as $task) {
+                if (! $taskInfo = JobsLoadTasks::getInstance()->getTasks()->get($task['id'])) {
+                    continue;
+                }
+                if ($taskModel = (new TaskModel())->get($taskInfo['id'])) {
+                    $taskModel->setAttr('prev_time', time());
+                    $taskModel->setAttr('execute_times', $taskModel->getAttr('execute_times') + 1);
+                    $taskModel->save();
+                }
+                ProcessManager::getInstance()->addProcess(
+                    $taskInfo['task_name'],
+                    $taskInfo['command'],
+                    Process::class,
+                    [$this, '_taskOnFinish'],
+                    $taskInfo
+                );
+            }
+        });
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Expr;
 
 use PhpParser\Node\Expr;
@@ -7,25 +11,27 @@ use PhpParser\Node\Name;
 
 class StaticPropertyFetch extends Expr
 {
-    /** @var Name|Expr Class name */
+    /** @var Expr|Name Class name */
     public $class;
-    /** @var string|Expr Property name */
+    /** @var Expr|string Property name */
     public $name;
 
     /**
      * Constructs a static property fetch node.
      *
-     * @param Name|Expr   $class      Class name
-     * @param string|Expr $name       Property name
-     * @param array       $attributes Additional attributes
+     * @param Expr|Name $class Class name
+     * @param Expr|string $name Property name
+     * @param array $attributes Additional attributes
      */
-    public function __construct($class, $name, array $attributes = array()) {
+    public function __construct($class, $name, array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->class = $class;
-        $this->name = $name;
+        $this->name  = $name;
     }
 
-    public function getSubNodeNames() {
-        return array('class', 'name');
+    public function getSubNodeNames()
+    {
+        return ['class', 'name'];
     }
 }

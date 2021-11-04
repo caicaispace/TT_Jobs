@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Expr;
 
 use PhpParser\Node\Expr;
@@ -12,15 +16,17 @@ class Isset_ extends Expr
     /**
      * Constructs an array node.
      *
-     * @param Expr[] $vars       Variables
-     * @param array  $attributes Additional attributes
+     * @param Expr[] $vars Variables
+     * @param array $attributes Additional attributes
      */
-    public function __construct(array $vars, array $attributes = array()) {
+    public function __construct(array $vars, array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->vars = $vars;
     }
 
-    public function getSubNodeNames() {
-        return array('vars');
+    public function getSubNodeNames()
+    {
+        return ['vars'];
     }
 }

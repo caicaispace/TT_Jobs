@@ -1,60 +1,56 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/6/11
- * Time: 下午2:56
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\Spl;
-
 
 class SplEnum
 {
-    const __default = null;
+    public const __default = null;
     private $selfEnum;
 
-    final function __construct($enumVal)
+    final public function __construct($enumVal)
     {
-        $list = static::enumList();
-        $key  = array_search($enumVal, $list, true);
+        $list           = static::enumList();
+        $key            = array_search($enumVal, $list, true);
         $this->selfEnum = $key ? $key : '__default';
     }
 
-    final function equals($val)
+    final public function __toString()
+    {
+        $list = static::enumList();
+        $data = $list[$this->selfEnum];
+        if (is_string($data)) {
+            return $data;
+        }
+        return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+
+    final public static function __callStatic($name, $arguments)
+    {
+        $list = static::enumList();
+        $val  = isset($list[$name]) ? $list[$name] : null;
+        return new static($val);
+    }
+
+    final public function equals($val)
     {
         $list = static::enumList();
         return $list[$this->selfEnum] === $val ? true : false;
     }
 
-    static function inEnum($enumVal)
+    public static function inEnum($enumVal)
     {
         $list = static::enumList();
         $key  = array_search($enumVal, $list, true);
         return $key ? $key : false;
     }
 
-    final static function enumList()
+    final public static function enumList()
     {
         $ref = new \ReflectionClass(static::class);
         return $ref->getConstants();
-    }
-
-    final function __toString()
-    {
-        $list = static::enumList();
-        $data = $list[$this->selfEnum];
-        if (is_string($data)) {
-            return $data;
-        } else {
-            return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        }
-    }
-
-    final  static function __callStatic($name, $arguments)
-    {
-        $list = static::enumList();
-        $val  = isset($list[$name]) ? $list[$name] : null;
-        return new static($val);
     }
 }

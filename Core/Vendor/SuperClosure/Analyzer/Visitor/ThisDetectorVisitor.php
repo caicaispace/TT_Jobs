@@ -1,4 +1,10 @@
-<?php namespace SuperClosure\Analyzer\Visitor;
+<?php
+
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
+namespace SuperClosure\Analyzer\Visitor;
 
 use PhpParser\Node as AstNode;
 use PhpParser\Node\Expr\Variable as VariableNode;

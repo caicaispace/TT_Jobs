@@ -1,22 +1,29 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace FastRoute\Dispatcher;
 
-class MarkBased extends RegexBasedAbstract {
-    public function __construct($data) {
-        list($this->staticRouteMap, $this->variableRouteData) = $data;
+class MarkBased extends RegexBasedAbstract
+{
+    public function __construct($data)
+    {
+        [$this->staticRouteMap, $this->variableRouteData] = $data;
     }
 
-    protected function dispatchVariableRoute($routeData, $uri) {
+    protected function dispatchVariableRoute($routeData, $uri)
+    {
         foreach ($routeData as $data) {
-            if (!preg_match($data['regex'], $uri, $matches)) {
+            if (! preg_match($data['regex'], $uri, $matches)) {
                 continue;
             }
 
-            list($handler, $varNames) = $data['routeMap'][$matches['MARK']];
+            [$handler, $varNames] = $data['routeMap'][$matches['MARK']];
 
             $vars = [];
-            $i = 0;
+            $i    = 0;
             foreach ($varNames as $varName) {
                 $vars[$varName] = $matches[++$i];
             }

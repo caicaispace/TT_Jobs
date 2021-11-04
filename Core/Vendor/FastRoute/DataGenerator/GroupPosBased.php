@@ -1,18 +1,25 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace FastRoute\DataGenerator;
 
-class GroupPosBased extends RegexBasedAbstract {
-    protected function getApproxChunkSize() {
+class GroupPosBased extends RegexBasedAbstract
+{
+    protected function getApproxChunkSize()
+    {
         return 10;
     }
 
-    protected function processChunk($regexToRoutesMap) {
+    protected function processChunk($regexToRoutesMap)
+    {
         $routeMap = [];
-        $regexes = [];
-        $offset = 1;
+        $regexes  = [];
+        $offset   = 1;
         foreach ($regexToRoutesMap as $regex => $route) {
-            $regexes[] = $regex;
+            $regexes[]         = $regex;
             $routeMap[$offset] = [$route->handler, $route->variables];
 
             $offset += count($route->variables);
@@ -22,4 +29,3 @@ class GroupPosBased extends RegexBasedAbstract {
         return ['regex' => $regex, 'routeMap' => $routeMap];
     }
 }
-

@@ -1,23 +1,20 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/6/11
- * Time: 22:40
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\Component\Crontab;
 
 /**
- * Class Parse
- * @package Core\Component\Crontab
+ * Class Parse.
  */
 class Parse
 {
-    static public $error;
+    public static $error;
 
     /**
-     *  解析crontab的定时格式
+     *  解析crontab的定时格式.
      * @param string $crontabString
      *
      *      0     1    2    3    4    5
@@ -30,26 +27,26 @@ class Parse
      *      |     |    +--------- hour (0 - 23)
      *      |     +----------- min (0 - 59)
      *      +------------- sec (0-59)
-     * @param int    $startTime timestamp [default=current timestamp]
-     * @return int|array unix timestamp  下一分钟内是否需要执行任务，如果需要，则把需要在那几秒执行返回
+     * @param int $startTime timestamp [default=current timestamp]
      * @throws \InvalidArgumentException 错误信息
+     * @return array|int unix timestamp  下一分钟内是否需要执行任务，如果需要，则把需要在那几秒执行返回
      */
-    static public function parse($crontabString, $startTime = null)
+    public static function parse($crontabString, $startTime = null)
     {
         if (is_array($crontabString)) {
             return self::_parseArray($crontabString, $startTime);
         }
-        if (!preg_match('/^((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)$/i', trim($crontabString))) {
-            if (!preg_match('/^((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)$/i', trim($crontabString))) {
-                self::$error = "Invalid cron string: " . $crontabString;
+        if (! preg_match('/^((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)$/i', trim($crontabString))) {
+            if (! preg_match('/^((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)\s+((\*(\/[0-9]+)?)|[0-9\-\,\/]+)$/i', trim($crontabString))) {
+                self::$error = 'Invalid cron string: ' . $crontabString;
                 return false;
             }
         }
-        if ($startTime && !is_numeric($startTime)) {
+        if ($startTime && ! is_numeric($startTime)) {
             self::$error = "{$startTime} must be a valid unix timestamp ({$startTime} given)";
             return false;
         }
-        $cron  = preg_split("/[\s]+/i", trim($crontabString));
+        $cron  = preg_split('/[\\s]+/i', trim($crontabString));
         $start = empty($startTime) ? time() : $startTime;
         $date  = [];
         if (count($cron) == 6) {
@@ -72,11 +69,11 @@ class Parse
             ];
         }
         if (
-            in_array(intval(date('i', $start)), $date['minutes']) &&
-            in_array(intval(date('G', $start)), $date['hours']) &&
-            in_array(intval(date('j', $start)), $date['day']) &&
-            in_array(intval(date('w', $start)), $date['week']) &&
-            in_array(intval(date('n', $start)), $date['month'])
+            in_array(intval(date('i', $start)), $date['minutes'])
+            && in_array(intval(date('G', $start)), $date['hours'])
+            && in_array(intval(date('j', $start)), $date['day'])
+            && in_array(intval(date('w', $start)), $date['week'])
+            && in_array(intval(date('n', $start)), $date['month'])
         ) {
             return $date['second'];
         }
@@ -84,22 +81,22 @@ class Parse
     }
 
     /**
-     * 解析单个配置的含义
+     * 解析单个配置的含义.
      * @param $s
      * @param $min
      * @param $max
      * @return array
      */
-    static protected function _parseCronNumber($s, $min, $max)
+    protected static function _parseCronNumber($s, $min, $max)
     {
         $result = [];
-        $v1     = explode(",", $s);
+        $v1     = explode(',', $s);
         foreach ($v1 as $v2) {
-            $v3   = explode("/", $v2);
+            $v3   = explode('/', $v2);
             $step = empty($v3[1]) ? 1 : $v3[1];
-            $v4   = explode("-", $v3[0]);
-            $_min = count($v4) == 2 ? $v4[0] : ($v3[0] == "*" ? $min : $v3[0]);
-            $_max = count($v4) == 2 ? $v4[1] : ($v3[0] == "*" ? $max : $v3[0]);
+            $v4   = explode('-', $v3[0]);
+            $_min = count($v4) == 2 ? $v4[0] : ($v3[0] == '*' ? $min : $v3[0]);
+            $_max = count($v4) == 2 ? $v4[1] : ($v3[0] == '*' ? $max : $v3[0]);
             for ($i = $_min; $i <= $_max; $i += $step) {
                 $result[$i] = intval($i);
             }
@@ -113,12 +110,12 @@ class Parse
      * @param $startTime
      * @return array
      */
-    static protected function _parseArray($data, $startTime)
+    protected static function _parseArray($data, $startTime)
     {
         $result = [];
         foreach ($data as $v) {
-            if (count(explode(":", $v)) == 2) {
-                $v = $v . ":01";
+            if (count(explode(':', $v)) == 2) {
+                $v = $v . ':01';
             }
             $time = strtotime($v);
             if ($time >= $startTime && $time < $startTime + 60) {

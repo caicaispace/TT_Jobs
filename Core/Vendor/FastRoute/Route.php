@@ -1,8 +1,13 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace FastRoute;
 
-class Route {
+class Route
+{
     /** @var string */
     public $httpMethod;
 
@@ -19,15 +24,16 @@ class Route {
      * Constructs a route (value object).
      *
      * @param string $httpMethod
-     * @param mixed  $handler
+     * @param mixed $handler
      * @param string $regex
-     * @param array  $variables
+     * @param array $variables
      */
-    public function __construct($httpMethod, $handler, $regex, $variables) {
+    public function __construct($httpMethod, $handler, $regex, $variables)
+    {
         $this->httpMethod = $httpMethod;
-        $this->handler = $handler;
-        $this->regex = $regex;
-        $this->variables = $variables;
+        $this->handler    = $handler;
+        $this->regex      = $regex;
+        $this->variables  = $variables;
     }
 
     /**
@@ -37,9 +43,9 @@ class Route {
      *
      * @return bool
      */
-    public function matches($str) {
+    public function matches($str)
+    {
         $regex = '~^' . $this->regex . '$~';
         return (bool) preg_match($regex, $str);
     }
 }
-

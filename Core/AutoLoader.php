@@ -1,51 +1,39 @@
 <?php
 
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: YF
- * Date: 16/8/24
- * Time: 下午11:58
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core;
-
 
 class AutoLoader
 {
     protected static $instance;
     /**
-     * 对应每个命名空间的路径前缀配置
+     * 对应每个命名空间的路径前缀配置.
      *
      * @var array
      */
     protected $prefixes = [];
 
-    static function getInstance()
+    public function __construct()
     {
-        if (!isset(self::$instance)) {
+        $this->register();
+    }
+
+    public static function getInstance()
+    {
+        if (! isset(self::$instance)) {
             self::$instance = new AutoLoader();
         }
         return self::$instance;
     }
 
-    function __construct()
-    {
-        $this->register();
-    }
-
     /**
-     *注册自动加载事件
-     */
-    protected function register()
-    {
-        spl_autoload_register([$this, 'loadClass']);
-    }
-
-    /**
-     * @param string $prefix   名称空间前缀.
+     * @param string $prefix 名称空间前缀
      * @param string $base_dir 对应的基础路径
-     * @param int    $memorySecure
-     * @param bool   $prepend  该路径是否优先搜索
+     * @param int $memorySecure
+     * @param bool $prepend 该路径是否优先搜索
      *
      * @return $this
      */
@@ -66,6 +54,37 @@ class AutoLoader
             array_push($this->prefixes[$prefix], $base_dir);
         }
         return $this;
+    }
+
+    public function requireFile($file)
+    {
+        /*
+         * 若不加ROOT，会导致在daemonize模式下
+         * 类文件引入目录错误导致类无法正常加载
+         */
+        $file = ROOT . '/' . $file;
+        if (file_exists($file)) {
+            require_once $file;
+            return true;
+        }
+        return false;
+    }
+
+    public function importPath($path, $ext = 'php')
+    {
+        $path = rtrim($path, '/');
+        $pat  = $path . '/*.' . $ext;
+        foreach (glob($pat) as $file) {
+            $this->requireFile($file);
+        }
+    }
+
+    /**
+     *注册自动加载事件.
+     */
+    protected function register()
+    {
+        spl_autoload_register([$this, 'loadClass']);
     }
 
     /**
@@ -102,28 +121,5 @@ class AutoLoader
             }
         }
         return false;
-    }
-
-    function requireFile($file)
-    {
-        /*
-         * 若不加ROOT，会导致在daemonize模式下
-         * 类文件引入目录错误导致类无法正常加载
-         */
-        $file = ROOT . '/' . $file;
-        if (file_exists($file)) {
-            require_once($file);
-            return true;
-        }
-        return false;
-    }
-
-    function importPath($path, $ext = 'php')
-    {
-        $path = rtrim($path, '/');
-        $pat  = $path . '/*.' . $ext;
-        foreach (glob($pat) as $file) {
-            $this->requireFile($file);
-        }
     }
 }

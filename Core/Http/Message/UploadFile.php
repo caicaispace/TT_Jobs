@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/6/14
- * Time: 下午12:32
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Http\Message;
-
 
 class UploadFile
 {
@@ -17,9 +14,9 @@ class UploadFile
     private $clientFileName;
     private $clientMediaType;
 
-    function __construct($tempName, $size, $errorStatus, $clientFilename = null, $clientMediaType = null)
+    public function __construct($tempName, $size, $errorStatus, $clientFilename = null, $clientMediaType = null)
     {
-        $this->stream          = new Stream(fopen($tempName, "r+"));
+        $this->stream          = new Stream(fopen($tempName, 'r+'));
         $this->error           = $errorStatus;
         $this->size            = $size;
         $this->clientFileName  = $clientFilename;

@@ -1,4 +1,10 @@
-<?php namespace SuperClosure;
+<?php
+
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
+namespace SuperClosure;
 
 use Closure;
 use SuperClosure\Exception\ClosureUnserializationException;
@@ -35,26 +41,13 @@ class SerializableClosure implements \Serializable
 
     /**
      * Create a new serializable closure instance.
-     *
-     * @param Closure                  $closure
-     * @param SerializerInterface|null $serializer
      */
     public function __construct(
-        \Closure $closure,
+        Closure $closure,
         SerializerInterface $serializer = null
     ) {
-        $this->closure = $closure;
-        $this->serializer = $serializer ?: new Serializer;
-    }
-
-    /**
-     * Return the original closure object.
-     *
-     * @return Closure
-     */
-    public function getClosure()
-    {
-        return $this->closure;
+        $this->closure    = $closure;
+        $this->serializer = $serializer ?: new Serializer();
     }
 
     /**
@@ -76,12 +69,32 @@ class SerializableClosure implements \Serializable
     }
 
     /**
+     * Returns closure data for `var_dump()`.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return $this->data ?: $this->serializer->getData($this->closure, true);
+    }
+
+    /**
+     * Return the original closure object.
+     *
+     * @return Closure
+     */
+    public function getClosure()
+    {
+        return $this->closure;
+    }
+
+    /**
      * Clones the SerializableClosure with a new bound object and class scope.
      *
      * The method is essentially a wrapped proxy to the Closure::bindTo method.
      *
-     * @param mixed $newthis  The object to which the closure should be bound,
-     *                        or NULL for the closure to be unbound.
+     * @param mixed $newthis the object to which the closure should be bound,
+     *                       or NULL for the closure to be unbound
      * @param mixed $newscope The class scope to which the closure is to be
      *                        associated, or 'static' to keep the current one.
      *                        If an object is given, the type of the object will
@@ -89,7 +102,7 @@ class SerializableClosure implements \Serializable
      *                        protected and private methods of the bound object.
      *
      * @return SerializableClosure
-     * @link http://www.php.net/manual/en/closure.bindto.php
+     * @see http://www.php.net/manual/en/closure.bindto.php
      */
     public function bindTo($newthis, $newscope = 'static')
     {
@@ -102,8 +115,8 @@ class SerializableClosure implements \Serializable
     /**
      * Serializes the code, context, and binding of the closure.
      *
-     * @return string|null
-     * @link http://php.net/manual/en/serializable.serialize.php
+     * @return null|string
+     * @see http://php.net/manual/en/serializable.serialize.php
      */
     public function serialize()
     {
@@ -132,16 +145,16 @@ class SerializableClosure implements \Serializable
      * @param string $serialized
      *
      * @throws ClosureUnserializationException
-     * @link http://php.net/manual/en/serializable.unserialize.php
+     * @see http://php.net/manual/en/serializable.unserialize.php
      */
     public function unserialize($serialized)
     {
         // Unserialize the closure data and reconstruct the closure object.
-        $this->data = unserialize($serialized);
+        $this->data    = unserialize($serialized);
         $this->closure = __reconstruct_closure($this->data);
 
         // Throw an exception if the closure could not be reconstructed.
-        if (!$this->closure instanceof Closure) {
+        if (! $this->closure instanceof Closure) {
             throw new ClosureUnserializationException(
                 'The closure is corrupted and cannot be unserialized.'
             );
@@ -154,16 +167,6 @@ class SerializableClosure implements \Serializable
                 $this->data['scope']
             );
         }
-    }
-
-    /**
-     * Returns closure data for `var_dump()`.
-     *
-     * @return array
-     */
-    public function __debugInfo()
-    {
-        return $this->data ?: $this->serializer->getData($this->closure, true);
     }
 }
 
@@ -179,9 +182,9 @@ class SerializableClosure implements \Serializable
  * This is also done inside a plain function instead of a method so that the
  * binding and scope of the closure are null.
  *
- * @param array $__data Unserialized closure data.
+ * @param array $__data unserialized closure data
  *
- * @return Closure|null
+ * @return null|Closure
  * @internal
  */
 function __reconstruct_closure(array $__data)

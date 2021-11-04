@@ -1,26 +1,21 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yangcai
- * Date: 2018/5/16
- * Time: 17:26
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Model;
 
 use Core\AbstractInterface\AModel as Model;
 
 /**
- * Class TaskGroup
- *
- * @package Home\Model
+ * Class TaskGroup.
  */
 class TaskGroup extends Model
 {
+    public const DELETED          = 1;
+    public const UN_DELETE        = 0;
     protected $autoWriteTimestamp = true;
-
-    const DELETED   = 1;
-    const UN_DELETE = 0;
 
     public static function init()
     {

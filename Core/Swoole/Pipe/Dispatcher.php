@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/23
- * Time: 上午2:28
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Swoole\Pipe;
-
 
 use Core\Component\Di;
 use Core\Component\SysConst;
@@ -17,15 +14,7 @@ class Dispatcher
     private $commandList;
     private static $instance;
 
-    static function getInstance()
-    {
-        if (!isset(self::$instance)) {
-            self::$instance = new Dispatcher();
-        }
-        return self::$instance;
-    }
-
-    function __construct()
+    public function __construct()
     {
         $this->commandList = new CommandList();
         $register          = Di::getInstance()->get(SysConst::PIPE_COMMAND_REGISTER);
@@ -34,11 +23,19 @@ class Dispatcher
         }
     }
 
+    public static function getInstance()
+    {
+        if (! isset(self::$instance)) {
+            self::$instance = new Dispatcher();
+        }
+        return self::$instance;
+    }
+
     /*
      * $onCommandWorker 当前（目标）收到信息进程
      * $fromProcessId 来自哪个进程的id
      */
-    function dispatch($onCommandWorker, $fromProcessId, $data)
+    public function dispatch($onCommandWorker, $fromProcessId, $data)
     {
         $arr     = json_decode($data, 1);
         $arr     = is_array($arr) ? $arr : [];
@@ -52,5 +49,4 @@ class Dispatcher
             }
         }
     }
-
 }

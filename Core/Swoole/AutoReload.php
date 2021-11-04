@@ -1,20 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yangcai
- * Date: 2018/7/18
- * Time: 9:26
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\Swoole;
 
 use Core\Component\Error\Trigger;
 use Core\Component\Logger;
 
 /**
- * Class AutoReload
- *
- * @package Core\Swoole
+ * Class AutoReload.
  */
 class AutoReload
 {
@@ -37,9 +33,9 @@ class AutoReload
      *
      * @param $serverPid
      */
-    function __construct($serverPid = null)
+    public function __construct($serverPid = null)
     {
-        if (!extension_loaded('inotify')) {
+        if (! extension_loaded('inotify')) {
             return false;
 //            exit("Please install inotify extension.\n");
         }
@@ -52,25 +48,26 @@ class AutoReload
         \swoole_event_add($this->_inotify, function ($ifd) {
             $events = \inotify_read($this->_inotify);
 //            var_dump($events);
-            if (!$events) {
+            if (! $events) {
                 return;
             }
             foreach ($events as $event) {
-                if (IN_IGNORED == $event['mask']) {
+                if ($event['mask'] == IN_IGNORED) {
                     continue;
-                } elseif (
-                    IN_CREATE == $event['mask'] or
-                    IN_DELETE == $event['mask'] or
-                    IN_MODIFY == $event['mask'] or
-                    IN_MOVED_TO == $event['mask'] or
-                    IN_MOVED_FROM == $event['mask']) {
+                }
+                if (
+                    $event['mask'] == IN_CREATE
+                    or $event['mask'] == IN_DELETE
+                    or $event['mask'] == IN_MODIFY
+                    or $event['mask'] == IN_MOVED_TO
+                    or $event['mask'] == IN_MOVED_FROM) {
                     $fileType = strrchr($event['name'], '.');
-                    if (!isset($this->_reloadFileTypes[$fileType])) { //非重启类型
+                    if (! isset($this->_reloadFileTypes[$fileType])) { //非重启类型
                         continue;
                     }
                 }
-                if (!$this->_reloading) { // 正在reload，不再接受任何事件，冻结10秒
-                    Logger::getInstance()->log("after 10 seconds reload the server");
+                if (! $this->_reloading) { // 正在reload，不再接受任何事件，冻结10秒
+                    Logger::getInstance()->log('after 10 seconds reload the server');
                     \swoole_timer_after($this->_afterSomeSeconds * 1000, [$this, 'reload']); //有事件发生了，进行重启
                     $this->_reloading = true;
                 }
@@ -78,7 +75,7 @@ class AutoReload
         });
     }
 
-    function reload()
+    public function reload()
     {
         if ($this->_serverPid) {
             \posix_kill($this->_serverPid, SIGUSR1); // 向主进程发送信号
@@ -93,30 +90,30 @@ class AutoReload
     }
 
     /**
-     * 添加文件类型
+     * 添加文件类型.
      *
      * @param $type
      */
-    function addFileType($type)
+    public function addFileType($type)
     {
         $type                                = trim($type, '.');
         $this->_reloadFileTypes['.' . $type] = true;
     }
 
     /**
-     * 添加事件
+     * 添加事件.
      *
      * @param $inotifyEvent
      */
-    function addEvent($inotifyEvent)
+    public function addEvent($inotifyEvent)
     {
         $this->_events |= $inotifyEvent;
     }
 
     /**
-     * 清理所有inotify监听
+     * 清理所有inotify监听.
      */
-    function clearWatch()
+    public function clearWatch()
     {
         foreach ($this->_watchingFiles as $wd) {
             \inotify_rm_watch($this->_inotify, $wd);
@@ -125,14 +122,14 @@ class AutoReload
     }
 
     /**
-     * @param      $dir
+     * @param $dir
      * @param bool $root
      *
      * @return bool
      */
-    function watch($dir, $root = true)
+    public function watch($dir, $root = true)
     {
-        if (!\is_dir($dir)) { //目录不存在
+        if (! \is_dir($dir)) { //目录不存在
             Trigger::error("[{$dir}] is not a directory.");
         }
         if (isset($this->_watchingFiles[$dir])) { //避免重复监听
@@ -159,7 +156,7 @@ class AutoReload
         return true;
     }
 
-    function run()
+    public function run()
     {
         \swoole_event_wait();
     }

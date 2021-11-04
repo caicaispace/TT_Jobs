@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * 程序名称: PHP探针
  * 程序功能: 探测系统的Web服务器运行环境
@@ -7,17 +7,17 @@
  * 项目主页: https://github.com/fbcha/phpprobe
  * 博   客: https://zerosn.com
  * Date: 2016-09-18
- * Update: 2017-2-13
+ * Update: 2017-2-13.
  */
 error_reporting(0);
-$title   = "PHPProbe探针 ";
-$name    = "PHPProbe探针 ";
-$downUrl = "https://github.com/fbcha/phpprobe";
-$version = "v1.4.1";
+$title   = 'PHPProbe探针 ';
+$name    = 'PHPProbe探针 ';
+$downUrl = 'https://github.com/fbcha/phpprobe';
+$version = 'v1.4.1';
 
 $is_constantly = true; // 是否开启实时信息, false - 关闭, true - 开启
 
-date_default_timezone_set("Asia/Shanghai");
+date_default_timezone_set('Asia/Shanghai');
 
 if (filter_input(INPUT_GET, 'act') == 'phpinfo') {
     phpinfo();
@@ -27,7 +27,7 @@ if (filter_input(INPUT_GET, 'act') == 'phpinfo') {
 $getServerHosts     = get_current_user() . '/' . filter_input(INPUT_SERVER, 'SERVER_NAME') . '(' . gethostbyname(filter_input(INPUT_SERVER, 'SERVER_NAME')) . ')'; // 获取服务器域名/ip
 $getServerOS        = PHP_OS . ' ' . php_uname('r'); // 获取服务器操作系统
 $getServerSoftWare  = filter_input(INPUT_SERVER, 'SERVER_SOFTWARE'); // 获取服务器类型和版本
-$getServerLang      = getenv("HTTP_ACCEPT_LANGUAGE"); // 获取服务器语言
+$getServerLang      = getenv('HTTP_ACCEPT_LANGUAGE'); // 获取服务器语言
 $getServerPort      = filter_input(INPUT_SERVER, 'SERVER_PORT'); // 获取服务器端口
 $getServerHostName  = php_uname('n'); // 获取服务器主机名
 $getServerAdminMail = filter_input(INPUT_SERVER, 'SERVER_ADMIN'); // 获取服务器管理员邮箱
@@ -35,7 +35,7 @@ $getServerTzPath    = __FILE__; // 获取探针路径
 // 检查true or false
 function checkstatus($status)
 {
-    if (false == $status) {
+    if ($status == false) {
         $out = '<i class="sui-icon icon-pc-error sui-text-danger"></i>';
     } else {
         $out = '<i class="sui-icon icon-pc-right sui-text-success"></i>';
@@ -57,10 +57,10 @@ function isinit($var)
             $out = checkstatus(isset($_COOKIE));
             break;
         case 'issmtp':
-            $out = checkstatus(get_cfg_var("SMTP"));
+            $out = checkstatus(get_cfg_var('SMTP'));
             break;
         case 'SMTP':
-            $out = get_cfg_var("SMTP");
+            $out = get_cfg_var('SMTP');
             break;
         default:
             $out = getini($var);
@@ -80,7 +80,7 @@ function getini($var)
         case 1:
             $out = checkstatus(1);
             break;
-        default :
+        default:
             $out = $conf;
             break;
     }
@@ -91,7 +91,9 @@ function getini($var)
 // 检测函数支持
 function isfunction($funname = '')
 {
-    if (!checkFunction($funname)) return "函数错误！";
+    if (! checkFunction($funname)) {
+        return '函数错误！';
+    }
     return checkstatus(function_exists($funname));
 }
 
@@ -104,7 +106,7 @@ function checkFunction($funname = '')
 // 禁用的函数
 function disableFunction()
 {
-    $fun = get_cfg_var("disable_functions");
+    $fun = get_cfg_var('disable_functions');
 
     if (empty($fun)) {
         $out = checkstatus($fun);
@@ -124,15 +126,15 @@ function disableFunction()
 function isExt($ext)
 {
     if ($ext == 'gd_info') {
-        $is_gd = extension_loaded("gd");
+        $is_gd = extension_loaded('gd');
         if ($is_gd) {
             $gd  = gd_info();
-            $out = $gd["GD Version"];
+            $out = $gd['GD Version'];
         } else {
             $out = checkstatus($is_gd);
         }
-    } else if ($ext == 'sqlite3') {
-        $is_sqlite3 = extension_loaded("sqlite3");
+    } elseif ($ext == 'sqlite3') {
+        $is_sqlite3 = extension_loaded('sqlite3');
         if ($is_sqlite3) {
             $sqlite3 = SQLite3::version();
             $out     = $sqlite3['versionString'];
@@ -161,37 +163,37 @@ function loadExt()
 
 // 判断操作系统平台
 switch (PHP_OS) {
-    case "Linux":
-        $svrShow = (false !== $is_constantly) ? ((false !== ($svrInfo = svr_linux())) ? "show" : "none") : "none";
+    case 'Linux':
+        $svrShow = ($is_constantly !== false) ? ((false !== ($svrInfo = svr_linux())) ? 'show' : 'none') : 'none';
         $svrInfo = array_merge($svrInfo, linux_Network());
         break;
-    case "FreeBSD":
-        $svrShow = (false !== $is_constantly) ? ((false !== ($svrInfo = svr_freebsd())) ? "show" : "none") : "none";
+    case 'FreeBSD':
+        $svrShow = ($is_constantly !== false) ? ((false !== ($svrInfo = svr_freebsd())) ? 'show' : 'none') : 'none';
         $svrInfo = array_merge($svrInfo, freebsd_Network());
         break;
-    case "Darwin":
-        $svrShow = (false !== $is_constantly) ? ((false !== ($svrInfo = svr_darwin())) ? "show" : "none") : "none";
+    case 'Darwin':
+        $svrShow = ($is_constantly !== false) ? ((false !== ($svrInfo = svr_darwin())) ? 'show' : 'none') : 'none';
         $svrInfo = array_merge($svrInfo, darwin_Network());
         break;
-    case "WINNT":
+    case 'WINNT':
         $is_constantly = false;
-        $svrShow       = (false !== $is_constantly) ? ((false !== ($svrInfo = svr_winnt())) ? "show" : "none") : "none";
+        $svrShow       = ($is_constantly !== false) ? ((false !== ($svrInfo = svr_winnt())) ? 'show' : 'none') : 'none';
         break;
-    default :
+    default:
         break;
 }
 
 function getCpuInfo()
 {
     $cpu  = [];
-    $str  = file_get_contents("/proc/stat");
-    $mode = "/(cpu)[\s]+([0-9]+)[\s]+([0-9]+)[\s]+([0-9]+)[\s]+([0-9]+)[\s]+([0-9]+)[\s]+([0-9]+)[\s]+([0-9]+)[\s]+([0-9]+)/";
+    $str  = file_get_contents('/proc/stat');
+    $mode = '/(cpu)[\\s]+([0-9]+)[\\s]+([0-9]+)[\\s]+([0-9]+)[\\s]+([0-9]+)[\\s]+([0-9]+)[\\s]+([0-9]+)[\\s]+([0-9]+)[\\s]+([0-9]+)/';
     preg_match_all($mode, $str, $cpu);
     $total = $cpu[2][0] + $cpu[3][0] + $cpu[4][0] + $cpu[5][0] + $cpu[6][0] + $cpu[7][0] + $cpu[8][0] + $cpu[9][0];
     $time  = $cpu[2][0] + $cpu[3][0] + $cpu[4][0] + $cpu[6][0] + $cpu[7][0] + $cpu[8][0] + $cpu[9][0];
     return [
         'total' => $total,
-        'time'  => $time
+        'time'  => $time,
     ];
 }
 
@@ -199,16 +201,20 @@ function getCpuInfo()
 function svr_linux()
 {
     // 获取CPU信息
-    if (false === ($str = file_get_contents("/proc/cpuinfo"))) return false;
+    if (false === ($str = file_get_contents('/proc/cpuinfo'))) {
+        return false;
+    }
 
-    if (is_array($str)) $str = implode(":", $str);
-    preg_match_all("/model\sname\s+\:(.*)[\r\n]+/isU", $str, $model);
-    preg_match_all("/cache\ssize\s+:\s*(.*)[\r\n]+/isU", $str, $cache);
-    preg_match_all("/cpu\sMHz\s+:\s*(.*)[\r\n]+/isU", $str, $mhz);
-    preg_match_all("/bogomips\s+:\s*(.*)[\r\n]+/isU", $str, $bogomips);
-    preg_match_all("/core\sid\s+:\s*(.[1-9])[\r\n]+/isU", $str, $cores);
+    if (is_array($str)) {
+        $str = implode(':', $str);
+    }
+    preg_match_all("/model\\sname\\s+\\:(.*)[\r\n]+/isU", $str, $model);
+    preg_match_all("/cache\\ssize\\s+:\\s*(.*)[\r\n]+/isU", $str, $cache);
+    preg_match_all("/cpu\\sMHz\\s+:\\s*(.*)[\r\n]+/isU", $str, $mhz);
+    preg_match_all("/bogomips\\s+:\\s*(.*)[\r\n]+/isU", $str, $bogomips);
+    preg_match_all("/core\\sid\\s+:\\s*(.[1-9])[\r\n]+/isU", $str, $cores);
 
-    if (false !== is_array($model[1])) {
+    if (is_array($model[1]) !== false) {
         $res['cpu']['core']      = sizeof($cores[1]);
         $res['cpu']['processor'] = sizeof($model[1]);
         $res['cpu']['cores']     = $res['cpu']['core'] . '核' . (($res['cpu']['processor']) ? '/' . $res['cpu']['processor'] . '线程' : '');
@@ -219,35 +225,45 @@ function svr_linux()
             $res['cpu']['model'][] = $model[1][$k] . $mhz[1][$k] . $cache[1][$k] . $bogomips[1][$k];
         }
 
-        if (false !== is_array($res['cpu']['model'])) $res['cpu']['model'] = implode("<br />", $res['cpu']['model']);
+        if (is_array($res['cpu']['model']) !== false) {
+            $res['cpu']['model'] = implode('<br />', $res['cpu']['model']);
+        }
     }
 
     // 获取服务器运行时间
-    if (false === ($str = file_get_contents("/proc/uptime"))) return false;
+    if (false === ($str = file_get_contents('/proc/uptime'))) {
+        return false;
+    }
 
-    $str   = explode(" ", $str);
+    $str   = explode(' ', $str);
     $str   = trim($str[0]);
     $min   = $str / 60;
     $hours = $min / 60;
     $days  = floor($hours / 24);
     $hours = floor($hours - ($days * 24));
     $min   = floor($min - ($days * 60 * 24) - ($hours * 60));
-    if ($days !== 0) $res['uptime'] = $days . "天";
-    if ($hours !== 0) $res['uptime'] .= $hours . "小时";
-    $res['uptime'] .= $min . "分钟";
+    if ($days !== 0) {
+        $res['uptime'] = $days . '天';
+    }
+    if ($hours !== 0) {
+        $res['uptime'] .= $hours . '小时';
+    }
+    $res['uptime'] .= $min . '分钟';
 
     // 获取内存信息
-    if (false === ($str = file_get_contents("/proc/meminfo"))) return false;
+    if (false === ($str = file_get_contents('/proc/meminfo'))) {
+        return false;
+    }
 
-    preg_match_all("/MemTotal\s{0,}\:+\s{0,}([\d\.]+).+?MemFree\s{0,}\:+\s{0,}([\d\.]+).+?Cached\s{0,}\:+\s{0,}([\d\.]+).+?SwapTotal\s{0,}\:+\s{0,}([\d\.]+).+?SwapFree\s{0,}\:+\s{0,}([\d\.]+)/s", $str, $mems);
-    preg_match_all("/Buffers\s{0,}\:+\s{0,}([\d\.]+)/s", $str, $buffers);
+    preg_match_all('/MemTotal\\s{0,}\\:+\\s{0,}([\\d\\.]+).+?MemFree\\s{0,}\\:+\\s{0,}([\\d\\.]+).+?Cached\\s{0,}\\:+\\s{0,}([\\d\\.]+).+?SwapTotal\\s{0,}\\:+\\s{0,}([\\d\\.]+).+?SwapFree\\s{0,}\\:+\\s{0,}([\\d\\.]+)/s', $str, $mems);
+    preg_match_all('/Buffers\\s{0,}\\:+\\s{0,}([\\d\\.]+)/s', $str, $buffers);
 
-    $mtotal    = $mems[1][0] * 1024;
-    $mfree     = $mems[2][0] * 1024;
+    $mtotal    = $mems[1][0]    * 1024;
+    $mfree     = $mems[2][0]    * 1024;
     $mbuffers  = $buffers[1][0] * 1024;
-    $mcached   = $mems[3][0] * 1024;
-    $stotal    = $mems[4][0] * 1024;
-    $sfree     = $mems[5][0] * 1024;
+    $mcached   = $mems[3][0]    * 1024;
+    $stotal    = $mems[4][0]    * 1024;
+    $sfree     = $mems[5][0]    * 1024;
     $mused     = $mtotal - $mfree;
     $sused     = $stotal - $sfree;
     $mrealused = $mtotal - $mfree - $mcached - $mbuffers; //真实内存使用
@@ -273,11 +289,13 @@ function svr_linux()
     $res['sBool'] = true;
 
     // cpu状态
-    if (false === ($str = file_get_contents("/proc/stat"))) return false;
+    if (false === ($str = file_get_contents('/proc/stat'))) {
+        return false;
+    }
     $cpuinfo1 = getCpuInfo($str);
     sleep(1);
     $cpuinfo2 = getCpuInfo($str);
-    $time     = $cpuinfo2['time'] - $cpuinfo1['time'];
+    $time     = $cpuinfo2['time']  - $cpuinfo1['time'];
     $total    = $cpuinfo2['total'] - $cpuinfo1['total'];
 
     $percent               = round($time / $total, 4);
@@ -291,15 +309,17 @@ function svr_linux()
 function svr_freebsd()
 {
     // 获取cpu信息
-    if (false === ($res['cpu']['core'] = getCommand("kern.smp.cpus"))) return false;
+    if (false === ($res['cpu']['core'] = getCommand('kern.smp.cpus'))) {
+        return false;
+    }
 
     $res['cpu']['cores'] = $res['cpu']['core'] . '核';
-    $model               = getCommand("hw.model");
+    $model               = getCommand('hw.model');
     $res['cpu']['model'] = $model;
 
     // 获取服务器运行时间
-    $uptime = getCommand("kern.boottime");
-    $uptime = preg_split("/ /", $uptime);
+    $uptime = getCommand('kern.boottime');
+    $uptime = preg_split('/ /', $uptime);
     $uptime = preg_replace('/,/', '', $uptime[3]);
 
     $str   = time() - $uptime;
@@ -308,30 +328,36 @@ function svr_freebsd()
     $days  = floor($hours / 24);
     $hours = floor($hours - ($days * 24));
     $min   = floor($min - ($days * 60 * 24) - ($hours * 60));
-    if ($days !== 0) $res['uptime'] = $days . "天";
-    if ($hours !== 0) $res['uptime'] .= $hours . "小时";
-    $res['uptime'] .= $min . "分钟";
+    if ($days !== 0) {
+        $res['uptime'] = $days . '天';
+    }
+    if ($hours !== 0) {
+        $res['uptime'] .= $hours . '小时';
+    }
+    $res['uptime'] .= $min . '分钟';
 
     // 获取内存信息
-    if (false === ($mTatol = getCommand("hw.physmem"))) return false;
-    $pagesize = getCommand("hw.pagesize");
-    $vmstat   = getCommand("", "vmstat", "");
-    $cached   = getCommand("vm.stats.vm.v_cache_count");
-    $active   = getCommand("vm.stats.vm.v_active_count");
-    $wire     = getCommand("vm.stats.vm.v_wire_count");
-    $swapstat = getCommand("", "swapctl", "-l -k");
+    if (false === ($mTatol = getCommand('hw.physmem'))) {
+        return false;
+    }
+    $pagesize = getCommand('hw.pagesize');
+    $vmstat   = getCommand('', 'vmstat', '');
+    $cached   = getCommand('vm.stats.vm.v_cache_count');
+    $active   = getCommand('vm.stats.vm.v_active_count');
+    $wire     = getCommand('vm.stats.vm.v_wire_count');
+    $swapstat = getCommand('', 'swapctl', '-l -k');
 
     $mlines = preg_split("/\n/", $vmstat, -1, 1);
-    $mbuf   = preg_split("/\s+/", trim($mlines[2]), 19);
+    $mbuf   = preg_split('/\\s+/', trim($mlines[2]), 19);
     $slines = preg_split("/\n/", $swapstat, -1, 1);
-    $sbuf   = preg_split("/\s+/", $slines[1], 6);
+    $sbuf   = preg_split('/\\s+/', $slines[1], 6);
 
     $app      = ($active + $wire) * $pagesize;
     $mTatol   = $mTatol;
     $mFree    = $mbuf[4] * 1024;
-    $mCached  = $cached * $pagesize;
+    $mCached  = $cached  * $pagesize;
     $mUsed    = $mTatol - $mFree;
-    $mBuffers = $mUsed - $app - $mCached;
+    $mBuffers = $mUsed  - $app  - $mCached;
     $sTotal   = $sbuf[1] * 1024;
     $sUsed    = $sbuf[2] * 1024;
     $sFree    = $sTotal - $sUsed;
@@ -365,17 +391,19 @@ function svr_freebsd()
 function svr_darwin()
 {
     // 获取CPU信息
-    if (false === ($res['cpu']['core'] = getCommand("machdep.cpu.core_count"))) return false;
+    if (false === ($res['cpu']['core'] = getCommand('machdep.cpu.core_count'))) {
+        return false;
+    }
 
-    $res['cpu']['processor'] = getCommand("machdep.cpu.thread_count");
+    $res['cpu']['processor'] = getCommand('machdep.cpu.thread_count');
     $res['cpu']['cores']     = $res['cpu']['core'] . '核' . (($res['cpu']['processor']) ? '/' . $res['cpu']['processor'] . '线程' : '');
-    $model                   = getCommand("machdep.cpu.brand_string");
-    $cache                   = getCommand("machdep.cpu.cache.size") * $res['cpu']['core'];
+    $model                   = getCommand('machdep.cpu.brand_string');
+    $cache                   = getCommand('machdep.cpu.cache.size') * $res['cpu']['core'];
     $cache                   = size_format($cache * 1024, 0);
     $res['cpu']['model']     = $model . ' [二级缓存：' . $cache . ']';
 
     // 获取服务器运行时间
-    $uptime = getCommand("kern.boottime");
+    $uptime = getCommand('kern.boottime');
     preg_match_all('#(?<={)\s?sec\s?=\s?+\d+#', $uptime, $matches);
     $_uptime = explode('=', $matches[0][0])[1];
 
@@ -385,17 +413,23 @@ function svr_darwin()
     $days  = floor($hours / 24);
     $hours = floor($hours - ($days * 24));
     $min   = floor($min - ($days * 60 * 24) - ($hours * 60));
-    if ($days !== 0) $res['uptime'] = $days . "天";
-    if ($hours !== 0) $res['uptime'] .= $hours . "小时";
-    $res['uptime'] .= $min . "分钟";
+    if ($days !== 0) {
+        $res['uptime'] = $days . '天';
+    }
+    if ($hours !== 0) {
+        $res['uptime'] .= $hours . '小时';
+    }
+    $res['uptime'] .= $min . '分钟';
 
     // 获取内存信息
-    if (false === ($mTatol = getCommand("hw.memsize"))) return false;
-    $vmstat = getCommand("", 'vm_stat', '');
+    if (false === ($mTatol = getCommand('hw.memsize'))) {
+        return false;
+    }
+    $vmstat = getCommand('', 'vm_stat', '');
     if (preg_match('/^Pages free:\s+(\S+)/m', $vmstat, $mfree)) {
         if (preg_match('/^File-backed pages:\s+(\S+)/m', $vmstat, $mcache)) {
             // OS X 10.9 or never
-            $mFree   = $mfree[1] * 4 * 1024;
+            $mFree   = $mfree[1]  * 4  * 1024;
             $mCached = $mcache[1] * 4 * 1024;
             if (preg_match('/^Pages occupied by compressor:\s+(\S+)/m', $vmstat, $mbuffer)) {
                 $mBuffer = $mbuffer[1] * 4 * 1024;
@@ -424,7 +458,7 @@ function svr_darwin()
     $res['mPercent']       = (floatval($mTatol) != 0) ? round($mUsed / $mTatol * 100, 1) : 0;
     $res['mCachedPercent'] = (floatval($mCached) != 0) ? round($mCached / $mTatol * 100, 1) : 0; //Cached内存使用率
 
-    $swapInfo = getCommand("vm.swapusage");
+    $swapInfo = getCommand('vm.swapusage');
     $swap1    = preg_split('/M/', $swapInfo);
     $swap2    = preg_split('/=/', $swap1[0]);
     $swap3    = preg_split('/=/', $swap1[1]);
@@ -446,8 +480,8 @@ function svr_darwin()
 
     // CPU状态
     $cpustat = getCommand(1, 'sar', '');
-    preg_match_all("/Average\s{0,}\:+\s+\w+\s+\w+\s+\w+\s+\w+/s", $cpustat, $_cpu);
-    $_cpu                  = preg_split("/\s+/", $_cpu[0][0]);
+    preg_match_all('/Average\\s{0,}\\:+\\s+\\w+\\s+\\w+\\s+\\w+\\s+\\w+/s', $cpustat, $_cpu);
+    $_cpu                  = preg_split('/\\s+/', $_cpu[0][0]);
     $percent               = $_cpu[1] + $_cpu[2] + $_cpu[3];
     $res['cpu']['percent'] = $percent;
 
@@ -456,9 +490,11 @@ function svr_darwin()
 
 function getCommand($args = '', $commandName = 'sysctl', $option = '-n')
 {
-    if (false === ($commandPath = findCommand($commandName))) return false;
+    if (false === ($commandPath = findCommand($commandName))) {
+        return false;
+    }
 
-    if ($command = shell_exec("$commandPath $option $args")) {
+    if ($command = shell_exec("{$commandPath} {$option} {$args}")) {
         return trim($command);
     }
     return false;
@@ -469,7 +505,9 @@ function findCommand($commandName)
     $paths = ['/bin', '/sbin', '/usr/bin', '/usr/sbin', '/usr/local/bin', '/usr/local/sbin'];
 
     foreach ($paths as $path) {
-        if (is_executable("$path/$commandName")) return "$path/$commandName";
+        if (is_executable("{$path}/{$commandName}")) {
+            return "{$path}/{$commandName}";
+        }
     }
     return false;
 }
@@ -478,14 +516,14 @@ function findCommand($commandName)
 function svr_winnt()
 {
     // 获取CPU信息
-    if (get_cfg_var("com.allow_dcom")) {
+    if (get_cfg_var('com.allow_dcom')) {
         $wmi     = new COM('winmgmts:{impersonationLevel=impersonate}');
-        $cpuinfo = getWMI($wmi, "Win32_Processor", "Name,LoadPercentage,NumberOfCores,NumberOfLogicalProcessors,L2CacheSize");
-    } else if (function_exists('exec')) {
-        exec("wmic cpu get LoadPercentage,NumberOfCores,NumberOfLogicalProcessors,L2CacheSize", $cpuwmic);
-        exec("wmic cpu get Name", $cpuname);
-        $cpuKey   = preg_split("/ +/", $cpuwmic[0]);
-        $cpuValue = preg_split("/ +/", $cpuwmic[1]);
+        $cpuinfo = getWMI($wmi, 'Win32_Processor', 'Name,LoadPercentage,NumberOfCores,NumberOfLogicalProcessors,L2CacheSize');
+    } elseif (function_exists('exec')) {
+        exec('wmic cpu get LoadPercentage,NumberOfCores,NumberOfLogicalProcessors,L2CacheSize', $cpuwmic);
+        exec('wmic cpu get Name', $cpuname);
+        $cpuKey   = preg_split('/ +/', $cpuwmic[0]);
+        $cpuValue = preg_split('/ +/', $cpuwmic[1]);
         foreach ($cpuKey as $k => $v) {
             $cpuinfo[$v] = $cpuValue[$k];
         }
@@ -501,12 +539,12 @@ function svr_winnt()
     $res['cpu']['model']     = $cpuinfo['Name'] . ' [二级缓存：' . $cache . ']';
 
     // 获取服务器运行时间
-    if (get_cfg_var("com.allow_dcom")) {
-        $sysinfo = getWMI($wmi, "Win32_OperatingSystem", "LastBootUpTime,TotalVisibleMemorySize,FreePhysicalMemory");
-    } else if (function_exists("exec")) {
-        exec("wmic os get LastBootUpTime,TotalVisibleMemorySize,FreePhysicalMemory", $osInfo);
-        $osKey   = preg_split("/ +/", $osInfo[0]);
-        $osValue = preg_split("/ +/", $osInfo[1]);
+    if (get_cfg_var('com.allow_dcom')) {
+        $sysinfo = getWMI($wmi, 'Win32_OperatingSystem', 'LastBootUpTime,TotalVisibleMemorySize,FreePhysicalMemory');
+    } elseif (function_exists('exec')) {
+        exec('wmic os get LastBootUpTime,TotalVisibleMemorySize,FreePhysicalMemory', $osInfo);
+        $osKey   = preg_split('/ +/', $osInfo[0]);
+        $osValue = preg_split('/ +/', $osInfo[1]);
         foreach ($osKey as $key => $value) {
             $sysinfo[$value] = $osValue[$key];
         }
@@ -521,13 +559,17 @@ function svr_winnt()
     $days          = floor($hours / 24);
     $hours         = floor($hours - ($days * 24));
     $min           = floor($min - ($days * 60 * 24) - ($hours * 60));
-    if ($days !== 0) $res['uptime'] = $days . "天";
-    if ($hours !== 0) $res['uptime'] .= $hours . "小时";
-    $res['uptime'] .= $min . "分钟";
+    if ($days !== 0) {
+        $res['uptime'] = $days . '天';
+    }
+    if ($hours !== 0) {
+        $res['uptime'] .= $hours . '小时';
+    }
+    $res['uptime'] .= $min . '分钟';
 
     // 获取内存信息
     $mTotal = $sysinfo['TotalVisibleMemorySize'] * 1024;
-    $mFree  = $sysinfo['FreePhysicalMemory'] * 1024;
+    $mFree  = $sysinfo['FreePhysicalMemory']     * 1024;
     $mUsed  = $mTotal - $mFree;
 
     $res['mTotal']   = size_format($mTotal, 1);
@@ -535,12 +577,12 @@ function svr_winnt()
     $res['mUsed']    = size_format($mUsed, 1);
     $res['mPercent'] = round($mUsed / $mTotal * 100, 1);
 
-    if (get_cfg_var("com.allow_dcom")) {
-        $swapinfo = getWMI($wmi, "Win32_PageFileUsage", 'AllocatedBaseSize,CurrentUsage');
-    } else if (function_exists("exec")) {
-        exec("wmic pagefile get AllocatedBaseSize,CurrentUsage", $swaps);
-        $swapKey   = preg_split("/ +/", $swaps[0]);
-        $swapValue = preg_split("/ +/", $swaps[1]);
+    if (get_cfg_var('com.allow_dcom')) {
+        $swapinfo = getWMI($wmi, 'Win32_PageFileUsage', 'AllocatedBaseSize,CurrentUsage');
+    } elseif (function_exists('exec')) {
+        exec('wmic pagefile get AllocatedBaseSize,CurrentUsage', $swaps);
+        $swapKey   = preg_split('/ +/', $swaps[0]);
+        $swapValue = preg_split('/ +/', $swaps[1]);
         foreach ($swapKey as $sk => $sv) {
             $swapinfo[$sv] = $swapValue[$sk];
         }
@@ -548,7 +590,7 @@ function svr_winnt()
         return false;
     }
     $sTotal = $swapinfo['AllocatedBaseSize'] * 1024 * 1024;
-    $sUsed  = $swapinfo['CurrentUsage'] * 1024 * 1024;
+    $sUsed  = $swapinfo['CurrentUsage']      * 1024      * 1024;
     $sFree  = $sTotal - $sUsed;
 
     $res['swapTotal']   = size_format($sTotal, 1);
@@ -570,11 +612,11 @@ function svr_winnt()
 function getWMI($wmi, $strClass, $strValue)
 {
     $object  = $wmi->ExecQuery("SELECT {$strValue} FROM {$strClass}");
-    $value   = explode(",", $strValue);
+    $value   = explode(',', $strValue);
     $arrData = [];
     foreach ($value as $v) {
         foreach ($object as $info) {
-            $arrData[$v] = $info->$v;
+            $arrData[$v] = $info->{$v};
         }
     }
 
@@ -583,13 +625,13 @@ function getWMI($wmi, $strClass, $strValue)
 
 function size_format($bytes, $decimals = 2)
 {
-    $quant = array(
+    $quant = [
         'TB' => 1099511627776, // pow( 1024, 4)
         'GB' => 1073741824, // pow( 1024, 3)
         'MB' => 1048576, // pow( 1024, 2)
         'KB' => 1024, // pow( 1024, 1)
         'B ' => 1, // pow( 1024, 0)
-    );
+    ];
 
     foreach ($quant as $unit => $mag) {
         if (doubleval($bytes) >= $mag) {
@@ -609,7 +651,7 @@ function linux_Network()
     $bufe         = preg_split("/\n/", $netstat, -1, PREG_SPLIT_NO_EMPTY);
     foreach ($bufe as $buf) {
         if (preg_match('/:/', $buf)) {
-            list($dev_name, $stats_list) = preg_split('/:/', $buf, 2);
+            [$dev_name, $stats_list]   = preg_split('/:/', $buf, 2);
             $dev_name                  = trim($dev_name);
             $stats                     = preg_split('/\s+/', trim($stats_list));
             $net[$dev_name]['name']    = $dev_name;
@@ -629,13 +671,13 @@ function linux_Network()
 // darwin
 function darwin_Network()
 {
-    $netstat      = getCommand("-nbdi | cut -c1-24,42- | grep Link", "netstat");
+    $netstat      = getCommand('-nbdi | cut -c1-24,42- | grep Link', 'netstat');
     $res['nBool'] = $netstat ? true : false;
     $nets         = preg_split("/\n/", $netstat, -1, PREG_SPLIT_NO_EMPTY);
     $_net         = [];
     foreach ($nets as $net) {
-        $buf = preg_split("/\s+/", $net, 10);
-        if (!empty($buf[0])) {
+        $buf = preg_split('/\\s+/', $net, 10);
+        if (! empty($buf[0])) {
             $dev_name                   = trim($buf[0]);
             $_net[$dev_name]['name']    = $dev_name;
             $_net[$dev_name]['rxbytes'] = netSize($buf[5]);
@@ -643,7 +685,7 @@ function darwin_Network()
             $_net[$dev_name]['rxspeed'] = $buf[5];
             $_net[$dev_name]['txspeed'] = $buf[8];
             $_net[$dev_name]['errors']  = $buf[4] + $buf[7];
-            $_net[$dev_name]['drops']   = isset($buf[10]) ? $buf[10] : "NULL";
+            $_net[$dev_name]['drops']   = isset($buf[10]) ? $buf[10] : 'NULL';
         }
     }
     $res['net'] = $_net;
@@ -653,13 +695,13 @@ function darwin_Network()
 // freebsd
 function freebsd_Network()
 {
-    $netstat      = getCommand("-nibd", "netstat");
+    $netstat      = getCommand('-nibd', 'netstat');
     $res['nBool'] = $netstat ? true : false;
     $nets         = preg_split("/\n/", $netstat, -1, PREG_SPLIT_NO_EMPTY);
     $_net         = [];
     foreach ($nets as $net) {
-        $buf = preg_split("/\s+/", $net);
-        if (!empty($buf[0])) {
+        $buf = preg_split('/\\s+/', $net);
+        if (! empty($buf[0])) {
             if (preg_match('/^<Link/i', $buf[2])) {
                 $dev_name                = trim($buf[0]);
                 $_net[$dev_name]['name'] = $dev_name;
@@ -669,7 +711,7 @@ function freebsd_Network()
                         $_net[$dev_name]['txbytes'] = netSize($buf[9]);
                         $_net[$dev_name]['rxspeed'] = $buf[6];
                         $_net[$dev_name]['txspeed'] = $buf[9];
-                        $_net[$dev_name]['errors']  = $buf[4] + $buf[8];
+                        $_net[$dev_name]['errors']  = $buf[4]  + $buf[8];
                         $_net[$dev_name]['drops']   = $buf[11] + $buf[5];
                     } else {
                         $_net[$dev_name]['rxbytes'] = netSize($buf[5]);
@@ -685,7 +727,7 @@ function freebsd_Network()
                         $_net[$dev_name]['txbytes'] = netSize($buf[10]);
                         $_net[$dev_name]['rxspeed'] = $buf[7];
                         $_net[$dev_name]['txspeed'] = $buf[10];
-                        $_net[$dev_name]['errors']  = $buf[5] + $buf[9];
+                        $_net[$dev_name]['errors']  = $buf[5]  + $buf[9];
                         $_net[$dev_name]['drops']   = $buf[12] + $buf[6];
                     } else {
                         $_net[$dev_name]['rxbytes'] = netSize($buf[6]);
@@ -706,28 +748,28 @@ function freebsd_Network()
 function netSize($size, $decimals = 2)
 {
     if ($size < 1024) {
-        $unit = "Bbps";
-    } else if ($size < 10240) {
+        $unit = 'Bbps';
+    } elseif ($size < 10240) {
         $size = round($size / 1024, $decimals);
-        $unit = "Kbps";
-    } else if ($size < 102400) {
+        $unit = 'Kbps';
+    } elseif ($size < 102400) {
         $size = round($size / 1024, $decimals);
-        $unit = "Kbps";
-    } else if ($size < 1048576) {
+        $unit = 'Kbps';
+    } elseif ($size < 1048576) {
         $size = round($size / 1024, $decimals);
-        $unit = "Kbps";
-    } else if ($size < 10485760) {
+        $unit = 'Kbps';
+    } elseif ($size < 10485760) {
         $size = round($size / 1048576, $decimals);
-        $unit = "Mbps";
-    } else if ($size < 104857600) {
+        $unit = 'Mbps';
+    } elseif ($size < 104857600) {
         $size = round($size / 1048576, $decimals);
-        $unit = "Mbps";
-    } else if ($size < 1073741824) {
+        $unit = 'Mbps';
+    } elseif ($size < 1073741824) {
         $size = round($size / 1048576, $decimals);
-        $unit = "Mbps";
+        $unit = 'Mbps';
     } else {
         $size = round($size / 1073741824, $decimals);
-        $unit = "Gbps";
+        $unit = 'Gbps';
     }
 
     $size .= $unit;
@@ -735,59 +777,59 @@ function netSize($size, $decimals = 2)
 }
 
 // 服务器测试
-$server_testinfo = array(
-    'fbcha' => array(
+$server_testinfo = [
+    'fbcha' => [
         'name'      => '作者电脑',
         'url'       => '',
         'logo'      => '',
         'intData'   => '0.108秒',
         'floatData' => '0.328秒',
         'ioData'    => '0.016秒',
-        'cpuData'   => 'Core(TM) i3-3220 CPU @ 3.30GHz x 2'
-    )
-);
+        'cpuData'   => 'Core(TM) i3-3220 CPU @ 3.30GHz x 2',
+    ],
+];
 function getTest($val)
 {
     $out = '';
     if ($val === 'intData') {
         $timeStart = gettimeofday();
-        for ($i = 0; $i < 3000000; $i++) {
+        for ($i = 0; $i < 3000000; ++$i) {
             $t = 1 + 1;
         }
         $timeEnd = gettimeofday();
-        $time    = ($timeEnd["usec"] - $timeStart["usec"]) / 1000000 + $timeEnd["sec"] - $timeStart["sec"];
-        $out     = round($time, 3) . "秒";
-    } else if ($val === 'floatData') {
+        $time    = ($timeEnd['usec'] - $timeStart['usec']) / 1000000 + $timeEnd['sec'] - $timeStart['sec'];
+        $out     = round($time, 3) . '秒';
+    } elseif ($val === 'floatData') {
         $t         = pi();
         $timeStart = gettimeofday();
-        for ($i = 0; $i < 3000000; $i++) {
+        for ($i = 0; $i < 3000000; ++$i) {
             sqrt($t);
         }
         $timeEnd = gettimeofday();
-        $time    = ($timeEnd["usec"] - $timeStart["usec"]) / 1000000 + $timeEnd["sec"] - $timeStart["sec"];
-        $out     = round($time, 3) . "秒";
-    } else if ($val === 'ioData') {
+        $time    = ($timeEnd['usec'] - $timeStart['usec']) / 1000000 + $timeEnd['sec'] - $timeStart['sec'];
+        $out     = round($time, 3) . '秒';
+    } elseif ($val === 'ioData') {
         $fp        = fopen(PHPPROBE, 'r');
         $timeStart = gettimeofday();
-        for ($i = 0; $i < 10000; $i++) {
+        for ($i = 0; $i < 10000; ++$i) {
             fread($fp, 10240);
             rewind($fp);
         }
         $timeEnd = gettimeofday();
         fclose($fp);
-        $time = ($timeEnd["usec"] - $timeStart["usec"]) / 1000000 + $timeEnd["sec"] - $timeStart["sec"];
-        $out  = round($time, 3) . "秒";
+        $time = ($timeEnd['usec'] - $timeStart['usec']) / 1000000 + $timeEnd['sec'] - $timeStart['sec'];
+        $out  = round($time, 3) . '秒';
     } else {
-        $out = "参数错误!";
+        $out = '参数错误!';
     }
     return $out;
 }
 
 function getSvrTestUrl($val)
 {
-    $out = $logo = $name = '';
+    $out                  = $logo                  = $name                  = '';
     $val['logo'] && $logo = '<img class="svr-logo" src="' . $val['logo'] . '" />';
-    $name = $val['logo'] ? '<div class="svr-logo-text">' . $val['name'] . '</div>' : $val['name'];
+    $name                 = $val['logo'] ? '<div class="svr-logo-text">' . $val['name'] . '</div>' : $val['name'];
     if ($val['url']) {
         $out = '<a href="' . $val['url'] . '"  target="_blank">' . $logo . $name . '</a>';
     } else {
@@ -797,11 +839,11 @@ function getSvrTestUrl($val)
 }
 
 if (filter_input(INPUT_GET, 'act') == 'st') {
-    $sts       = array(
+    $sts       = [
         'intData'   => getTest('intData'),
         'floatData' => getTest('floatData'),
-        'ioData'    => getTest('ioData')
-    );
+        'ioData'    => getTest('ioData'),
+    ];
     $stJsonRes = json_encode($sts);
     echo filter_input(INPUT_GET, 'callback') . '(' . $stJsonRes . ')';
     exit();
@@ -809,10 +851,10 @@ if (filter_input(INPUT_GET, 'act') == 'st') {
 if (filter_input(INPUT_GET, 'act') == 'test') {
     $posts = filter_input_array(INPUT_POST);
     if ($posts['type'] == 'mysql') {
-        $link = mysql_connect($posts['host'] . ":" . $posts['port'], $posts['user'], $posts['pwd']);
+        $link = mysql_connect($posts['host'] . ':' . $posts['port'], $posts['user'], $posts['pwd']);
         echo $link ? checkstatus(true) : checkstatus(false);
         mysqli_close($link);
-    } else if ($posts['type'] == 'fun') {
+    } elseif ($posts['type'] == 'fun') {
         echo $posts['funname'] ? isfunction($posts['funname']) : '<span class="stxt red">请输入函数名</span>';
     } else {
         echo false;
@@ -821,18 +863,18 @@ if (filter_input(INPUT_GET, 'act') == 'test') {
 }
 
 if ($is_constantly) {
-    $currentTime = date("Y-m-d H:i:s");
+    $currentTime = date('Y-m-d H:i:s');
     $uptime      = $svrInfo['uptime'];
 }
 
 // hdd
-$hddTotal   = disk_total_space(".");
-$hddFree    = disk_free_space(".");
+$hddTotal   = disk_total_space('.');
+$hddFree    = disk_free_space('.');
 $hddUsed    = $hddTotal - $hddFree;
 $hddPercent = (floatval($hddTotal) != 0) ? round($hddUsed / $hddTotal * 100, 2) : 0;
 
 if (filter_input(INPUT_GET, 'act') == 'rt' && $is_constantly) {
-    $res     = array(
+    $res     = [
         'currentTime'         => $currentTime,
         'uptime'              => $uptime,
         'cpuPercent'          => $svrInfo['cpu']['percent'],
@@ -847,16 +889,16 @@ if (filter_input(INPUT_GET, 'act') == 'rt' && $is_constantly) {
         'Buffers'             => $svrInfo['mBuffers'],
         'SwapFree'            => $svrInfo['swapFree'],
         'SwapUsed'            => $svrInfo['swapUsed'],
-        'SwapPercent'         => $svrInfo['swapPercent']
-    );
+        'SwapPercent'         => $svrInfo['swapPercent'],
+    ];
     $jsonRes = json_encode($res);
     echo filter_input(INPUT_GET, 'callback') . '(' . $jsonRes . ')';
     exit();
 }
 if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
-    $oRes   = array(
-        'Network' => $svrInfo['net']
-    );
+    $oRes   = [
+        'Network' => $svrInfo['net'],
+    ];
     $ortRes = json_encode($oRes);
     echo filter_input(INPUT_GET, 'callback') . '(' . $ortRes . ')';
     exit();
@@ -969,19 +1011,19 @@ if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
         $( document ).ready( function () {
             getServerTest();
             getTestDB();
-            <?php if($svrInfo['nBool']){ ?>
+            <?php if ($svrInfo['nBool']) { ?>
             getNetwork();
             <?php } ?>
-            <?php if($svrShow === 'show'){ ?>
+            <?php if ($svrShow === 'show') { ?>
             getRealTime();
             getCpuStatus();
             getMemory();
             getHdd();
             <?php }?>
         } );
-        <?php if($svrInfo['nBool']){ ?>
+        <?php if ($svrInfo['nBool']) { ?>
         var inputSpeed = [], outSpeed = [];
-        <?php foreach($svrInfo['net'] as $netkey => $netvar){ ?>
+        <?php foreach ($svrInfo['net'] as $netkey => $netvar) { ?>
         inputSpeed[ "<?php echo $netvar['name']; ?>" ] = <?php echo $netvar['rxspeed']; ?>;
         outSpeed[ "<?php echo $netvar['name']; ?>" ] = <?php echo $netvar['txspeed']; ?>;
         <?php } ?>
@@ -1017,7 +1059,7 @@ if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
             return Last;
         }
         <?php } ?>
-        <?php if($svrShow === 'show'){ ?>
+        <?php if ($svrShow === 'show') { ?>
         function size_format( bytes, decimals = 4 ) {
             if ( bytes === 0 ) return '0 B';
 
@@ -1484,7 +1526,7 @@ if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
                     PHP版本 <span class="stxt">php_version</span>
                 </td>
                 <td width="20%">
-                    <?php echo isinit("version"); ?>
+                    <?php echo isinit('version'); ?>
                 </td>
                 <td width="30%">
                     PHP运行方式
@@ -1666,13 +1708,13 @@ if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
                     拼写检查 <span class="stxt">ASpell Library</span>
                 </td>
                 <td>
-                    <?php echo isfunction("aspell_check_raw"); ?>
+                    <?php echo isfunction('aspell_check_raw'); ?>
                 </td>
                 <td>
                     高精度数学运算 <span class="stxt">BCMath</span>
                 </td>
                 <td>
-                    <?php echo isfunction("bcadd"); ?>
+                    <?php echo isfunction('bcadd'); ?>
                 </td>
             </tr>
             <tr>
@@ -1680,13 +1722,13 @@ if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
                     PREL相容语法 <span class="stxt">PCRE</span>
                 </td>
                 <td>
-                    <?php echo isfunction("preg_match"); ?>
+                    <?php echo isfunction('preg_match'); ?>
                 </td>
                 <td>
                     PDF文档支持
                 </td>
                 <td>
-                    <?php echo isfunction("pdf_close"); ?>
+                    <?php echo isfunction('pdf_close'); ?>
                 </td>
             </tr>
             <tr>
@@ -1694,13 +1736,13 @@ if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
                     SNMP网络管理协议
                 </td>
                 <td>
-                    <?php echo isfunction("snmpget"); ?>
+                    <?php echo isfunction('snmpget'); ?>
                 </td>
                 <td>
                     Curl支持
                 </td>
                 <td>
-                    <?php echo isfunction("curl_init"); ?>
+                    <?php echo isfunction('curl_init'); ?>
                 </td>
             </tr>
             <tr>
@@ -1708,7 +1750,7 @@ if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
                     SMTP支持
                 </td>
                 <td>
-                    <?php echo isinit("issmtp"); ?>
+                    <?php echo isinit('issmtp'); ?>
                 </td>
                 <td>
                     SMTP地址
@@ -1763,13 +1805,13 @@ if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
                     FTP支持
                 </td>
                 <td width="20%">
-                    <?php echo isfunction("ftp_login"); ?>
+                    <?php echo isfunction('ftp_login'); ?>
                 </td>
                 <td width="30%">
                     XML解析支持
                 </td>
                 <td width="20%">
-                    <?php echo isfunction("xml_set_object"); ?>
+                    <?php echo isfunction('xml_set_object'); ?>
                 </td>
             </tr>
             <tr>
@@ -1777,13 +1819,13 @@ if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
                     Session支持
                 </td>
                 <td>
-                    <?php echo isfunction("session_start"); ?>
+                    <?php echo isfunction('session_start'); ?>
                 </td>
                 <td>
                     Socket支持
                 </td>
                 <td>
-                    <?php echo isfunction("socket_accept"); ?>
+                    <?php echo isfunction('socket_accept'); ?>
                 </td>
             </tr>
             <tr>
@@ -1791,13 +1833,13 @@ if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
                     Calendar支持
                 </td>
                 <td>
-                    <?php echo isfunction("cal_days_in_month"); ?>
+                    <?php echo isfunction('cal_days_in_month'); ?>
                 </td>
                 <td>
                     允许URL打开文件
                 </td>
                 <td>
-                    <?php echo isinit("allow_url_fopen"); ?>
+                    <?php echo isinit('allow_url_fopen'); ?>
                 </td>
             </tr>
             <tr>
@@ -1805,13 +1847,13 @@ if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
                     GD库支持
                 </td>
                 <td>
-                    <?php echo isExt("gd_info"); ?>
+                    <?php echo isExt('gd_info'); ?>
                 </td>
                 <td>
                     压缩文件支持(Zlib)
                 </td>
                 <td>
-                    <?php echo isfunction("gzclose"); ?>
+                    <?php echo isfunction('gzclose'); ?>
                 </td>
             </tr>
             <tr>
@@ -1819,13 +1861,13 @@ if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
                     IMAP电子邮件系统函数库
                 </td>
                 <td>
-                    <?php echo isfunction("imap_close"); ?>
+                    <?php echo isfunction('imap_close'); ?>
                 </td>
                 <td>
                     历法运算函数库
                 </td>
                 <td>
-                    <?php echo isfunction("JDToGregorian"); ?>
+                    <?php echo isfunction('JDToGregorian'); ?>
                 </td>
             </tr>
             <tr>
@@ -1833,13 +1875,13 @@ if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
                     正则表达式函数库
                 </td>
                 <td>
-                    <?php echo isfunction("preg_match"); ?>
+                    <?php echo isfunction('preg_match'); ?>
                 </td>
                 <td>
                     WDDX支持
                 </td>
                 <td>
-                    <?php echo isfunction("wddx_add_vars"); ?>
+                    <?php echo isfunction('wddx_add_vars'); ?>
                 </td>
             </tr>
             <tr>
@@ -1847,13 +1889,13 @@ if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
                     Iconv编码转换
                 </td>
                 <td>
-                    <?php echo isfunction("iconv"); ?>
+                    <?php echo isfunction('iconv'); ?>
                 </td>
                 <td>
                     mbstring
                 </td>
                 <td>
-                    <?php echo isfunction("mb_eregi"); ?>
+                    <?php echo isfunction('mb_eregi'); ?>
                 </td>
             </tr>
             <tr>
@@ -1861,13 +1903,13 @@ if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
                     高精度数学运算
                 </td>
                 <td>
-                    <?php echo isfunction("bcadd"); ?>
+                    <?php echo isfunction('bcadd'); ?>
                 </td>
                 <td>
                     LDAP目录协议
                 </td>
                 <td>
-                    <?php echo isfunction("ldap_close"); ?>
+                    <?php echo isfunction('ldap_close'); ?>
                 </td>
             </tr>
             <tr>
@@ -1875,13 +1917,13 @@ if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
                     MCrypt加密处理
                 </td>
                 <td>
-                    <?php echo isfunction("mcrypt_cbc"); ?>
+                    <?php echo isfunction('mcrypt_cbc'); ?>
                 </td>
                 <td>
                     哈稀计算
                 </td>
                 <td>
-                    <?php echo isfunction("mhash_count"); ?>
+                    <?php echo isfunction('mhash_count'); ?>
                 </td>
             </tr>
             </tbody>
@@ -1895,45 +1937,45 @@ if (filter_input(INPUT_GET, 'act') == 'ort' && $svrInfo['nBool']) {
             <tbody>
             <tr>
                 <td width="30%">MySQL 数据库</td>
-                <td width="20%"><?php echo isfunction("mysql_close"); ?></td>
+                <td width="20%"><?php echo isfunction('mysql_close'); ?></td>
                 <td width="30%">ODBC 数据库</td>
-                <td width="20%"><?php echo isfunction("odbc_close"); ?></td>
+                <td width="20%"><?php echo isfunction('odbc_close'); ?></td>
             </tr>
             <tr>
                 <td>Oracle 数据库</td>
-                <td><?php echo isfunction("ora_close"); ?></td>
+                <td><?php echo isfunction('ora_close'); ?></td>
                 <td>SQL Server 数据库</td>
-                <td><?php echo isfunction("mssql_close"); ?></td>
+                <td><?php echo isfunction('mssql_close'); ?></td>
             </tr>
             <tr>
                 <td>dBASE 数据库</td>
-                <td><?php echo isfunction("dbase_close"); ?></td>
+                <td><?php echo isfunction('dbase_close'); ?></td>
                 <td>mSQL 数据库</td>
-                <td><?php echo isfunction("msql_close"); ?></td>
+                <td><?php echo isfunction('msql_close'); ?></td>
             </tr>
             <tr>
                 <td>SQLite 数据库</td>
-                <td><?php echo isExt("sqlite3"); ?></td>
+                <td><?php echo isExt('sqlite3'); ?></td>
                 <td>Hyperwave 数据库</td>
-                <td><?php echo isfunction("hw_close"); ?></td>
+                <td><?php echo isfunction('hw_close'); ?></td>
             </tr>
             <tr>
                 <td>Postgre SQL 数据库</td>
-                <td><?php echo isfunction("pg_close"); ?></td>
+                <td><?php echo isfunction('pg_close'); ?></td>
                 <td>Informix 数据库</td>
-                <td><?php echo isfunction("ifx_close"); ?></td>
+                <td><?php echo isfunction('ifx_close'); ?></td>
             </tr>
             <tr>
                 <td>DBA 数据库</td>
-                <td><?php echo isfunction("dba_close"); ?></td>
+                <td><?php echo isfunction('dba_close'); ?></td>
                 <td>DBM 数据库</td>
-                <td><?php echo isfunction("dbmclose"); ?></td>
+                <td><?php echo isfunction('dbmclose'); ?></td>
             </tr>
             <tr>
                 <td>FilePro 数据库</td>
-                <td><?php echo isfunction("filepro_fieldcount"); ?></td>
+                <td><?php echo isfunction('filepro_fieldcount'); ?></td>
                 <td>SyBase 数据库</td>
-                <td><?php echo isfunction("sybase_close"); ?></td>
+                <td><?php echo isfunction('sybase_close'); ?></td>
             </tr>
             </tbody>
         </table>

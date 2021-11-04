@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Stmt;
 
 use PhpParser\Node;
@@ -12,15 +16,17 @@ class Const_ extends Node\Stmt
     /**
      * Constructs a const list node.
      *
-     * @param Node\Const_[] $consts     Constant declarations
-     * @param array         $attributes Additional attributes
+     * @param Node\Const_[] $consts Constant declarations
+     * @param array $attributes Additional attributes
      */
-    public function __construct(array $consts, array $attributes = array()) {
+    public function __construct(array $consts, array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->consts = $consts;
     }
 
-    public function getSubNodeNames() {
-        return array('consts');
+    public function getSubNodeNames()
+    {
+        return ['consts'];
     }
 }

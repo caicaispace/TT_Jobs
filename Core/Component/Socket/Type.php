@@ -1,17 +1,14 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/10
- * Time: 下午11:45
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\Socket;
-
 
 class Type
 {
-    const UDP = 'UDP';
-    const TCP = 'TCP';
-    const WEB_SOCKET = 'WEB_SOCKET';
+    public const UDP        = 'UDP';
+    public const TCP        = 'TCP';
+    public const WEB_SOCKET = 'WEB_SOCKET';
 }

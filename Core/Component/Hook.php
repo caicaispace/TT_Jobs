@@ -1,37 +1,31 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/9/23
- * Time: 上午12:05
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component;
-
-
-use Core\Swoole\Task\TaskManager;
-use Core\Swoole\Server;
 
 class Hook
 {
     protected static $instance;
     private $eventList = [];
 
-    static function getInstance()
+    public static function getInstance()
     {
-        if (!isset(self::$instance)) {
+        if (! isset(self::$instance)) {
             self::$instance = new static();
         }
         return self::$instance;
     }
 
-    function listen($event, callable $callback)
+    public function listen($event, callable $callback)
     {
         $this->eventList[$event] = $callback;
         return $this;
     }
 
-    function event($event, ...$arg)
+    public function event($event, ...$arg)
     {
         if (isset($this->eventList[$event])) {
             $handler = $this->eventList[$event];

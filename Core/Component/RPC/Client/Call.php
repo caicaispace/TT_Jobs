@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/23
- * Time: 下午5:40
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\RPC\Client;
-
 
 use Core\Component\RPC\Common\Package;
 
@@ -17,7 +14,7 @@ class Call
     protected $successCall;
     protected $failCall;
 
-    function __construct(Package $package, callable $success = null, callable $fail = null)
+    public function __construct(Package $package, callable $success = null, callable $fail = null)
     {
         $this->package     = $package;
         $this->successCall = $success;

@@ -1,12 +1,9 @@
 <?php
 
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/6/13
- * Time: 下午8:01
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Http\Message;
 
 class Stream extends \Core\Component\IO\Stream

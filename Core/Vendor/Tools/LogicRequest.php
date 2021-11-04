@@ -1,17 +1,14 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/6/6
- * Time: 0:11
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Vendor\Tools;
-
 
 class LogicRequest
 {
-    const PAGE_DEFAULT = [
+    public const PAGE_DEFAULT = [
         'page'     => 1,
         'limit'    => 10,
         'start'    => 0,
@@ -29,7 +26,7 @@ class LogicRequest
 
     private static $instance;
 
-    static function getInstance()
+    public static function getInstance()
     {
         // if (!self::$instance) {
         //     self::$instance = new self();
@@ -42,7 +39,7 @@ class LogicRequest
      * @param null $key
      * @return array|bool
      */
-    public function getId($key = NULL)
+    public function getId($key = null)
     {
         return $this->_resolveData($this->id, $key);
     }
@@ -61,13 +58,12 @@ class LogicRequest
      * @param null $key
      * @return array|bool
      */
-    public function getData($key = NULL)
+    public function getData($key = null)
     {
         return $this->_resolveData($this->data, $key);
     }
 
     /**
-     * @param array $data
      * @return LogicRequest
      */
     public function setData(array $data)
@@ -77,16 +73,15 @@ class LogicRequest
     }
 
     /**
-     * @param  string $key
+     * @param string $key
      * @return array|bool
      */
-    public function getWhere($key = NULL)
+    public function getWhere($key = null)
     {
         return $this->_resolveData($this->where, $key);
     }
 
     /**
-     * @param array $where
      * @return LogicRequest
      */
     public function setWhere(array $where)
@@ -96,26 +91,25 @@ class LogicRequest
     }
 
     /**
-     * @param  string $key
+     * @param string $key
      * @return string
      */
-    public function getField($key = NULL)
+    public function getField($key = null)
     {
-        if (!$data = $this->field) {
-            return FALSE;
+        if (! $data = $this->field) {
+            return false;
         }
-        if ($key === NULL) {
-            return !empty($data)
+        if ($key === null) {
+            return ! empty($data)
                 ? \join(',', $data)
-                : FALSE;
+                : false;
         }
         return isset($data[$key])
             ? \join(',', $data[$key])
-            : FALSE;
+            : false;
     }
 
     /**
-     * @param array $field
      * @return LogicRequest
      */
     public function setField(array $field)
@@ -125,26 +119,25 @@ class LogicRequest
     }
 
     /**
-     * @param  string $key
+     * @param string $key
      * @return string
      */
-    public function getOrder($key = NULL)
+    public function getOrder($key = null)
     {
-        if (!$data = $this->order) {
-            return FALSE;
+        if (! $data = $this->order) {
+            return false;
         }
-        if ($key === NULL) {
-            return !empty($data)
+        if ($key === null) {
+            return ! empty($data)
                 ? \join(',', $data)
-                : FALSE;
+                : false;
         }
         return isset($data[$key])
             ? \join(',', $data[$key])
-            : FALSE;
+            : false;
     }
 
     /**
-     * @param array $order
      * @return LogicRequest
      */
     public function setOrder(array $order)
@@ -157,13 +150,12 @@ class LogicRequest
      * @param null $key
      * @return array|bool
      */
-    public function getExtend($key = NULL)
+    public function getExtend($key = null)
     {
         return $this->_resolveData($this->extend, $key);
     }
 
     /**
-     * @param array $extend
      * @return LogicRequest
      */
     public function setExtend(array $extend)
@@ -176,13 +168,12 @@ class LogicRequest
      * @param null $key
      * @return array|bool
      */
-    public function getPage($key = NULL)
+    public function getPage($key = null)
     {
         return $this->_resolveData($this->page, $key);
     }
 
     /**
-     * @param array $page
      * @return LogicRequest
      */
     public function setPage(array $page)
@@ -198,20 +189,20 @@ class LogicRequest
     /**
      * @param $data
      * @param $key
-     * @return bool|array
+     * @return array|bool
      */
     private function _resolveData($data, $key)
     {
-        if (NULL === $data) {
-            return FALSE;
+        if ($data === null) {
+            return false;
         }
-        if ($key === NULL) {
-            return !empty($data)
+        if ($key === null) {
+            return ! empty($data)
                 ? $data
-                : FALSE;
+                : false;
         }
         return isset($data[$key])
             ? $data[$key]
-            : FALSE;
+            : false;
     }
 }

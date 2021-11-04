@@ -1,17 +1,14 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: 一丰
- * Date: 2016/5/17
- * Time: 15:22
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Utility;
-
 
 class Sort
 {
-    static function quickSort($arr)
+    public static function quickSort($arr)
     {
         //先判断是否需要继续进行
         $length = count($arr);
@@ -24,9 +21,9 @@ class Sort
         $base_num = $arr[0];
         //遍历 除了标尺外的所有元素，按照大小关系放入两个数组内
         //初始化两个数组
-        $left_array  = [];//小于标尺的
-        $right_array = [];//大于标尺的
-        for ($i = 1; $i < $length; $i++) {
+        $left_array  = []; //小于标尺的
+        $right_array = []; //大于标尺的
+        for ($i = 1; $i < $length; ++$i) {
             if ($base_num > $arr[$i]) {
                 //放入左边数组
                 $left_array[] = $arr[$i];
@@ -40,44 +37,44 @@ class Sort
         $left_array  = self::quickSort($left_array);
         $right_array = self::quickSort($right_array);
         //合并左边 标尺 右边
-        return array_merge($left_array, array($base_num), $right_array);
+        return array_merge($left_array, [$base_num], $right_array);
     }
 
     //冒泡排序 //默认从小到大
-    static function bubbleSort($arr, $order = 0)
+    public static function bubbleSort($arr, $order = 0)
     {
         $len = count($arr);
         if ($order == 0) {
-            for ($i = 1; $i < $len; $i++)//最多做n-1趟排序
-            {
+            for ($i = 1; $i < $len; ++$i) {//最多做n-1趟排序
                 $flag = false;    //本趟排序开始前，交换标志应为假
-                for ($j = $len - 1; $j >= $i; $j--) {
-                    if ($arr[$j] < $arr[$j - 1])//交换记录
-                    {//如果是从大到小的话，只要在这里的判断改成if($arr[$j]>$arr[$j-1])就可以了
+                for ($j = $len - 1; $j >= $i; --$j) {
+                    if ($arr[$j] < $arr[$j - 1]) {//交换记录
+                        //如果是从大到小的话，只要在这里的判断改成if($arr[$j]>$arr[$j-1])就可以了
                         $x           = $arr[$j];
                         $arr[$j]     = $arr[$j - 1];
                         $arr[$j - 1] = $x;
-                        $flag        = true;//发生了交换，故将交换标志置为真
+                        $flag        = true; //发生了交换，故将交换标志置为真
                     }
                 }
-                if (!$flag)//本趟排序未发生交换，提前终止算法
+                if (! $flag) {//本趟排序未发生交换，提前终止算法
                     return $arr;
+                }
             }
         } else {
-            for ($i = 1; $i < $len; $i++)//最多做n-1趟排序
-            {
+            for ($i = 1; $i < $len; ++$i) {//最多做n-1趟排序
                 $flag = false;    //本趟排序开始前，交换标志应为假
-                for ($j = $len - 1; $j >= $i; $j--) {
-                    if ($arr[$j] > $arr[$j - 1])//交换记录
-                    {//如果是从大到小的话，只要在这里的判断改成if($arr[$j]>$arr[$j-1])就可以了
+                for ($j = $len - 1; $j >= $i; --$j) {
+                    if ($arr[$j] > $arr[$j - 1]) {//交换记录
+                        //如果是从大到小的话，只要在这里的判断改成if($arr[$j]>$arr[$j-1])就可以了
                         $x           = $arr[$j];
                         $arr[$j]     = $arr[$j - 1];
                         $arr[$j - 1] = $x;
-                        $flag        = true;//发生了交换，故将交换标志置为真
+                        $flag        = true; //发生了交换，故将交换标志置为真
                     }
                 }
-                if (!$flag)//本趟排序未发生交换，提前终止算法
+                if (! $flag) {//本趟排序未发生交换，提前终止算法
                     return $arr;
+                }
             }
         }
 
@@ -89,10 +86,10 @@ class Sort
      * @param $sort_key
      * @param int $sort
      * @return array|bool
-     * $arr = array(array("a"=>15,"b"=>"xxxxx1"),array("a"=>115,"b"=>"xxxxx2"),);
-     * $data = multi_array_sort($arr,"a");
+     *                    $arr = array(array("a"=>15,"b"=>"xxxxx1"),array("a"=>115,"b"=>"xxxxx2"),);
+     *                    $data = multi_array_sort($arr,"a");
      */
-    static function multiArraySort($multi_array, $sort_key, $sort = SORT_ASC)
+    public static function multiArraySort($multi_array, $sort_key, $sort = SORT_ASC)
     {
         if (is_array($multi_array)) {
             foreach ($multi_array as $row_array) {

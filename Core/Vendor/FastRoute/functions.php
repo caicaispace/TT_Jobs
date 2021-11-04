@@ -1,25 +1,28 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace FastRoute;
 
-if (!function_exists('FastRoute\simpleDispatcher')) {
+if (! function_exists('FastRoute\simpleDispatcher')) {
     /**
-     * @param callable $routeDefinitionCallback
-     * @param array $options
-     *
      * @return Dispatcher
      */
-    function simpleDispatcher(callable $routeDefinitionCallback, array $options = []) {
+    function simpleDispatcher(callable $routeDefinitionCallback, array $options = [])
+    {
         $options += [
-            'routeParser' => 'FastRoute\\RouteParser\\Std',
-            'dataGenerator' => 'FastRoute\\DataGenerator\\GroupCountBased',
-            'dispatcher' => 'FastRoute\\Dispatcher\\GroupCountBased',
+            'routeParser'    => 'FastRoute\\RouteParser\\Std',
+            'dataGenerator'  => 'FastRoute\\DataGenerator\\GroupCountBased',
+            'dispatcher'     => 'FastRoute\\Dispatcher\\GroupCountBased',
             'routeCollector' => 'FastRoute\\RouteCollector',
         ];
 
         /** @var RouteCollector $routeCollector */
         $routeCollector = new $options['routeCollector'](
-            new $options['routeParser'], new $options['dataGenerator']
+            new $options['routeParser'](),
+            new $options['dataGenerator']()
         );
         $routeDefinitionCallback($routeCollector);
 
@@ -27,40 +30,39 @@ if (!function_exists('FastRoute\simpleDispatcher')) {
     }
 
     /**
-     * @param callable $routeDefinitionCallback
-     * @param array $options
-     *
      * @return Dispatcher
      */
-    function cachedDispatcher(callable $routeDefinitionCallback, array $options = []) {
+    function cachedDispatcher(callable $routeDefinitionCallback, array $options = [])
+    {
         $options += [
-            'routeParser' => 'FastRoute\\RouteParser\\Std',
-            'dataGenerator' => 'FastRoute\\DataGenerator\\GroupCountBased',
-            'dispatcher' => 'FastRoute\\Dispatcher\\GroupCountBased',
+            'routeParser'    => 'FastRoute\\RouteParser\\Std',
+            'dataGenerator'  => 'FastRoute\\DataGenerator\\GroupCountBased',
+            'dispatcher'     => 'FastRoute\\Dispatcher\\GroupCountBased',
             'routeCollector' => 'FastRoute\\RouteCollector',
-            'cacheDisabled' => false,
+            'cacheDisabled'  => false,
         ];
 
-        if (!isset($options['cacheFile'])) {
+        if (! isset($options['cacheFile'])) {
             throw new \LogicException('Must specify "cacheFile" option');
         }
 
-        if (!$options['cacheDisabled'] && file_exists($options['cacheFile'])) {
+        if (! $options['cacheDisabled'] && file_exists($options['cacheFile'])) {
             $dispatchData = require $options['cacheFile'];
-            if (!is_array($dispatchData)) {
+            if (! is_array($dispatchData)) {
                 throw new \RuntimeException('Invalid cache file "' . $options['cacheFile'] . '"');
             }
             return new $options['dispatcher']($dispatchData);
         }
 
         $routeCollector = new $options['routeCollector'](
-            new $options['routeParser'], new $options['dataGenerator']
+            new $options['routeParser'](),
+            new $options['dataGenerator']()
         );
         $routeDefinitionCallback($routeCollector);
 
         /** @var RouteCollector $routeCollector */
         $dispatchData = $routeCollector->getData();
-        if (!$options['cacheDisabled']) {
+        if (! $options['cacheDisabled']) {
             file_put_contents(
                 $options['cacheFile'],
                 '<?php return ' . var_export($dispatchData, true) . ';'

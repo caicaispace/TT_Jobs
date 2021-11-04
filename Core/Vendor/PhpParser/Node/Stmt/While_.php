@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Stmt;
 
 use PhpParser\Node;
@@ -14,17 +18,19 @@ class While_ extends Node\Stmt
     /**
      * Constructs a while node.
      *
-     * @param Node\Expr $cond       Condition
-     * @param Node[]    $stmts      Statements
-     * @param array     $attributes Additional attributes
+     * @param Node\Expr $cond Condition
+     * @param Node[] $stmts Statements
+     * @param array $attributes Additional attributes
      */
-    public function __construct(Node\Expr $cond, array $stmts = array(), array $attributes = array()) {
+    public function __construct(Node\Expr $cond, array $stmts = [], array $attributes = [])
+    {
         parent::__construct($attributes);
-        $this->cond = $cond;
+        $this->cond  = $cond;
         $this->stmts = $stmts;
     }
 
-    public function getSubNodeNames() {
-        return array('cond', 'stmts');
+    public function getSubNodeNames()
+    {
+        return ['cond', 'stmts'];
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Stmt;
 
 use PhpParser\Node\Name;
@@ -17,19 +21,21 @@ class GroupUse extends Stmt
     /**
      * Constructs a group use node.
      *
-     * @param Name     $prefix     Prefix for uses
-     * @param UseUse[] $uses       Uses
-     * @param int      $type       Type of group use
-     * @param array    $attributes Additional attributes
+     * @param Name $prefix Prefix for uses
+     * @param UseUse[] $uses Uses
+     * @param int $type Type of group use
+     * @param array $attributes Additional attributes
      */
-    public function __construct(Name $prefix, array $uses, $type = Use_::TYPE_NORMAL, array $attributes = array()) {
+    public function __construct(Name $prefix, array $uses, $type = Use_::TYPE_NORMAL, array $attributes = [])
+    {
         parent::__construct($attributes);
-        $this->type = $type;
+        $this->type   = $type;
         $this->prefix = $prefix;
-        $this->uses = $uses;
+        $this->uses   = $uses;
     }
 
-    public function getSubNodeNames() {
-        return array('type', 'prefix', 'uses');
+    public function getSubNodeNames()
+    {
+        return ['type', 'prefix', 'uses'];
     }
 }

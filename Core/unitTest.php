@@ -1,9 +1,8 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/1/22
- * Time: 下午9:46
+ * @link https://github.com/TTSimple/TT_Jobs
  */
 require_once './Core.php';
 \Core\Core::getInstance()->frameWorkInitialize();

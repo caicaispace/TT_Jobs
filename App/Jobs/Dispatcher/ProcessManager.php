@@ -1,42 +1,29 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/6/13
- * Time: 23:06
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Dispatcher;
 
 use Core\Component\Error\Trigger;
-use Core\Component\Logger;
 use Core\Swoole\Memory\TableManager;
 use Core\Swoole\Server;
 
 /**
- * Class ProcessManager
- *
- * @package Core\Swoole\Process
+ * Class ProcessManager.
  */
 class ProcessManager
 {
-    const SWOOLE_TABLE_NAME = 'JOBS_PROCESS_MANAGER';
+    public const SWOOLE_TABLE_NAME = 'JOBS_PROCESS_MANAGER';
+
+    protected static $instance;
 
     private $_processList = [];
 
     private $_table;
 
-    protected static $instance;
-
-    static function getInstance()
-    {
-        if (!isset(self::$instance)) {
-            self::$instance = new static();
-        }
-        return self::$instance;
-    }
-
-    function __construct()
+    public function __construct()
     {
         TableManager::getInstance()->add(
             self::SWOOLE_TABLE_NAME,
@@ -51,23 +38,30 @@ class ProcessManager
         $this->_table = TableManager::getInstance()->get(self::SWOOLE_TABLE_NAME);
     }
 
+    public static function getInstance()
+    {
+        if (! isset(self::$instance)) {
+            self::$instance = new static();
+        }
+        return self::$instance;
+    }
+
     /**
-     * @param string   $key
-     * @param string   $processName
-     * @param string   $processClass
+     * @param string $key
+     * @param string $processName
+     * @param string $processClass
      * @param callable $onFinish
-     * @param array    $args
      *
      * @return bool
      */
     public function addProcess($key, $processName, $processClass, $onFinish, array $args = [])
     {
-        if (Server::SERVER_NOT_START === Server::getInstance()->isStart()) {
+        if (Server::getInstance()->isStart() === Server::SERVER_NOT_START) {
             trigger_error("you can't add a process {$processName}.{$processClass} after server start");
             return false;
         }
         $md5Key = $this->_generateKey($key);
-        if (!isset($this->_processList[$md5Key])) {
+        if (! isset($this->_processList[$md5Key])) {
             try {
                 $this->_processList[$md5Key] = (new $processClass($key, $processName, $onFinish, $args));
                 return true;
@@ -106,9 +100,8 @@ class ProcessManager
             $this->_removeInTable($process);
             if (\swoole_process::kill($pid, 0)) {
                 \swoole_process::kill($pid);
-                while ($ret = \swoole_process::wait(false)) {
+                while ($ret = \swoole_process::wait(false));
 //                    echo "PID={$ret['pid']}\n";
-                }
             }
         }
         return true;
@@ -117,22 +110,21 @@ class ProcessManager
     /**
      * @param $key
      *
-     * @return Process|null
+     * @return null|Process
      */
     public function getProcessByKey($key)
     {
         $key = $this->_generateKey($key);
         if (isset($this->_processList[$key])) {
             return $this->_processList[$key];
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
      * @param int $pid
      *
-     * @return Process|null
+     * @return null|Process
      */
     public function getProcessByPid($pid)
     {
@@ -163,9 +155,8 @@ class ProcessManager
         if ($process = $this->getProcessByKey($key)) {
             \swoole_process::kill($process->getPid(), SIGTERM);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -179,18 +170,14 @@ class ProcessManager
             $pid = $process->getPid();
             if (\swoole_process::kill($pid, 0)) {
                 \swoole_process::kill($pid);
-                while ($ret = \swoole_process::wait(false)) {
+                while ($ret = \swoole_process::wait(false));
 //                    echo "PID={$ret['pid']}\n";
-                }
             }
             $this->_removeInTable($process);
         }
         return true;
     }
 
-    /**
-     * @param Process $process
-     */
     private function _removeInTable(Process $process)
     {
         $key = $this->_generateKey($process->getProcessKey());

@@ -1,8 +1,14 @@
-<?php namespace SuperClosure\Analyzer\Visitor;
+<?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
+namespace SuperClosure\Analyzer\Visitor;
+
+use PhpParser\Node as AstNode;
 use PhpParser\Node\Scalar\LNumber as NumberNode;
 use PhpParser\Node\Scalar\String_ as StringNode;
-use PhpParser\Node as AstNode;
 use PhpParser\NodeVisitorAbstract as NodeVisitor;
 
 /**
@@ -18,9 +24,6 @@ final class MagicConstantVisitor extends NodeVisitor
      */
     private $location;
 
-    /**
-     * @param array $location
-     */
     public function __construct(array $location)
     {
         $this->location = $location;
@@ -29,21 +32,21 @@ final class MagicConstantVisitor extends NodeVisitor
     public function leaveNode(AstNode $node)
     {
         switch ($node->getType()) {
-            case 'Scalar_MagicConst_Class' :
+            case 'Scalar_MagicConst_Class':
                 return new StringNode($this->location['class']);
-            case 'Scalar_MagicConst_Dir' :
+            case 'Scalar_MagicConst_Dir':
                 return new StringNode($this->location['directory']);
-            case 'Scalar_MagicConst_File' :
+            case 'Scalar_MagicConst_File':
                 return new StringNode($this->location['file']);
-            case 'Scalar_MagicConst_Function' :
+            case 'Scalar_MagicConst_Function':
                 return new StringNode($this->location['function']);
-            case 'Scalar_MagicConst_Line' :
+            case 'Scalar_MagicConst_Line':
                 return new NumberNode($node->getAttribute('startLine'));
-            case 'Scalar_MagicConst_Method' :
+            case 'Scalar_MagicConst_Method':
                 return new StringNode($this->location['method']);
-            case 'Scalar_MagicConst_Namespace' :
+            case 'Scalar_MagicConst_Namespace':
                 return new StringNode($this->location['namespace']);
-            case 'Scalar_MagicConst_Trait' :
+            case 'Scalar_MagicConst_Trait':
                 return new StringNode($this->location['trait']);
         }
     }

@@ -1,42 +1,39 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/12/3
- * Time: 下午4:08
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\Component\Spl;
 
 class SplArray extends \ArrayObject
 {
-    function __get($name)
+    public function __get($name)
     {
         if (isset($this[$name])) {
             return $this[$name];
-        } else {
-            return null;
         }
+        return null;
     }
 
-    function __set($name, $value)
+    public function __set($name, $value)
     {
         $this[$name] = $value;
     }
 
-    function __toString()
+    public function __toString()
     {
         return json_encode($this, JSON_UNESCAPED_UNICODE, JSON_UNESCAPED_SLASHES);
     }
 
-    function getArrayCopy()
+    public function getArrayCopy()
     {
-        return (array)$this;
+        return (array) $this;
     }
 
-    function set($path, $value)
+    public function set($path, $value)
     {
-        $path = explode(".", $path);
+        $path = explode('.', $path);
         $temp = $this;
         while ($key = array_shift($path)) {
             $temp = &$temp[$key];
@@ -44,14 +41,14 @@ class SplArray extends \ArrayObject
         $temp = $value;
     }
 
-    function get($path)
+    public function get($path)
     {
-        $paths = explode(".", $path);
-        $data = $this->getArrayCopy();
-        while ($key = array_shift($paths)){
-            if(isset($data[$key])){
+        $paths = explode('.', $path);
+        $data  = $this->getArrayCopy();
+        while ($key = array_shift($paths)) {
+            if (isset($data[$key])) {
                 $data = $data[$key];
-            }else{
+            } else {
                 return null;
             }
         }
@@ -60,14 +57,14 @@ class SplArray extends \ArrayObject
 
     public function delete($key)
     {
-        $path = explode(".", $key);
+        $path    = explode('.', $key);
         $lastKey = array_pop($path);
-        $data = $this->getArrayCopy();
-        $copy = &$data;
-        while ($key = array_shift($path)){
-            if(isset($copy[$key])){
+        $data    = $this->getArrayCopy();
+        $copy    = &$data;
+        while ($key = array_shift($path)) {
+            if (isset($copy[$key])) {
                 $copy = &$copy[$key];
-            }else{
+            } else {
                 return;
             }
         }
@@ -95,7 +92,7 @@ class SplArray extends \ArrayObject
     }
 
     /**
-     * 按照键值升序
+     * 按照键值升序.
      * @return SplArray
      */
     public function asort()
@@ -105,7 +102,7 @@ class SplArray extends \ArrayObject
     }
 
     /**
-     * 按照键升序
+     * 按照键升序.
      * @return SplArray
      */
     public function ksort()
@@ -115,7 +112,7 @@ class SplArray extends \ArrayObject
     }
 
     /**
-     * 自定义排序
+     * 自定义排序.
      * @param int $sort_flags
      * @return SplArray
      */
@@ -127,8 +124,8 @@ class SplArray extends \ArrayObject
     }
 
     /**
-     * 取得某一列
-     * @param string      $column
+     * 取得某一列.
+     * @param string $column
      * @param null|string $index_key
      * @return SplArray
      */
@@ -147,9 +144,9 @@ class SplArray extends \ArrayObject
     }
 
     /**
-     * 过滤本数组
-     * @param string|array $keys    需要取得/排除的键
-     * @param bool         $exclude true则排除设置的键名 false则仅获取设置的键名
+     * 过滤本数组.
+     * @param array|string $keys 需要取得/排除的键
+     * @param bool $exclude true则排除设置的键名 false则仅获取设置的键名
      * @return SplArray
      */
     public function filter($keys, $exclude = false)
@@ -157,9 +154,9 @@ class SplArray extends \ArrayObject
         if (is_string($keys)) {
             $keys = explode(',', $keys);
         }
-        $new = array();
+        $new = [];
         foreach ($this->getArrayCopy() as $name => $value) {
-            if (!$exclude) {
+            if (! $exclude) {
                 in_array($name, $keys) ? $new[$name] = $value : null;
             } else {
                 in_array($name, $keys) ? null : $new[$name] = $value;
@@ -169,7 +166,7 @@ class SplArray extends \ArrayObject
     }
 
     /**
-     * 提取数组中的键
+     * 提取数组中的键.
      * @return SplArray
      */
     public function keys()
@@ -188,7 +185,7 @@ class SplArray extends \ArrayObject
 
     public function flush()
     {
-        foreach ($this as $key => $item){
+        foreach ($this as $key => $item) {
             unset($this[$key]);
         }
         return $this;

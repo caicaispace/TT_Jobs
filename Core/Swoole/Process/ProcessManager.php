@@ -1,67 +1,62 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yf
- * Date: 2018/1/11
- * Time: 下午9:00
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\Swoole\Process;
 
-
-use Core\Component\SysConst;
 use Core\Component\Error\Trigger;
+use Core\Component\SysConst;
 use Core\Swoole\Memory\TableManager;
 use Core\Swoole\Server;
 
 /**
- * Class ProcessManager
- *
- * @package Core\Swoole\Process
+ * Class ProcessManager.
  */
 class ProcessManager
 {
+    protected static $instance;
     private $_processList = [];
 
-    protected static $instance;
-
-    static function getInstance()
+    public function __construct()
     {
-        if (!isset(self::$instance)) {
+        TableManager::getInstance()->add(
+            SysConst::PROCESS_HASH_MAP,
+            [
+                'pid' => [
+                    'type' => \swoole_table::TYPE_INT,
+                    'size' => 10,
+                ],
+            ],
+            256
+        );
+    }
+
+    public static function getInstance()
+    {
+        if (! isset(self::$instance)) {
             self::$instance = new static();
         }
         return self::$instance;
     }
 
-    function __construct()
-    {
-        TableManager::getInstance()->add(
-            SysConst::PROCESS_HASH_MAP, [
-            'pid' => [
-                'type' => \swoole_table::TYPE_INT,
-                'size' => 10,
-            ],
-        ], 256
-        );
-    }
-
     /**
      * @param string $processName
      * @param string $processClass
-     * @param bool   $redirectStdinStdout
-     * @param array  $args
-     * @param bool   $async
+     * @param bool $redirectStdinStdout
+     * @param bool $async
      *
      * @return bool
      */
     public function addProcess($processName, $processClass, $redirectStdinStdout = false, array $args = [], $async = true)
     {
-        if (Server::SERVER_STARTED === Server::getInstance()->isStart()) {
+        if (Server::getInstance()->isStart() === Server::SERVER_STARTED) {
             trigger_error("you can not add a process {$processName}.{$processClass} after server start");
             return false;
         }
         $key = md5($processName);
-        if (!isset($this->_processList[$key])) {
+        if (! isset($this->_processList[$key])) {
             try {
                 $process                  = new $processClass($processName, $redirectStdinStdout, $args, $async);
                 $this->_processList[$key] = $process;
@@ -101,9 +96,8 @@ class ProcessManager
             $this->_removeInTable($process);
             if (\swoole_process::kill($pid, 0)) {
                 $process->getProcess()->exit(0);
-                while ($ret = \swoole_process::wait(false)) {
+                while ($ret = \swoole_process::wait(false));
 //                    echo "PID={$ret['pid']}\n";
-                }
             }
         }
         return true;
@@ -112,22 +106,21 @@ class ProcessManager
     /**
      * @param string $processName
      *
-     * @return AProcess|null
+     * @return null|AProcess
      */
     public function getProcessByName($processName)
     {
         $key = md5($processName);
         if (isset($this->_processList[$key])) {
             return $this->_processList[$key];
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
      * @param int $pid
      *
-     * @return AProcess|null
+     * @return null|AProcess
      */
     public function getProcessByPid($pid)
     {
@@ -142,7 +135,7 @@ class ProcessManager
 
     /**
      * @param string $processName
-     * @param        $process
+     * @param $process
      */
     public function setProcess($processName, $process)
     {
@@ -160,9 +153,8 @@ class ProcessManager
         if ($process = $this->getProcessByName($processName)) {
             \swoole_process::kill($process->getPid(), SIGTERM);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -176,9 +168,8 @@ class ProcessManager
             $pid = $process->getPid();
             if (\swoole_process::kill($pid, 0)) {
                 \swoole_process::kill($pid);
-                while ($ret = \swoole_process::wait(false)) {
+                while ($ret = \swoole_process::wait(false));
 //                    echo "PID={$ret['pid']}\n";
-                }
             }
             $this->_removeInTable($process);
         }
@@ -187,22 +178,21 @@ class ProcessManager
 
     /**
      * @param string $name
-     * @param mixed  $data
+     * @param mixed $data
      *
      * @return bool
      */
     public function writeByProcessName($name, $data)
     {
         if ($process = $this->getProcessByName($name)) {
-            return (bool)$process->getProcess()->write($data);
-        } else {
-            return false;
+            return (bool) $process->getProcess()->write($data);
         }
+        return false;
     }
 
     /**
      * @param string $name
-     * @param float  $timeOut
+     * @param float $timeOut
      *
      * @return null|string
      */
@@ -216,17 +206,12 @@ class ProcessManager
             $ret     = \swoole_client_select($read, $write, $error, $timeOut);
             if ($ret) {
                 return $process->read(64 * 1024);
-            } else {
-                return null;
             }
-        } else {
             return null;
         }
+        return null;
     }
 
-    /**
-     * @param AProcess $process
-     */
     private function _removeInTable(AProcess $process)
     {
         $key = md5($process->getProcessName());

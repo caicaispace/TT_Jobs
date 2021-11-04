@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/12/5
- * Time: 上午11:58
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace EasySwoole\Core\Component\Spl;
-
 
 class SplStream
 {
@@ -16,52 +13,53 @@ class SplStream
     private $readable;
     private $writable;
     private $readList = [
-        'r' => true, 'w+' => true, 'r+' => true, 'x+' => true, 'c+' => true,
-        'rb' => true, 'w+b' => true, 'r+b' => true, 'x+b' => true,
+        'r'   => true, 'w+' => true, 'r+' => true, 'x+' => true, 'c+' => true,
+        'rb'  => true, 'w+b' => true, 'r+b' => true, 'x+b' => true,
         'c+b' => true, 'rt' => true, 'w+t' => true, 'r+t' => true,
-        'x+t' => true, 'c+t' => true, 'a+' => true
+        'x+t' => true, 'c+t' => true, 'a+' => true,
     ];
     private $writeList = [
-        'w' => true, 'w+' => true, 'rw' => true, 'r+' => true, 'x+' => true,
-        'c+' => true, 'wb' => true, 'w+b' => true, 'r+b' => true,
+        'w'   => true, 'w+' => true, 'rw' => true, 'r+' => true, 'x+' => true,
+        'c+'  => true, 'wb' => true, 'w+b' => true, 'r+b' => true,
         'x+b' => true, 'c+b' => true, 'w+t' => true, 'r+t' => true,
-        'x+t' => true, 'c+t' => true, 'a' => true, 'a+' => true
+        'x+t' => true, 'c+t' => true, 'a' => true, 'a+' => true,
     ];
-    function __construct($resource = '',$mode = 'r+')
+    public function __construct($resource = '', $mode = 'r+')
     {
         switch (gettype($resource)) {
-            case 'resource': {
+            case 'resource':
                 $this->stream = $resource;
                 break;
-            }
-            case 'object':{
-                if(method_exists($resource, '__toString')) {
-                    $resource = $resource->__toString();
+            case 'object':
+                if (method_exists($resource, '__toString')) {
+                    $resource     = $resource->__toString();
                     $this->stream = fopen('php://memory', $mode);
                     if ($resource !== '') {
                         fwrite($this->stream, $resource);
                     }
                     break;
-                }else{
-                    throw new \InvalidArgumentException('Invalid resource type: ' . gettype($resource));
                 }
-            }
-            default:{
+                    throw new \InvalidArgumentException('Invalid resource type: ' . gettype($resource));
+            default:
                 $this->stream  = fopen('php://memory', $mode);
-                try{
-                    $resource = (string)$resource;
+                try {
+                    $resource = (string) $resource;
                     if ($resource !== '') {
                         fwrite($this->stream, $resource);
                     }
-                }catch (\Exception $exception){
+                } catch (\Exception $exception) {
                     throw new \InvalidArgumentException('Invalid resource type: ' . gettype($resource));
                 }
-            }
         }
-        $info = stream_get_meta_data($this->stream);
+        $info           = stream_get_meta_data($this->stream);
         $this->seekable = $info['seekable'];
         $this->readable = isset($this->readList[$info['mode']]);
         $this->writable =  isset($this->writeList[$info['mode']]);
+    }
+
+    public function __destruct()
+    {
+        $this->close();
     }
 
     public function __toString()
@@ -77,18 +75,18 @@ class SplStream
     public function close()
     {
         $res = $this->detach();
-        if(is_resource($res)){
+        if (is_resource($res)) {
             fclose($res);
         }
     }
 
     public function detach()
     {
-        if (!isset($this->stream)) {
+        if (! isset($this->stream)) {
             return null;
         }
         $this->readable = $this->writable = $this->seekable = false;
-        $result = $this->stream;
+        $result         = $this->stream;
         unset($this->stream);
         return $result;
     }
@@ -98,9 +96,8 @@ class SplStream
         $stats = fstat($this->stream);
         if (isset($stats['size'])) {
             return $stats['size'];
-        }else{
-            return null;
         }
+        return null;
     }
 
     public function tell()
@@ -114,7 +111,7 @@ class SplStream
 
     public function eof()
     {
-        return !$this->stream || feof($this->stream);
+        return ! $this->stream || feof($this->stream);
     }
 
     public function isSeekable()
@@ -124,9 +121,10 @@ class SplStream
 
     public function seek($offset, $whence = SEEK_SET)
     {
-        if (!$this->seekable) {
+        if (! $this->seekable) {
             throw new \RuntimeException('Stream is not seekable');
-        } elseif (fseek($this->stream, $offset, $whence) === -1) {
+        }
+        if (fseek($this->stream, $offset, $whence) === -1) {
             throw new \RuntimeException('Unable to seek to stream position '
                 . $offset . ' with whence ' . var_export($whence, true));
         }
@@ -144,7 +142,7 @@ class SplStream
 
     public function write($string)
     {
-        if (!$this->writable) {
+        if (! $this->writable) {
             throw new \RuntimeException('Cannot write to a non-writable stream');
         }
         $result = fwrite($this->stream, $string);
@@ -161,17 +159,17 @@ class SplStream
 
     public function read($length)
     {
-        if (!$this->readable) {
+        if (! $this->readable) {
             throw new \RuntimeException('Cannot read from non-readable stream');
         }
         if ($length < 0) {
             throw new \RuntimeException('Length parameter cannot be negative');
         }
-        if (0 === $length) {
+        if ($length === 0) {
             return '';
         }
         $string = fread($this->stream, $length);
-        if (false === $string) {
+        if ($string === false) {
             throw new \RuntimeException('Unable to read from stream');
         }
         return $string;
@@ -189,26 +187,23 @@ class SplStream
 
     public function getMetadata($key = null)
     {
-        if (!isset($this->stream)) {
+        if (! isset($this->stream)) {
             return $key ? null : [];
-        } elseif (!$key) {
-            return stream_get_meta_data($this->stream);
-        } else {
-            $meta = stream_get_meta_data($this->stream);
-            return isset($meta[$key]) ? $meta[$key] : null;
         }
+        if (! $key) {
+            return stream_get_meta_data($this->stream);
+        }
+        $meta = stream_get_meta_data($this->stream);
+        return isset($meta[$key]) ? $meta[$key] : null;
     }
 
-    public function __destruct()
+    public function getStreamResource()
     {
-        $this->close();
-    }
-
-    function getStreamResource(){
         return $this->stream;
     }
 
-    function truncate($size = 0){
-        return ftruncate($this->stream,$size);
+    public function truncate($size = 0)
+    {
+        return ftruncate($this->stream, $size);
     }
 }

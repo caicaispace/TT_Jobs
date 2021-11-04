@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Stmt;
 
 use PhpParser\Node;
@@ -12,15 +16,17 @@ class Continue_ extends Node\Stmt
     /**
      * Constructs a continue node.
      *
-     * @param null|Node\Expr $num        Number of loops to continue
-     * @param array          $attributes Additional attributes
+     * @param null|Node\Expr $num Number of loops to continue
+     * @param array $attributes Additional attributes
      */
-    public function __construct(Node\Expr $num = null, array $attributes = array()) {
+    public function __construct(Node\Expr $num = null, array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->num = $num;
     }
 
-    public function getSubNodeNames() {
-        return array('num');
+    public function getSubNodeNames()
+    {
+        return ['num'];
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\Swoole\Task;
 
 use Core\Swoole\Server;
@@ -9,7 +13,7 @@ abstract class AAsyncTask
     private $dataForFinishCallBack;
     private $dataForTask;
 
-    function __construct($dataForTask = null)
+    public function __construct($dataForTask = null)
     {
         $this->dataForTask = $dataForTask;
     }
@@ -41,12 +45,12 @@ abstract class AAsyncTask
     /*
      * 注意   server为task进程的server   但taskId为分配该任务的主worker分配的taskId 为每个主worker进程内独立自增
      */
-    abstract function handler(\swoole_server $server, $taskId, $fromId);
+    abstract public function handler(\swoole_server $server, $taskId, $fromId);
 
     /*
      * 注意   server为主worker进程的server   但taskId为分配该任务的主worker分配的taskId 为每个主worker进程内独立自增
      */
-    abstract function finishCallBack(\swoole_server $server, $task_id, $resultData);
+    abstract public function finishCallBack(\swoole_server $server, $task_id, $resultData);
 
     protected function finish($dataForFinishCallBack = null)
     {

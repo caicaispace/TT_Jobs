@@ -1,25 +1,22 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/1/23
- * Time: 上午12:30
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Swoole\Task;
-
 
 use Core\Component\SuperClosure;
 use Core\Swoole\Server;
 
 class TaskManager
 {
+    public const TASK_DISPATCHER_TYPE_RANDOM = -1;
     private static $instance;
-    const TASK_DISPATCHER_TYPE_RANDOM = -1;
 
-    static function getInstance()
+    public static function getInstance()
     {
-        if (!isset(self::$instance)) {
+        if (! isset(self::$instance)) {
             self::$instance = new static();
         }
         return self::$instance;
@@ -37,21 +34,21 @@ class TaskManager
         task方法不能在task进程/用户自定义进程中调用
      */
     /**
-     * add async task
+     * add async task.
      *
-     * @param      $callable
-     * @param int  $workerId
+     * @param $callable
+     * @param int $workerId
      * @param null $finishCallBack
      *
      * @return bool
      */
-    function add($callable, $workerId = self::TASK_DISPATCHER_TYPE_RANDOM, $finishCallBack = null)
+    public function add($callable, $workerId = self::TASK_DISPATCHER_TYPE_RANDOM, $finishCallBack = null)
     {
         if ($callable instanceof \Closure) {
             try {
                 $callable = new SuperClosure($callable);
             } catch (\Exception $exception) {
-                trigger_error("async task serialize fail ");
+                trigger_error('async task serialize fail ');
                 return false;
             }
         }
@@ -59,21 +56,21 @@ class TaskManager
     }
 
     /**
-     * add sync task
+     * add sync task.
      *
-     * @param       $callable
+     * @param $callable
      * @param float $timeout
-     * @param int   $workerId
+     * @param int $workerId
      *
      * @return bool|string
      */
-    function addSync($callable, $timeout = 0.5, $workerId = self::TASK_DISPATCHER_TYPE_RANDOM)
+    public function addSync($callable, $timeout = 0.5, $workerId = self::TASK_DISPATCHER_TYPE_RANDOM)
     {
         if ($callable instanceof \Closure) {
             try {
                 $callable = new SuperClosure($callable);
             } catch (\Exception $exception) {
-                trigger_error("async task serialize fail ");
+                trigger_error('async task serialize fail ');
                 return false;
             }
         }

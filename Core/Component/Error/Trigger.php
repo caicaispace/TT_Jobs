@@ -1,34 +1,30 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/11/9
- * Time: 下午12:29
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\Component\Error;
 
-
-use Core\Conf\Config;
 use Core\AbstractInterface\IErrorHandler;
 use Core\AbstractInterface\IExceptionHandler;
 use Core\Component\Di;
 use Core\Component\SysConst;
+use Core\Conf\Config;
 
 /**
- * Class Trigger
- * @package Core\Component\Error
+ * Class Trigger.
  */
 class Trigger
 {
     public static function error($msg, $file = null, $line = null, $errorCode = E_USER_ERROR, $trace = null)
     {
-        $conf = Config::getInstance()->getConf("APP_DEBUG");
+        $conf = Config::getInstance()->getConf('APP_DEBUG');
         if ($trace == null) {
             $trace = debug_backtrace();
         }
         $handler = Di::getInstance()->get(SysConst::ERROR_HANDLER);
-        if (!$handler instanceof IErrorHandler) {
+        if (! $handler instanceof IErrorHandler) {
             $handler = new ErrorHandler();
         }
         $handler->handler($msg, $file, $line, $errorCode, $trace);
@@ -42,9 +38,9 @@ class Trigger
 
     public static function exception(\Exception $exception)
     {
-        $conf    = Config::getInstance()->getConf("APP_DEBUG");
+        $conf    = Config::getInstance()->getConf('APP_DEBUG');
         $handler = Di::getInstance()->get(SysConst::EXCEPTION_HANDLER);
-        if (!$handler instanceof IExceptionHandler) {
+        if (! $handler instanceof IExceptionHandler) {
             $handler = new ExceptionHandler();
         }
         $handler->handler($exception);

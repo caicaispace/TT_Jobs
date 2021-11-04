@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\ErrorHandler;
 
 use PhpParser\Error;
@@ -15,7 +19,8 @@ class Collecting implements ErrorHandler
     /** @var Error[] Collected errors */
     private $errors = [];
 
-    public function handleError(Error $error) {
+    public function handleError(Error $error)
+    {
         $this->errors[] = $error;
     }
 
@@ -24,7 +29,8 @@ class Collecting implements ErrorHandler
      *
      * @return Error[]
      */
-    public function getErrors() {
+    public function getErrors()
+    {
         return $this->errors;
     }
 
@@ -33,14 +39,16 @@ class Collecting implements ErrorHandler
      *
      * @return bool
      */
-    public function hasErrors() {
-        return !empty($this->errors);
+    public function hasErrors()
+    {
+        return ! empty($this->errors);
     }
 
     /**
      * Reset/clear collected errors.
      */
-    public function clearErrors() {
+    public function clearErrors()
+    {
         $this->errors = [];
     }
 }

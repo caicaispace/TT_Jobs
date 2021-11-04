@@ -1,5 +1,9 @@
 <?php
-// +----------------------------------------------------------------------
+
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 // | Chadanla [ Easy Multi Express Tracking ]
 // +----------------------------------------------------------------------
 // | Power BY Guangxi DuoMeile Trading Co., Ltd.
@@ -11,28 +15,25 @@ namespace Core\Utility\Curl;
 
 /**
  * 爬虫UA随机生成器
- * Class UAGenerate
- * @author : evalor <master@evalor.cn>
- * @package Core\Utility\Curl
+ * Class UAGenerate.
  */
 class UAGenerate
 {
     // 操作系统类型
-    const SYS_WIN = 'WIN';
-    const SYS_OSX = 'OSX';
-    const SYS_IOS = 'IOS';
-    const SYS_LINUX = 'LINUX';
-    const SYS_ANDROID = 'ANDROID';
+    public const SYS_WIN     = 'WIN';
+    public const SYS_OSX     = 'OSX';
+    public const SYS_IOS     = 'IOS';
+    public const SYS_LINUX   = 'LINUX';
+    public const SYS_ANDROID = 'ANDROID';
 
     // 操作系统版本
-    const SYS_BIT_X86 = 'X86';
-    const SYS_BIT_X64 = 'X64';
+    public const SYS_BIT_X86 = 'X86';
+    public const SYS_BIT_X64 = 'X64';
 
     // UA 基本结构: Mozilla/5.0 (平台) 引擎版本 浏览器版本号
 
     /**
-     * 生成随机UA
-     * @author : evalor <master@evalor.cn>
+     * 生成随机UA.
      * @param bool $isWechat 是否微信UA
      * @param string $system 操作系统
      * @param string $bits 操作系统位数
@@ -44,15 +45,13 @@ class UAGenerate
     }
 
     /**
-     * 生成操作系统以及版本号
-     * @author : evalor <master@evalor.cn>
+     * 生成操作系统以及版本号.
      * @param string $system 平台类型
      * @param string $bits 系统版本(手机不分版本)
      * @return string UA平台子串
      */
     private static function mockPlatform($system, $bits)
     {
-
         $Platform = [
             UAGenerate::SYS_WIN,
             UAGenerate::SYS_OSX,
@@ -61,11 +60,14 @@ class UAGenerate
             UAGenerate::SYS_ANDROID,
         ];
 
-        $Bit = [UAGenerate::SYS_BIT_X64, UAGenerate::SYS_BIT_X86,];
+        $Bit = [UAGenerate::SYS_BIT_X64, UAGenerate::SYS_BIT_X86];
 
-        if (!in_array($system, $Platform)) $system = $Platform[array_rand($Platform, 1)];
-        if (!in_array($bits, $Bit)) $bits = $Bit[array_rand($Bit, 1)];
-
+        if (! in_array($system, $Platform)) {
+            $system = $Platform[array_rand($Platform, 1)];
+        }
+        if (! in_array($bits, $Bit)) {
+            $bits = $Bit[array_rand($Bit, 1)];
+        }
 
         $Platform = [
             UAGenerate::SYS_WIN     => [
@@ -80,8 +82,8 @@ class UAGenerate
                 ],
                 'bits'    => [
                     'X86' => 'WOW64 )',  // 32Bits
-                    'X64' => 'Win64; x64)'   // 64Bits
-                ]
+                    'X64' => 'Win64; x64)',   // 64Bits
+                ],
             ],
             UAGenerate::SYS_LINUX   => [
                 'version' => [
@@ -92,8 +94,8 @@ class UAGenerate
                 ],
                 'bits'    => [
                     'X86' => 'i686)',    // 32Bits
-                    'X64' => 'x86_64)'   // 64Bits
-                ]
+                    'X64' => 'x86_64)',   // 64Bits
+                ],
             ],
             UAGenerate::SYS_OSX     => [
                 'version' => [
@@ -127,7 +129,7 @@ class UAGenerate
                 ],
                 'bits'    => [
                     'X86' => ' (Macintosh; Intel Mac OS X',    // 32Bits
-                    'X64' => ' (Macintosh; Intel x86_64 Mac OS X'   // 64Bits
+                    'X64' => ' (Macintosh; Intel x86_64 Mac OS X',   // 64Bits
                 ],
             ],
             UAGenerate::SYS_ANDROID => [
@@ -148,7 +150,7 @@ class UAGenerate
                     ' (Linux; Android 5.0; Mobile)',   // Lollipop 5.0
                     ' (Linux; Android 6.0; Mobile)',   // Marshmallow 6.0
                     ' (Linux; Android 7.0; Mobile)',   // AndroidN 7.0
-                ]
+                ],
             ],
             UAGenerate::SYS_IOS     => [
                 'version' => [
@@ -165,8 +167,8 @@ class UAGenerate
                     ' (iPhone; CPU iPhone OS 9_1 like Mac OS X)',   // iPhone iOS 9.1
                     ' (iPhone; CPU iPhone OS 9_2 like Mac OS X)',   // iPhone iOS 9.2
                     ' (iPhone; CPU iPhone OS 9_3 like Mac OS X)',   // iPhone iOS 9.3
-                ]
-            ]
+                ],
+            ],
         ];
 
         switch ($system) {
@@ -192,8 +194,7 @@ class UAGenerate
     }
 
     /**
-     * 生成浏览器以及引擎版本号
-     * @author : evalor <master@evalor.cn>
+     * 生成浏览器以及引擎版本号.
      * @param bool $isWechat 是否模拟微信浏览器
      * @return string 浏览器引擎以及版本号
      */
@@ -219,9 +220,7 @@ class UAGenerate
             $v2 = rand(1, 9);
             $v3 = rand(100, 280);
             return $chromeVer[array_rand($chromeVer, 1)] . ' Mobile MicroMessenger/' . $v1 . '.' . $v2 . '.' . $v3;
-        } else {
-            return $Browser[array_rand($Browser, 1)];
         }
-
+        return $Browser[array_rand($Browser, 1)];
     }
 }

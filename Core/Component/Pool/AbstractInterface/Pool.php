@@ -1,19 +1,15 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2018/5/3
- * Time: 下午1:37
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\Pool\AbstractInterface;
-
 
 use Core\Component\Pool\PoolManager;
 
 /**
- * Class Pool
- * @package Core\Component\Pool\AbstractInterface
+ * Class Pool.
  */
 abstract class Pool
 {
@@ -30,7 +26,7 @@ abstract class Pool
         $this->poolTableKey = $poolTableKey;
         $this->queue        = new \SplQueue();
         $this->poolTable    = PoolManager::getInstance()->getPoolTable();
-        for ($i = 0; $i < $this->minNum; $i++) {
+        for ($i = 0; $i < $this->minNum; ++$i) {
             $obj = $this->createObject();
             if ($obj) {
                 $this->poolTable->incr($poolTableKey, 'createNum');
@@ -39,11 +35,9 @@ abstract class Pool
         }
     }
 
-    abstract protected function createObject();
-
     /**
      * @param float $timeOut
-     * @return mixed|null
+     * @return null|mixed
      */
     public function getObj($timeOut = 0.1)
     {
@@ -76,4 +70,6 @@ abstract class Pool
         }
         $this->queue->enqueue($obj);
     }
+
+    abstract protected function createObject();
 }

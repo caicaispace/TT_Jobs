@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/23
- * Time: 下午3:49
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\RPC\Server;
-
 
 use Core\Component\RPC\AbstractInterface\AActionRegister;
 use Core\Component\RPC\AbstractInterface\APackageParser;
@@ -16,43 +13,42 @@ use Core\Component\RPC\Common\Config;
 use Core\Component\RPC\Common\Package;
 use Core\Component\Socket\Client\TcpClient;
 use Core\Component\Socket\Response;
-use \Core\Swoole\Server as SwooleServer;
+use Core\Swoole\Server as SwooleServer;
 
 class Server
 {
     protected $config;
-    private $serverList = [];
+    private $serverList       = [];
     private $serverActionList = [];
-    private $serverParser = [];
+    private $serverParser     = [];
 
-    function __construct(Config $config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
         if (empty($this->config->getPackageParserClass())) {
-            die('server conf need package parser class');
+            exit('server conf need package parser class');
         }
     }
 
-    function registerServer($name)
+    public function registerServer($name)
     {
         if (isset($this->serverList[$name])) {
             return $this->serverList[$name];
-        } else {
-            $handler                 = new Service();
-            $this->serverList[$name] = $handler;
-            return $handler;
         }
+        $handler                 = new Service();
+        $this->serverList[$name] = $handler;
+        return $handler;
     }
 
-    function attach($port, $listenAddress = '0.0.0.0')
+    public function attach($port, $listenAddress = '0.0.0.0')
     {
         $listener = SwooleServer::getInstance()->getServer()->addlistener($listenAddress, $port, SWOOLE_TCP);
         $listener->set([
             'heartbeat_check_interval' => $this->config->getHeartBeatCheckInterval(),
             'open_eof_check'           => true,
-            'package_eof'              => $this->config->getEof()
+            'package_eof'              => $this->config->getEof(),
         ]);
-        $listener->on("receive", function (\swoole_server $server, $fd, $from_id, $data) {
+        $listener->on('receive', function (\swoole_server $server, $fd, $from_id, $data) {
             $data   = substr($data, 0, -strlen($this->config->getEof()));
             $client = new TcpClient($server->getClientInfo($fd));
             $client->setFd($fd);
@@ -79,7 +75,7 @@ class Server
                 //判断有没有该服务
                 if (isset($this->serverList[$serverName])) {
                     //存在该服务  还未进行action 注册的时候
-                    if (!isset($this->serverActionList[$serverName])) {
+                    if (! isset($this->serverActionList[$serverName])) {
                         $actionList = new ActionList();
                         $service    = $this->serverList[$serverName];
                         //获取行为注册类
@@ -111,7 +107,7 @@ class Server
                     $response->setErrorMsg("server @ {$serverName} not found");
                 }
                 $ret = $parser->encode($response);
-                Response::response($client, (string)$ret, $this->config->getEof());
+                Response::response($client, (string) $ret, $this->config->getEof());
             } else {
                 trigger_error("{$parserClass} is not a instance of APackageParser");
             }

@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/21
- * Time: 下午5:46
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\Socket\AbstractInterface;
-
 
 use Core\Component\Spl\SplBean;
 

@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Expr;
 
 use PhpParser\Node\Expr;
@@ -14,17 +18,19 @@ class ArrayDimFetch extends Expr
     /**
      * Constructs an array index fetch node.
      *
-     * @param Expr      $var        Variable
-     * @param null|Expr $dim        Array index / dim
-     * @param array     $attributes Additional attributes
+     * @param Expr $var Variable
+     * @param null|Expr $dim Array index / dim
+     * @param array $attributes Additional attributes
      */
-    public function __construct(Expr $var, Expr $dim = null, array $attributes = array()) {
+    public function __construct(Expr $var, Expr $dim = null, array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->var = $var;
         $this->dim = $dim;
     }
 
-    public function getSubNodeNames() {
-        return array('var', 'dim');
+    public function getSubNodeNames()
+    {
+        return ['var', 'dim'];
     }
 }

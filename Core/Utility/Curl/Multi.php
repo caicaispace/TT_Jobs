@@ -1,26 +1,23 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/9/24
- * Time: 下午11:30
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Utility\Curl;
-
 
 class Multi
 {
     private $taskList = [];
 
-    function addRequest($taskName)
+    public function addRequest($taskName)
     {
         $request                   = new Request();
         $this->taskList[$taskName] = $request;
         return $request;
     }
 
-    function select()
+    public function select()
     {
         $successCh = null;
         $mh        = curl_multi_init();
@@ -62,7 +59,7 @@ class Multi
         return $res;
     }
 
-    function exec()
+    public function exec()
     {
         $mh  = curl_multi_init();
         $map = [];
@@ -99,5 +96,4 @@ class Multi
         curl_multi_close($mh);
         return $data;
     }
-
 }

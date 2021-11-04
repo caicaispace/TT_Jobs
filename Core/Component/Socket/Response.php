@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/10
- * Time: 下午10:20
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\Socket;
-
 
 use Core\Component\Socket\AbstractInterface\AClient;
 use Core\Component\Socket\Client\TcpClient;
@@ -16,19 +13,18 @@ use Core\Swoole\Server;
 
 class Response
 {
-    static function response(AClient $client, $data, $eof = '')
+    public static function response(AClient $client, $data, $eof = '')
     {
         if ($client instanceof TcpClient) {
             if ($client->getClientType() == Type::WEB_SOCKET) {
                 return Server::getInstance()->getServer()->push($client->getFd(), $data);
-            } else {
-                return Server::getInstance()->getServer()->send($client->getFd(), $data . $eof, $client->getReactorId());
             }
-        } else if ($client instanceof UdpClient) {
-            return Server::getInstance()->getServer()->sendto($client->getAddress(), $client->getPort(), $data . $eof);
-        } else {
-            trigger_error("client is not validate");
-            return false;
+            return Server::getInstance()->getServer()->send($client->getFd(), $data . $eof, $client->getReactorId());
         }
+        if ($client instanceof UdpClient) {
+            return Server::getInstance()->getServer()->sendto($client->getAddress(), $client->getPort(), $data . $eof);
+        }
+        trigger_error('client is not validate');
+        return false;
     }
 }

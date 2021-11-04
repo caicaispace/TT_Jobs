@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/10/23
- * Time: 下午5:35
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Component\RPC\Client;
-
 
 use Core\Component\RPC\AbstractInterface\APackageParser;
 use Core\Component\RPC\Common\Config;
@@ -20,33 +17,31 @@ class Client
     private $serverConf = [];
 
     /**
-     * @param Config $conf
-     * @return CallList|mixed
      * @throws \Exception
+     * @return CallList|mixed
      */
-    function selectServer(Config $conf)
+    public function selectServer(Config $conf)
     {
         if (empty($conf->getHost())) {
-            throw new \Exception("rpc host error @" . $conf->getHost());
+            throw new \Exception('rpc host error @' . $conf->getHost());
         }
         if (empty($conf->getPort())) {
-            throw new \Exception("rpc host port error @" . $conf->getPort());
+            throw new \Exception('rpc host port error @' . $conf->getPort());
         }
         if (empty($conf->getPackageParserClass())) {
-            throw new \Exception("rpc packageParserClass  error @" . $conf->getPort());
+            throw new \Exception('rpc packageParserClass  error @' . $conf->getPort());
         }
         $serverHash = spl_object_hash($conf);
         if (isset($this->serverList[$serverHash])) {
             return $this->serverList[$serverHash];
-        } else {
-            $call                          = new CallList();
-            $this->serverList[$serverHash] = $call;
-            $this->serverConf[$serverHash] = $conf;
-            return $call;
         }
+        $call                          = new CallList();
+        $this->serverList[$serverHash] = $call;
+        $this->serverConf[$serverHash] = $conf;
+        return $call;
     }
 
-    function call($timeOut = 1000)
+    public function call($timeOut = 1000)
     {
         $clients             = [];
         $clientsInfo         = [];
@@ -63,7 +58,7 @@ class Client
                     $client = new \swoole_client(SWOOLE_TCP, SWOOLE_SOCK_SYNC);
                     $client->set([
                         'open_eof_check' => true,
-                        'package_eof'    => $serverConf->getEof(),//\r\n
+                        'package_eof'    => $serverConf->getEof(), //\r\n
                     ]);
                     $client->connect($serverConf->getHost(), $serverConf->getPort(), $serverConf->getConnectTimeOut(), 0);
                     if ($client->isConnected()) {
@@ -74,7 +69,7 @@ class Client
                             $clientsInfo[$client->sock] = [
                                 'callObj'    => $task,
                                 'eof'        => $serverConf->getEof(),
-                                'serverHash' => $serverHash
+                                'serverHash' => $serverHash,
                             ];
                         }
                     } else {
@@ -84,7 +79,7 @@ class Client
                             $res = new Package();
                             $res->setErrorCode($res::ERROR_SERVER_CONNECT_FAIL);
                             call_user_func_array($handler, [
-                                $task->getPackage(), $res
+                                $task->getPackage(), $res,
                             ]);
                         }
                     }
@@ -92,7 +87,7 @@ class Client
             }
         }
         $start = microtime(1);
-        while (!empty($clients)) {
+        while (! empty($clients)) {
             $write = $error = [];
             $read  = array_values($clients);
             $n     = swoole_client_select($read, $write, $error, 0.1);
@@ -111,20 +106,19 @@ class Client
                         $handler = $clientsInfo[$c->sock]['callObj']->getFailCall();
                         if (is_callable($handler)) {
                             call_user_func_array($handler, [
-                                $clientsInfo[$c->sock]['callObj']->getPackage(), $res
+                                $clientsInfo[$c->sock]['callObj']->getPackage(), $res,
                             ]);
                         }
                     } else {
                         $handler = $clientsInfo[$c->sock]['callObj']->getSuccessCall();
                         if (is_callable($handler)) {
                             call_user_func_array($handler, [
-                                $clientsInfo[$c->sock]['callObj']->getPackage(), $res
+                                $clientsInfo[$c->sock]['callObj']->getPackage(), $res,
                             ]);
                         }
                     }
                     $c->close();
-                    unset($clients[$c->sock]);
-                    unset($clientsInfo[$c->sock]);
+                    unset($clients[$c->sock], $clientsInfo[$c->sock]);
                 }
             }
             $now   = microtime(1);
@@ -140,8 +134,7 @@ class Client
                         ]);
                     }
                     $client->close();
-                    unset($clients[$client->sock]);
-                    unset($clientsInfo[$client->sock]);
+                    unset($clients[$client->sock], $clientsInfo[$client->sock]);
                 }
                 break;
             }

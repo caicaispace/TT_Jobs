@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Stmt;
 
 use PhpParser\Node\Stmt;
@@ -12,15 +16,17 @@ class Label extends Stmt
     /**
      * Constructs a label node.
      *
-     * @param string $name       Name
-     * @param array  $attributes Additional attributes
+     * @param string $name Name
+     * @param array $attributes Additional attributes
      */
-    public function __construct($name, array $attributes = array()) {
+    public function __construct($name, array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->name = $name;
     }
 
-    public function getSubNodeNames() {
-        return array('name');
+    public function getSubNodeNames()
+    {
+        return ['name'];
     }
 }

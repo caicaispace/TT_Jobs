@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node;
 
 use PhpParser\NodeAbstract;
@@ -14,16 +18,29 @@ class Name extends NodeAbstract
     /**
      * Constructs a name node.
      *
-     * @param string|array|self $name       Name as string, part array or Name instance (copy ctor)
-     * @param array             $attributes Additional attributes
+     * @param array|self|string $name Name as string, part array or Name instance (copy ctor)
+     * @param array $attributes Additional attributes
      */
-    public function __construct($name, array $attributes = array()) {
+    public function __construct($name, array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->parts = self::prepareName($name);
     }
 
-    public function getSubNodeNames() {
-        return array('parts');
+    /**
+     * Returns a string representation of the name by imploding the namespace parts with the
+     * namespace separator.
+     *
+     * @return string String representation
+     */
+    public function __toString()
+    {
+        return implode('\\', $this->parts);
+    }
+
+    public function getSubNodeNames()
+    {
+        return ['parts'];
     }
 
     /**
@@ -31,7 +48,8 @@ class Name extends NodeAbstract
      *
      * @return string First part of the name
      */
-    public function getFirst() {
+    public function getFirst()
+    {
         return $this->parts[0];
     }
 
@@ -40,43 +58,48 @@ class Name extends NodeAbstract
      *
      * @return string Last part of the name
      */
-    public function getLast() {
+    public function getLast()
+    {
         return $this->parts[count($this->parts) - 1];
     }
 
     /**
-     * Checks whether the name is unqualified. (E.g. Name)
+     * Checks whether the name is unqualified. (E.g. Name).
      *
      * @return bool Whether the name is unqualified
      */
-    public function isUnqualified() {
-        return 1 == count($this->parts);
+    public function isUnqualified()
+    {
+        return count($this->parts) == 1;
     }
 
     /**
-     * Checks whether the name is qualified. (E.g. Name\Name)
+     * Checks whether the name is qualified. (E.g. Name\Name).
      *
      * @return bool Whether the name is qualified
      */
-    public function isQualified() {
+    public function isQualified()
+    {
         return 1 < count($this->parts);
     }
 
     /**
-     * Checks whether the name is fully qualified. (E.g. \Name)
+     * Checks whether the name is fully qualified. (E.g. \Name).
      *
      * @return bool Whether the name is fully qualified
      */
-    public function isFullyQualified() {
+    public function isFullyQualified()
+    {
         return false;
     }
 
     /**
-     * Checks whether the name is explicitly relative to the current namespace. (E.g. namespace\Name)
+     * Checks whether the name is explicitly relative to the current namespace. (E.g. namespace\Name).
      *
      * @return bool Whether the name is relative
      */
-    public function isRelative() {
+    public function isRelative()
+    {
         return false;
     }
 
@@ -86,17 +109,8 @@ class Name extends NodeAbstract
      *
      * @return string String representation
      */
-    public function toString() {
-        return implode('\\', $this->parts);
-    }
-
-    /**
-     * Returns a string representation of the name by imploding the namespace parts with the
-     * namespace separator.
-     *
-     * @return string String representation
-     */
-    public function __toString() {
+    public function toString()
+    {
         return implode('\\', $this->parts);
     }
 
@@ -111,12 +125,13 @@ class Name extends NodeAbstract
      *
      * Offset and length have the same meaning as in array_slice().
      *
-     * @param int      $offset Offset to start the slice at (may be negative)
-     * @param int|null $length Length of the slice (may be negative)
+     * @param int $offset Offset to start the slice at (may be negative)
+     * @param null|int $length Length of the slice (may be negative)
      *
-     * @return static|null Sliced name
+     * @return null|static Sliced name
      */
-    public function slice($offset, $length = null) {
+    public function slice($offset, $length = null)
+    {
         $numParts = count($this->parts);
 
         $realOffset = $offset < 0 ? $offset + $numParts : $offset;
@@ -124,7 +139,7 @@ class Name extends NodeAbstract
             throw new \OutOfBoundsException(sprintf('Offset %d is out of bounds', $offset));
         }
 
-        if (null === $length) {
+        if ($length === null) {
             $realLength = $numParts - $realOffset;
         } else {
             $realLength = $length < 0 ? $length + $numParts - $realOffset : $length;
@@ -152,40 +167,45 @@ class Name extends NodeAbstract
      *     Name::concat($namespace, $shortName)
      * where $namespace is a Name node or null will work as expected.
      *
-     * @param string|array|self|null $name1      The first name
-     * @param string|array|self|null $name2      The second name
-     * @param array                  $attributes Attributes to assign to concatenated name
+     * @param null|array|self|string $name1 The first name
+     * @param null|array|self|string $name2 The second name
+     * @param array $attributes Attributes to assign to concatenated name
      *
-     * @return static|null Concatenated name
+     * @return null|static Concatenated name
      */
-    public static function concat($name1, $name2, array $attributes = []) {
-        if (null === $name1 && null === $name2) {
+    public static function concat($name1, $name2, array $attributes = [])
+    {
+        if ($name1 === null && $name2 === null) {
             return null;
-        } elseif (null === $name1) {
+        }
+        if ($name1 === null) {
             return new static(self::prepareName($name2), $attributes);
-        } else if (null === $name2) {
+        }
+        if ($name2 === null) {
             return new static(self::prepareName($name1), $attributes);
-        } else {
-            return new static(
+        }
+        return new static(
                 array_merge(self::prepareName($name1), self::prepareName($name2)), $attributes
             );
-        }
     }
 
     /**
      * Prepares a (string, array or Name node) name for use in name changing methods by converting
      * it to an array.
      *
-     * @param string|array|self $name Name to prepare
+     * @param array|self|string $name Name to prepare
      *
      * @return array Prepared name
      */
-    private static function prepareName($name) {
+    private static function prepareName($name)
+    {
         if (\is_string($name)) {
             return explode('\\', $name);
-        } elseif (\is_array($name)) {
+        }
+        if (\is_array($name)) {
             return $name;
-        } elseif ($name instanceof self) {
+        }
+        if ($name instanceof self) {
             return $name->parts;
         }
 

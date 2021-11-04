@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\AbstractInterface;
-
 
 use Core\Http\Request;
 use Core\Http\Response;
@@ -10,29 +13,29 @@ abstract class AEvent
 {
     protected static $instance;
 
-    static function getInstance(...$args)
-    {
-        if (!isset(self::$instance)) {
-            self::$instance = new static($args);
-        }
-        return self::$instance;
-    }
-
-    final function __construct(...$args)
+    final public function __construct(...$args)
     {
         if (\method_exists($this, 'initialize')) {
             $this->initialize($args);
         }
     }
 
-    abstract function frameInitialize();
+    public static function getInstance(...$args)
+    {
+        if (! isset(self::$instance)) {
+            self::$instance = new static($args);
+        }
+        return self::$instance;
+    }
 
-    abstract function frameInitialized();
+    abstract public function frameInitialize();
+
+    abstract public function frameInitialized();
 
     /*
      * 未执行swoole_http_server start
      */
-    abstract function beforeWorkerStart(\swoole_server $server);
+    abstract public function beforeWorkerStart(\swoole_server $server);
 
     /*
      * Server启动在主进程的主线程回调此函数
@@ -49,7 +52,7 @@ abstract class AEvent
        worker进程已经创建好了。新创建的对象在主进程内，worker进程无法访问到此内存区域。
        因此全局对象创建的代码需要放置在swoole_server_start之前。
      */
-    abstract function onStart(\swoole_server $server);
+    abstract public function onStart(\swoole_server $server);
 
     /*
      * 在此之前Swoole Server已进行了如下操作
@@ -60,7 +63,7 @@ abstract class AEvent
        强制kill进程不会回调onShutdown，如kill -9
        需要使用kill -15来发送SIGTREM信号到主进程才能按照正常的流程终止
      */
-    abstract function onShutdown(\swoole_server $server);
+    abstract public function onShutdown(\swoole_server $server);
 
     /*
      * 此事件在worker进程/task进程启动时发生。这里创建的对象可以在进程生命周期内使用
@@ -73,24 +76,24 @@ abstract class AEvent
         $worker_id和进程PID没有任何关系
      * 每个worker进程启动均会执行该函数，6个worker就执行6次
      */
-    abstract function onWorkerStart(\swoole_server $server, $workerId);
+    abstract public function onWorkerStart(\swoole_server $server, $workerId);
 
     /*
     * 每个worker进程启动均会执行该函数，6个worker就执行6次
     */
-    abstract function onWorkerStop(\swoole_server $server, $workerId);
+    abstract public function onWorkerStop(\swoole_server $server, $workerId);
 
-    abstract function onRequest(Request $request, Response $response);
+    abstract public function onRequest(Request $request, Response $response);
 
-    abstract function onDispatcher(Request $request, Response $response, $targetControllerClass, $targetAction);
+    abstract public function onDispatcher(Request $request, Response $response, $targetControllerClass, $targetAction);
 
-    abstract function onResponse(Request $request, Response $response);
+    abstract public function onResponse(Request $request, Response $response);
 
-    abstract function onTask(\swoole_server $server, $taskId, $workerId, $callBackObj);
+    abstract public function onTask(\swoole_server $server, $taskId, $workerId, $callBackObj);
 
-    abstract function onFinish(\swoole_server $server, $taskId, $callBackObj);
+    abstract public function onFinish(\swoole_server $server, $taskId, $callBackObj);
 
-    abstract function onWorkerError(\swoole_server $server, $worker_id, $worker_pid, $exit_code);
+    abstract public function onWorkerError(\swoole_server $server, $worker_id, $worker_pid, $exit_code);
 
-    abstract function onMessage(\swoole_server $server, $frame);
+    abstract public function onMessage(\swoole_server $server, $frame);
 }

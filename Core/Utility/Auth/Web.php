@@ -1,15 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/6/27
- * Time: 22:27:51
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\Utility\Auth;
 
-use Core\Http\SessionFacade as Session;
 use Core\conf\Config;
+use Core\Http\SessionFacade as Session;
 use think\Db;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
@@ -89,16 +87,15 @@ CREATE TABLE `tt_auth_group_access` (
 */
 
 /**
- * Class newWeb
- * @package Core\Utility\Auth
+ * Class newWeb.
  */
 class Web
 {
-    const AUTH_ON = true;
-    const AUTH_OFF = false;
+    public const AUTH_ON  = true;
+    public const AUTH_OFF = false;
 
-    const REAL_TIME_AUTH = 1;
-    const LOGIN_TIME_AUTH = 2;
+    public const REAL_TIME_AUTH  = 1;
+    public const LOGIN_TIME_AUTH = 2;
 
     protected $_config = [
         'auth_on'            => self::AUTH_ON,          // 认证开关
@@ -118,19 +115,19 @@ class Web
     }
 
     /**
-     * @param string|array  $name      需要验证的规则列表,支持逗号分隔的权限规则或索引数组
-     * @param int           $uid       认证用户的id
-     * @param int           $type
-     * @param string        $relation  如果为 'or' 表示满足任一条规则即通过验证;如果为 'and'则表示需满足所有规则才能通过验证
-     * @param string        $mode      执行check的模式
-     * @return bool                    通过验证返回true;失败返回false
+     * @param array|string $name 需要验证的规则列表,支持逗号分隔的权限规则或索引数组
+     * @param int $uid 认证用户的id
+     * @param int $type
+     * @param string $relation 如果为 'or' 表示满足任一条规则即通过验证;如果为 'and'则表示需满足所有规则才能通过验证
+     * @param string $mode 执行check的模式
      * @throws DataNotFoundException
      * @throws DbException
      * @throws ModelNotFoundException
+     * @return bool 通过验证返回true;失败返回false
      */
     public function check($name, $uid, $type, $relation = 'or', $mode = 'url')
     {
-        if (!$this->_config['auth_on']) {
+        if (! $this->_config['auth_on']) {
             return true;
         }
 
@@ -161,7 +158,7 @@ class Web
             }
         }
 
-        if ($relation === 'or' && !empty($list)) {
+        if ($relation === 'or' && ! empty($list)) {
             return true;
         }
 
@@ -175,10 +172,10 @@ class Web
 
     /**
      * @param int $uid
-     * @return array|bool array(array('uid'=>'用户id','group_id'=>'用户组id','title'=>'用户组名称','rules'=>'用户组拥有的规则id,多个,号隔开'))
      * @throws DataNotFoundException
      * @throws DbException
      * @throws ModelNotFoundException
+     * @return array|bool array(array('uid'=>'用户id','group_id'=>'用户组id','title'=>'用户组名称','rules'=>'用户组拥有的规则id,多个,号隔开'))
      */
     public function getGroups($uid)
     {
@@ -192,7 +189,7 @@ class Web
             ->alias('a')
             ->where('a.uid', $uid)
             ->where('g.status', 1)
-            ->join($this->_config['auth_group'] . ' g', "a.group_id = g.id")
+            ->join($this->_config['auth_group'] . ' g', 'a.group_id = g.id')
             ->field('uid,group_id,title,rules')
             ->select();
 
@@ -203,24 +200,23 @@ class Web
     /**
      * @param $uid
      * @param $type
-     * @return array|mixed
      * @throws DataNotFoundException
      * @throws DbException
      * @throws ModelNotFoundException
+     * @return array|mixed
      */
     protected function getAuthList($uid, $type)
     {
         static $_authList = [];
 
-        $t = implode(',', (array)$type);
+        $t = implode(',', (array) $type);
         if (isset($_authList[$uid . $t])) {
             return $_authList[$uid . $t];
         }
 
         if (
             $this->_config['auth_type'] == self::LOGIN_TIME_AUTH
-            &&
-            Session::has('_AUTH_LIST_' . $uid . $t)
+            && Session::has('_AUTH_LIST_' . $uid . $t)
         ) {
             return Session::find('_AUTH_LIST_' . $uid . $t);
         }
@@ -241,7 +237,7 @@ class Web
         $map = [
             ['id', 'in', $ids],
             ['type', '=', $type],
-            ['status', '=', 1]
+            ['status', '=', 1],
         ];
 
         // 读取用户组所有权限规则
@@ -253,8 +249,8 @@ class Web
         // 循环规则，判断结果。
         $authList = [];
         foreach ($rules as $rule) {
-            if (!empty($rule['condition'])) { // 根据condition进行验证
-                $user = $this->getUserInfo($uid); // 获取用户信息,一维数组
+            if (! empty($rule['condition'])) { // 根据condition进行验证
+                $user    = $this->getUserInfo($uid); // 获取用户信息,一维数组
                 $command = preg_replace('/\{(\w*?)\}/', '$user[\'\\1\']', $rule['condition']);
                 // dump($command); // debug
                 @(eval('$condition=(' . $command . ');'));
@@ -277,17 +273,17 @@ class Web
 
     /**
      * @param $uid
-     * @return mixed
      * @throws DataNotFoundException
      * @throws DbException
      * @throws ModelNotFoundException
+     * @return mixed
      */
     protected function getUserInfo($uid)
     {
         static $userInfo = [];
-        if (!isset($userInfo[$uid])) {
+        if (! isset($userInfo[$uid])) {
             $userInfo[$uid] = Db::name($this->_config['auth_user'])
-                ->where((string)$this->_config['auth_user_id_field'], $uid)
+                ->where((string) $this->_config['auth_user_id_field'], $uid)
                 ->find();
         }
         return $userInfo[$uid];

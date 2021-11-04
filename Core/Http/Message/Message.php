@@ -1,21 +1,18 @@
 <?php
 
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/6/13
- * Time: 下午7:01
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Http\Message;
 
 class Message
 {
     private $protocolVersion = '1.1';
-    private $headers = [];
+    private $headers         = [];
     private $body;
 
-    function __construct(array $headers = null, Stream $body = null, $protocolVersion = '1.1')
+    public function __construct(array $headers = null, Stream $body = null, $protocolVersion = '1.1')
     {
         if ($headers != null) {
             $this->headers = $headers;
@@ -54,23 +51,21 @@ class Message
     {
         if (array_key_exists($name, $this->headers)) {
             return $this->headers[$name];
-        } else {
-            return array();
         }
+        return [];
     }
 
     public function getHeaderLine($name)
     {
         if (array_key_exists($name, $this->headers)) {
-            return implode("; ", $this->headers[$name]);
-        } else {
-            return '';
+            return implode('; ', $this->headers[$name]);
         }
+        return '';
     }
 
     public function withHeader($name, $value)
     {
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             $value = [$value];
         }
         if (isset($this->headers[$name]) && $this->headers[$name] === $value) {
@@ -82,7 +77,7 @@ class Message
 
     public function withAddedHeader($name, $value)
     {
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             $value = [$value];
         }
         if (isset($this->headers[$name])) {
@@ -98,9 +93,8 @@ class Message
         if (isset($this->headers[$name])) {
             unset($this->headers[$name]);
             return $this;
-        } else {
-            return $this;
         }
+        return $this;
     }
 
     public function getBody()

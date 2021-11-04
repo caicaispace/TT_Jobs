@@ -1,27 +1,26 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yangcai
- * Date: 2018/5/24
- * Time: 17:42
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace Core\AbstractInterface;
 
 use Core\Conf\Config;
 use Core\Http\Message\Status;
 use Core\Http\Request;
 use Core\Http\Response;
+
 //use think\Template;
 
 class AHttpController extends ABaseController
 {
     /**
-     * 模板引擎
+     * 模板引擎.
      *
      * @var null
      */
-    private $_templateEngine = null;
+    private $_templateEngine;
 
     public function __construct()
     {
@@ -30,22 +29,22 @@ class AHttpController extends ABaseController
 //        $this->_templateEngine = new Template($tplConfig);
     }
 
-    function index()
+    public function index()
     {
         $this->actionNotFound();
     }
 
-    function request()
+    public function request()
     {
         return Request::getInstance();
     }
 
-    function response()
+    public function response()
     {
         return Response::getInstance();
     }
 
-    function responseError()
+    public function responseError()
     {
         $this->response()->withStatus(Status::CODE_INTERNAL_SERVER_ERROR);
     }

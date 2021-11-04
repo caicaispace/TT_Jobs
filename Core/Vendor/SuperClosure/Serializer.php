@@ -1,4 +1,10 @@
-<?php namespace SuperClosure;
+<?php
+
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
+namespace SuperClosure;
 
 use SuperClosure\Analyzer\AstAnalyzer as DefaultAnalyzer;
 use SuperClosure\Analyzer\ClosureAnalyzer;
@@ -18,7 +24,7 @@ class Serializer implements SerializerInterface
      *
      * @var string
      */
-    const RECURSION = "{{RECURSION}}";
+    public const RECURSION = '{{RECURSION}}';
 
     /**
      * The keys of closure data required for serialization.
@@ -50,24 +56,24 @@ class Serializer implements SerializerInterface
     /**
      * Create a new serializer instance.
      *
-     * @param ClosureAnalyzer|null $analyzer   Closure analyzer instance.
-     * @param string|null          $signingKey HMAC key to sign closure data.
+     * @param null|ClosureAnalyzer $analyzer closure analyzer instance
+     * @param null|string $signingKey HMAC key to sign closure data
      */
     public function __construct(
         ClosureAnalyzer $analyzer = null,
         $signingKey = null
     ) {
-        $this->analyzer = $analyzer ?: new DefaultAnalyzer;
+        $this->analyzer   = $analyzer ?: new DefaultAnalyzer();
         $this->signingKey = $signingKey;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function serialize(\Closure $closure)
     {
         $serialized = serialize(new SerializableClosure($closure, $this));
-        
+
         if ($serialized === null) {
             throw new ClosureSerializationException(
                 'The closure could not be serialized.'
@@ -75,7 +81,7 @@ class Serializer implements SerializerInterface
         }
 
         if ($this->signingKey) {
-            $signature = $this->calculateSignature($serialized);
+            $signature  = $this->calculateSignature($serialized);
             $serialized = '%' . base64_encode($signature) . $serialized;
         }
 
@@ -83,14 +89,14 @@ class Serializer implements SerializerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function unserialize($serialized)
     {
         // Strip off the signature from the front of the string.
         $signature = null;
         if ($serialized[0] === '%') {
-            $signature = base64_decode(substr($serialized, 1, 44));
+            $signature  = base64_decode(substr($serialized, 1, 44));
             $serialized = substr($serialized, 45);
         }
 
@@ -106,7 +112,8 @@ class Serializer implements SerializerInterface
             throw new ClosureUnserializationException(
                 'The closure could not be unserialized.'
             );
-        } elseif (!$unserialized instanceof SerializableClosure) {
+        }
+        if (! $unserialized instanceof SerializableClosure) {
             throw new ClosureUnserializationException(
                 'The closure did not unserialize to a SuperClosure.'
             );
@@ -116,7 +123,7 @@ class Serializer implements SerializerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getData(\Closure $closure, $forSerialization = false)
     {
@@ -127,7 +134,7 @@ class Serializer implements SerializerInterface
         // serializing the closure, then make some modifications to the data.
         if ($forSerialization) {
             // If there is no reference to the binding, don't serialize it.
-            if (!$data['hasThis']) {
+            if (! $data['hasThis']) {
                 $data['binding'] = null;
             }
 
@@ -152,8 +159,8 @@ class Serializer implements SerializerInterface
      *
      * NOTE: THIS MAY NOT WORK IN ALL USE CASES, SO USE AT YOUR OWN RISK.
      *
-     * @param mixed $data Any variable that contains closures.
-     * @param SerializerInterface $serializer The serializer to use.
+     * @param mixed $data any variable that contains closures
+     * @param SerializerInterface $serializer the serializer to use
      */
     public static function wrapClosures(&$data, SerializerInterface $serializer)
     {
@@ -164,7 +171,7 @@ class Serializer implements SerializerInterface
                 self::wrapClosures($binding, $serializer);
                 $scope = $reflection->getClosureScopeClass();
                 $scope = $scope ? $scope->getName() : 'static';
-                $data = $data->bindTo($binding, $scope);
+                $data  = $data->bindTo($binding, $scope);
             }
             $data = new SerializableClosure($data, $serializer);
         } elseif (is_array($data) || $data instanceof \stdClass || $data instanceof \Traversable) {
@@ -172,10 +179,10 @@ class Serializer implements SerializerInterface
             foreach ($data as &$value) {
                 self::wrapClosures($value, $serializer);
             }
-        } elseif (is_object($data) && !$data instanceof \Serializable) {
+        } elseif (is_object($data) && ! $data instanceof \Serializable) {
             // Handle objects that are not already explicitly serializable.
             $reflection = new \ReflectionObject($data);
-            if (!$reflection->hasMethod('__sleep')) {
+            if (! $reflection->hasMethod('__sleep')) {
                 foreach ($reflection->getProperties() as $property) {
                     if ($property->isPrivate() || $property->isProtected()) {
                         $property->setAccessible(true);
@@ -191,9 +198,9 @@ class Serializer implements SerializerInterface
     /**
      * Calculates a signature for a closure's serialized data.
      *
-     * @param string $data Serialized closure data.
+     * @param string $data serialized closure data
      *
-     * @return string Signature of the closure's data.
+     * @return string signature of the closure's data
      */
     private function calculateSignature($data)
     {
@@ -203,16 +210,17 @@ class Serializer implements SerializerInterface
     /**
      * Verifies the signature for a closure's serialized data.
      *
-     * @param string $signature The provided signature of the data.
-     * @param string $data      The data for which to verify the signature.
+     * @param string $signature the provided signature of the data
+     * @param string $data the data for which to verify the signature
      *
-     * @throws ClosureUnserializationException if the signature is invalid.
+     * @throws ClosureUnserializationException if the signature is invalid
      */
     private function verifySignature($signature, $data)
     {
         // Verify that the provided signature matches the calculated signature.
-        if (!hash_equals($signature, $this->calculateSignature($data))) {
-            throw new ClosureUnserializationException('The signature of the'
+        if (! hash_equals($signature, $this->calculateSignature($data))) {
+            throw new ClosureUnserializationException(
+                'The signature of the'
                 . ' closure\'s data is invalid, which means the serialized '
                 . 'closure has been modified and is unsafe to unserialize.'
             );

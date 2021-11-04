@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Expr;
 
 use PhpParser\Node\Expr;
@@ -17,11 +21,13 @@ class Error extends Expr
      *
      * @param array $attributes Additional attributes
      */
-    public function __construct(array $attributes = array()) {
+    public function __construct(array $attributes = [])
+    {
         parent::__construct($attributes);
     }
 
-    public function getSubNodeNames() {
-        return array();
+    public function getSubNodeNames()
+    {
+        return [];
     }
 }

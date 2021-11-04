@@ -1,13 +1,10 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/1/23
- * Time: 上午11:17
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Utility\Curl;
-
 
 class Response
 {
@@ -19,7 +16,7 @@ class Response
     protected $cookies = [];
     protected $requestCookies;
 
-    function __construct($rawResponse, $curlResource, array $requestCookies)
+    public function __construct($rawResponse, $curlResource, array $requestCookies)
     {
         $this->requestCookies = $requestCookies;
         $this->curlInfo       = curl_getinfo($curlResource);
@@ -30,10 +27,10 @@ class Response
         $this->body       = substr($rawResponse, $this->curlInfo['header_size']);
         //处理头部中的cookie
         preg_match_all("/Set-Cookie:(.*)\n/U", $this->headerLine, $ret);
-        if (!empty($ret[0])) {
+        if (! empty($ret[0])) {
             foreach ($ret[0] as $item) {
-                preg_match('/(Cookie: )(.*?)(\r\n)/',$item,$ret);
-                $ret = explode('=',trim($ret[2],';'));
+                preg_match('/(Cookie: )(.*?)(\r\n)/', $item, $ret);
+                $ret    = explode('=', trim($ret[2], ';'));
                 $cookie = new Cookie();
                 $cookie->setValue($ret[1]);
                 $cookie->setName($ret[0]);
@@ -41,6 +38,15 @@ class Response
             }
         }
         curl_close($curlResource);
+    }
+
+    public function __toString()
+    {
+        $ret = '';
+        if (! empty($this->headerLine)) {
+            $ret = $this->headerLine . "\n\r\n\r";
+        }
+        return $ret . $this->body;
     }
 
     /**
@@ -96,16 +102,7 @@ class Response
         return isset($this->cookies[$cookieName]) ? $this->cookies[$cookieName] : null;
     }
 
-    function __toString()
-    {
-        $ret = '';
-        if (!empty($this->headerLine)) {
-            $ret = $this->headerLine . "\n\r\n\r";
-        }
-        return $ret . $this->body;
-    }
-
-    function follow($url, callable $preCall = null)
+    public function follow($url, callable $preCall = null)
     {
         $request = new Request($url);
         $request->setOpt([CURLOPT_REFERER => $this->curlInfo['url']]);

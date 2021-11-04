@@ -1,34 +1,61 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/6/27
- * Time: 0:53:56
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Model;
 
 use Core\AbstractInterface\AModel as Model;
 use Core\Component\Error\Trigger;
-use Core\Component\Logger;
 use Exception;
 
 /**
- * Class Admin
- *
- * @package Jobs\Model
+ * Class Admin.
  */
 class Admin extends Model
 {
-    protected $autoWriteTimestamp = true;
-
-    const DELETED    = 1;
-    const UN_DELETED = 0;
+    public const DELETED    = 1;
+    public const UN_DELETED = 0;
 
     /**
      * @var array
      */
-    public $snapshotData = [];
+    public $snapshotData          = [];
+    protected $autoWriteTimestamp = true;
+
+    /**
+     * @param array $snapshotData
+     *
+     * @return $this
+     */
+    public function setSnapshotData($snapshotData = [])
+    {
+        if (empty($snapshotData)) {
+            $snapshotData = $this->toArray();
+        }
+        $this->snapshotData = $snapshotData;
+        return $this;
+    }
+
+    /**
+     * @param null $field
+     *
+     * @return null|array
+     */
+    public function getSnapshotData($field = null)
+    {
+        if (empty($this->snapshotData)) {
+            return null;
+        }
+        if ($field === null) {
+            return $this->snapshotData;
+        }
+        if (isset($this->snapshotData[$field]) === false) {
+            return null;
+        }
+        return $this->snapshotData[$field];
+    }
 
     protected function initialize()
     {
@@ -46,42 +73,8 @@ class Admin extends Model
                     $this->_restPassword();
                 }
             } catch (Exception $e) {
-
             }
         });
-    }
-
-    /**
-     * @param array $snapshotData
-     *
-     * @return $this
-     */
-    function setSnapshotData($snapshotData = [])
-    {
-        if (empty($snapshotData)) {
-            $snapshotData = $this->toArray();
-        }
-        $this->snapshotData = $snapshotData;
-        return $this;
-    }
-
-    /**
-     * @param null $field
-     *
-     * @return array|null
-     */
-    function getSnapshotData($field = null)
-    {
-        if (empty($this->snapshotData)) {
-            return null;
-        }
-        if (null === $field) {
-            return $this->snapshotData;
-        }
-        if (false === isset($this->snapshotData[$field])) {
-            return null;
-        }
-        return $this->snapshotData[$field];
     }
 
     private function _restPassword()

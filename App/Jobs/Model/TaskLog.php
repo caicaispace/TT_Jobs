@@ -1,19 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: safer
- * Date: 2018/6/23
- * Time: 0:56:25
- */
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace App\Jobs\Model;
 
 use Core\AbstractInterface\AModel as Model;
 
 /**
- * Class TaskLog
- *
- * @package Jobs\Model
+ * Class TaskLog.
  */
 class TaskLog extends Model
 {
@@ -21,6 +17,5 @@ class TaskLog extends Model
 
     public static function init()
     {
-
     }
 }

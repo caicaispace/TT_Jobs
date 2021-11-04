@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * @link https://github.com/TTSimple/TT_Jobs
+ */
 namespace PhpParser\Node\Stmt\TraitUseAdaptation;
 
 use PhpParser\Node;
@@ -14,21 +18,23 @@ class Alias extends Node\Stmt\TraitUseAdaptation
     /**
      * Constructs a trait use precedence adaptation node.
      *
-     * @param null|Node\Name $trait       Trait name
-     * @param string         $method      Method name
-     * @param null|int       $newModifier New modifier
-     * @param null|string    $newName     New name
-     * @param array          $attributes  Additional attributes
+     * @param null|Node\Name $trait Trait name
+     * @param string $method Method name
+     * @param null|int $newModifier New modifier
+     * @param null|string $newName New name
+     * @param array $attributes Additional attributes
      */
-    public function __construct($trait, $method, $newModifier, $newName, array $attributes = array()) {
+    public function __construct($trait, $method, $newModifier, $newName, array $attributes = [])
+    {
         parent::__construct($attributes);
-        $this->trait = $trait;
-        $this->method = $method;
+        $this->trait       = $trait;
+        $this->method      = $method;
         $this->newModifier = $newModifier;
-        $this->newName = $newName;
+        $this->newName     = $newName;
     }
 
-    public function getSubNodeNames() {
-        return array('trait', 'method', 'newModifier', 'newName');
+    public function getSubNodeNames()
+    {
+        return ['trait', 'method', 'newModifier', 'newName'];
     }
 }

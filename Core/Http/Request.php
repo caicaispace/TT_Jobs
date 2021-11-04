@@ -1,39 +1,28 @@
 <?php
+
+declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/6/15
- * Time: 下午8:05
+ * @link https://github.com/TTSimple/TT_Jobs
  */
-
 namespace Core\Http;
-
 
 use Core\Http\Message\ServerRequest;
 use Core\Http\Message\Stream;
 use Core\Http\Message\UploadFile;
 use Core\Http\Message\Uri;
-use Core\Utility\Validate\Validate;
 use Core\Http\Session\Request as SessionRequest;
+use Core\Utility\Validate\Validate;
 
 class Request extends ServerRequest
 {
-    const REST_SPECIFICATION = 'REST_SPECIFICATION';
+    public const REST_SPECIFICATION = 'REST_SPECIFICATION';
 
     private static $instance;
-    private $swoole_http_request = null;
+    private $swoole_http_request;
     private $session;
     private $specification;
 
-    static function getInstance(\swoole_http_request $request = null)
-    {
-        if ($request !== null) {
-            self::$instance = new Request($request);
-        }
-        return self::$instance;
-    }
-
-    function __construct(\swoole_http_request $request)
+    public function __construct(\swoole_http_request $request)
     {
         $this->swoole_http_request = $request;
         $this->initHeaders();
@@ -46,59 +35,64 @@ class Request extends ServerRequest
         $this->withCookieParams($this->initCookie())->withQueryParams($this->initGet())->withParsedBody($this->initPost())->withUploadedFiles($files);
     }
 
-    function getRequestParam($keyOrKeys = null, $default = null)
+    public static function getInstance(\swoole_http_request $request = null)
     {
-        if (null !== $keyOrKeys) {
+        if ($request !== null) {
+            self::$instance = new Request($request);
+        }
+        return self::$instance;
+    }
+
+    public function getRequestParam($keyOrKeys = null, $default = null)
+    {
+        if ($keyOrKeys !== null) {
             if (is_string($keyOrKeys)) {
                 if (null === $ret = $this->getParsedBody($keyOrKeys)) {
                     if (null === $ret = $this->getQueryParam($keyOrKeys)) {
-                        if (null !== $default) {
+                        if ($default !== null) {
                             $ret = $default;
                         }
                     }
                 }
                 return $ret;
-            } else if (is_array($keyOrKeys)) {
-                if (!is_array($default)) {
+            }
+            if (is_array($keyOrKeys)) {
+                if (! is_array($default)) {
                     $default = [];
                 }
                 $data     = $this->getRequestParam();
                 $keysNull = array_fill_keys(array_values($keyOrKeys), null);
-                if (null === $keysNull) {
+                if ($keysNull === null) {
                     $keysNull = [];
                 }
                 $all = array_merge($keysNull, $default, $data);
-                $all = array_intersect_key($all, $keysNull);
-                return $all;
-            } else {
-                return null;
+                return array_intersect_key($all, $keysNull);
             }
-        } else {
-            return array_merge($this->getParsedBody(), $this->getQueryParams());
+            return null;
         }
+        return array_merge($this->getParsedBody(), $this->getQueryParams());
     }
 
-    function requestParamsValidate(Validate $validate)
+    public function requestParamsValidate(Validate $validate)
     {
         return $validate->validate($this->getRequestParam());
     }
 
-    function setExtendSpecification($specification)
+    public function setExtendSpecification($specification)
     {
         $this->specification = $specification;
     }
 
-    function getSwooleRequest()
+    public function getSwooleRequest()
     {
         return $this->swoole_http_request;
     }
 
-    function getPostData($name = null)
+    public function getPostData($name = null)
     {
         if (
             $this->specification === self::REST_SPECIFICATION
-            &&
-            in_array($this->getMethod(), ['PUT','PATCH','POST'], true)
+            && in_array($this->getMethod(), ['PUT', 'PATCH', 'POST'], true)
         ) {
             $data = json_decode($this->getSwooleRequest()->rawContent(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
             $this->withParsedBody($data);
@@ -106,9 +100,9 @@ class Request extends ServerRequest
         return $this->getParsedBody($name);
     }
 
-    function session()
+    public function session()
     {
-        if (!isset($this->session)) {
+        if (! isset($this->session)) {
             $this->session = new SessionRequest();
         }
         return $this->session;
@@ -117,12 +111,12 @@ class Request extends ServerRequest
     private function initUri()
     {
         $uri = new Uri();
-        $uri->withScheme("http");
+        $uri->withScheme('http');
         $uri->withPath($this->swoole_http_request->server['path_info']);
         $query = isset($this->swoole_http_request->server['query_string']) ? $this->swoole_http_request->server['query_string'] : '';
         $uri->withQuery($query);
         $host = $this->swoole_http_request->header['host'];
-        $host = explode(":", $host);
+        $host = explode(':', $host);
         $uri->withHost($host[0]);
         $port = isset($host[1]) ? $host[1] : 80;
         $uri->withPort($port);
@@ -140,34 +134,33 @@ class Request extends ServerRequest
     private function initFiles()
     {
         if (isset($this->swoole_http_request->files)) {
-            $normalized = array();
+            $normalized = [];
             foreach ($this->swoole_http_request->files as $key => $value) {
                 $normalized[$key] = new UploadFile(
                     $value['tmp_name'],
-                    (int)$value['size'],
-                    (int)$value['error'],
+                    (int) $value['size'],
+                    (int) $value['error'],
                     $value['name'],
                     $value['type']
                 );
             }
             return $normalized;
-        } else {
-            return array();
         }
+        return [];
     }
 
     private function initCookie()
     {
-        return isset($this->swoole_http_request->cookie) ? $this->swoole_http_request->cookie : array();
+        return isset($this->swoole_http_request->cookie) ? $this->swoole_http_request->cookie : [];
     }
 
     private function initPost()
     {
-        return isset($this->swoole_http_request->post) ? $this->swoole_http_request->post : array();
+        return isset($this->swoole_http_request->post) ? $this->swoole_http_request->post : [];
     }
 
     private function initGet()
     {
-        return isset($this->swoole_http_request->get) ? $this->swoole_http_request->get : array();
+        return isset($this->swoole_http_request->get) ? $this->swoole_http_request->get : [];
     }
 }
