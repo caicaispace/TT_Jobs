@@ -66,7 +66,7 @@ return (new PhpCsFixer\Config())
         ],
         'class_attributes_separation'       => false,
         'combine_consecutive_unsets'        => true,
-        'declare_strict_types'              => true,
+        'declare_strict_types'              => false,
         'linebreak_after_opening_tag'       => true,
         'lowercase_static_reference'        => true,
         'no_useless_else'                   => true,

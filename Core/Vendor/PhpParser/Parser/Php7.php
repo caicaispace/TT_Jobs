@@ -1,6 +1,4 @@
 <?php
-
-declare(strict_types=1);
 /**
  * @link https://github.com/TTSimple/TT_Jobs
  */
@@ -829,7 +827,7 @@ class Php7 extends \PhpParser\ParserAbstract
             $this->semValue = array_merge($this->semStack[$this->stackPos - (2 - 1)], $this->semStack[$this->stackPos - (2 - 2)]);
         } else {
             $this->semStack[$this->stackPos - (2 - 1)][] = $this->semStack[$this->stackPos - (2 - 2)];
-            $this->semValue                            = $this->semStack[$this->stackPos - (2 - 1)];
+            $this->semValue                              = $this->semStack[$this->stackPos - (2 - 1)];
         }
     }
 
@@ -1245,7 +1243,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule83()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule84()
@@ -1382,7 +1380,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule109()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule110()
@@ -1398,7 +1396,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule112()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule113()
@@ -1414,7 +1412,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule115()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule116()
@@ -1464,7 +1462,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule124()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule125()
@@ -1485,7 +1483,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule128()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule129()
@@ -1504,7 +1502,7 @@ class Php7 extends \PhpParser\ParserAbstract
             $this->semValue = array_merge($this->semStack[$this->stackPos - (2 - 1)], $this->semStack[$this->stackPos - (2 - 2)]);
         } else {
             $this->semStack[$this->stackPos - (2 - 1)][] = $this->semStack[$this->stackPos - (2 - 2)];
-            $this->semValue                            = $this->semStack[$this->stackPos - (2 - 1)];
+            $this->semValue                              = $this->semStack[$this->stackPos - (2 - 1)];
         }
     }
 
@@ -1711,7 +1709,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule165()
     {
         $this->semStack[$this->stackPos - (2 - 1)][] = $this->semStack[$this->stackPos - (2 - 2)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (2 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (2 - 1)];
     }
 
     protected function reduceRule166()
@@ -1722,7 +1720,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule167()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule168()
@@ -1753,7 +1751,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule173()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule174()
@@ -1856,7 +1854,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule193()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule194()
@@ -1907,7 +1905,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule203()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule204()
@@ -1943,7 +1941,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule210()
     {
         $this->semStack[$this->stackPos - (2 - 1)][] = $this->semStack[$this->stackPos - (2 - 2)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (2 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (2 - 1)];
     }
 
     protected function reduceRule211()
@@ -1984,7 +1982,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule218()
     {
         $this->semStack[$this->stackPos - (2 - 1)][] = $this->semStack[$this->stackPos - (2 - 2)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (2 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (2 - 1)];
     }
 
     protected function reduceRule219()
@@ -2000,7 +1998,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule221()
     {
         $this->semStack[$this->stackPos - (2 - 1)][] = $this->semStack[$this->stackPos - (2 - 2)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (2 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (2 - 1)];
     }
 
     protected function reduceRule222()
@@ -2066,7 +2064,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule234()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule235()
@@ -2144,7 +2142,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule249()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule250()
@@ -2170,7 +2168,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule254()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule255()
@@ -2191,7 +2189,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule258()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule259()
@@ -2212,7 +2210,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule262()
     {
         $this->semStack[$this->stackPos - (2 - 1)][] = $this->semStack[$this->stackPos - (2 - 2)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (2 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (2 - 1)];
     }
 
     protected function reduceRule263()
@@ -2261,7 +2259,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule271()
     {
         $this->semStack[$this->stackPos - (2 - 1)][] = $this->semStack[$this->stackPos - (2 - 2)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (2 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (2 - 1)];
     }
 
     protected function reduceRule272()
@@ -2388,7 +2386,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule296()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule297()
@@ -2409,7 +2407,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule300()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule301()
@@ -2884,7 +2882,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule394()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule395()
@@ -3333,7 +3331,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule475()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule476()
@@ -3378,7 +3376,7 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule483()
     {
         $this->semStack[$this->stackPos - (3 - 1)][] = $this->semStack[$this->stackPos - (3 - 3)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (3 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (3 - 1)];
     }
 
     protected function reduceRule484()
@@ -3414,13 +3412,13 @@ class Php7 extends \PhpParser\ParserAbstract
     protected function reduceRule490()
     {
         $this->semStack[$this->stackPos - (2 - 1)][] = $this->semStack[$this->stackPos - (2 - 2)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (2 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (2 - 1)];
     }
 
     protected function reduceRule491()
     {
         $this->semStack[$this->stackPos - (2 - 1)][] = $this->semStack[$this->stackPos - (2 - 2)];
-        $this->semValue                            = $this->semStack[$this->stackPos - (2 - 1)];
+        $this->semValue                              = $this->semStack[$this->stackPos - (2 - 1)];
     }
 
     protected function reduceRule492()

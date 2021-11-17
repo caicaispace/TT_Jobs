@@ -1,6 +1,4 @@
 <?php
-
-declare(strict_types=1);
 /**
  * @link https://github.com/TTSimple/TT_Jobs
  */
@@ -346,7 +344,8 @@ class Func
                 return true;
             }
             return false;
-        } elseif (is_array($data)) {
+        }
+        if (is_array($data)) {
             if (count($data) == $len) {
                 return true;
             }
@@ -462,7 +461,8 @@ class Func
                 return true;
             }
             return false;
-        } elseif (is_array($data)) {
+        }
+        if (is_array($data)) {
             if (count($data) <= $len) {
                 return true;
             }
@@ -527,7 +527,8 @@ class Func
                 return true;
             }
             return false;
-        } elseif (is_array($data)) {
+        }
+        if (is_array($data)) {
             if (count($data) >= $len) {
                 return true;
             }

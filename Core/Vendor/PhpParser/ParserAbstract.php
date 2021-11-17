@@ -1,6 +1,4 @@
 <?php
-
-declare(strict_types=1);
 /**
  * @link https://github.com/TTSimple/TT_Jobs
  */
@@ -63,7 +61,7 @@ abstract class ParserAbstract implements Parser
     protected $actionBase;
     /** @var array Table of actions. Indexed according to comment. */
     protected $action;
-    /** @var array Table indexed analogously to. IfCheck[$actionBase[$state] + $symbol] != $symbol
+    /** @var array Table indexed analogously to. IfCheck[$actionBase[$state] +] !=
      *             then the action is defaulted, i.e. $actionDefault[$state] should be used instead. */
     protected $actionCheck;
     /** @var array Map of states to their default action */
@@ -74,7 +72,7 @@ abstract class ParserAbstract implements Parser
     protected $gotoBase;
     /** @var array Table of states to goto after reduction. Indexed according to comment. */
     protected $goto;
-    /** @var array Table indexed analogously to. IfCheck[$gotoBase[$nonTerminal] + $state] != $nonTerminal
+    /** @var array Table indexed analogously to. IfCheck[$gotoBase[$nonTerminal] +] !=
      *             then the goto state is defaulted, i.e. $gotoDefault[$nonTerminal] should be used. */
     protected $gotoCheck;
     /** @var array Map of non-terminals to the default state to goto after their reduction */
@@ -185,7 +183,7 @@ abstract class ParserAbstract implements Parser
 
         $this->errorState = 0;
 
-          while (true){
+        while (true) {
             //$this->traceNewState($state, $symbol);
 
             if ($this->actionBase[$state] == 0) {
@@ -215,7 +213,7 @@ abstract class ParserAbstract implements Parser
                     // the attributes of the next token, even though they don't contain it themselves.
                     $this->startAttributeStack[$this->stackPos + 1] = $startAttributes;
                     $this->endAttributeStack[$this->stackPos + 1]   = $endAttributes;
-                    $this->lookaheadStartAttributes                = $startAttributes;
+                    $this->lookaheadStartAttributes                 = $startAttributes;
 
                     //$this->traceRead($symbol);
                 }
@@ -263,7 +261,7 @@ abstract class ParserAbstract implements Parser
                 }
             }
 
-              while (true){
+            while (true) {
                 if ($rule === 0) {
                     /* accept */
                     //$this->traceAccept();
