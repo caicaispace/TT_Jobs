@@ -1,4 +1,5 @@
-<?php /**
+<?php declare(strict_types=1);
+/**
  * 程序名称: PHP探针
  * 程序功能: 探测系统的Web服务器运行环境
  * 程序开发: 浪子不归(fbcha)

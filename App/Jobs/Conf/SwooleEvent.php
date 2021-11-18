@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @link https://github.com/TTSimple/TT_Jobs
  */
@@ -21,15 +23,15 @@ class SwooleEvent extends AEvent
 {
     public function frameInitialize()
     {
-        if (
-            version_compare(phpversion('swoole'), '4.2.9', '>')
-            and ! extension_loaded('swoole_async')
-        ) {
-            echo "---------------------------------------------------------------\n";
-            echo "请安装 swoole async 模块 或降级 swoole 至 4.2.9 及以下版本\n";
-            echo "---------------------------------------------------------------\n";
-            exit();
-        }
+        // if (
+        //     version_compare(phpversion('swoole'), '4.2.9', '>')
+        //     and ! extension_loaded('swoole_async')
+        // ) {
+        //     echo "---------------------------------------------------------------\n";
+        //     echo "请安装 swoole async 模块 或降级 swoole 至 4.2.9 及以下版本\n";
+        //     echo "---------------------------------------------------------------\n";
+        //     exit();
+        // }
     }
 
     public function frameInitialized()

@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @link https://github.com/TTSimple/TT_Jobs
  */
@@ -30,7 +32,7 @@ class Server
         $conf = Config::getInstance();
         switch ($conf->getServerType()) {
             case Config::SERVER_TYPE_SERVER:
-                $this->swooleServer = new \swoole_server(
+                $this->swooleServer = new \Swoole\Server(
                     $conf->getListenIp(),
                     $conf->getListenPort(),
                     $conf->getRunMode(),
@@ -38,14 +40,14 @@ class Server
                 );
                 break;
             case Config::SERVER_TYPE_WEB:
-                $this->swooleServer = new \swoole_http_server(
+                $this->swooleServer = new \Swoole\Http\Server(
                     $conf->getListenIp(),
                     $conf->getListenPort(),
                     $conf->getRunMode()
                 );
                 break;
             case Config::SERVER_TYPE_WEB_SOCKET:
-                $this->swooleServer = new \swoole_websocket_server(
+                $this->swooleServer = new \Swoole\Websocket\Server(
                     $conf->getListenIp(),
                     $conf->getListenPort(),
                     $conf->getRunMode()
