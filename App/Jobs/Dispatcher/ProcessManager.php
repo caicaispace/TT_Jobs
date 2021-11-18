@@ -19,7 +19,7 @@ class ProcessManager
 
     protected static $instance;
 
-    private $_processList = [];
+    private array $_processList = [];
 
     private $_table;
 
@@ -46,15 +46,7 @@ class ProcessManager
         return self::$instance;
     }
 
-    /**
-     * @param string $key
-     * @param string $processName
-     * @param string $processClass
-     * @param callable $onFinish
-     *
-     * @return bool
-     */
-    public function addProcess($key, $processName, $processClass, $onFinish, array $args = [])
+    public function addProcess(string $key, string $processName, string $processClass, callable $onFinish, array $args = []): bool
     {
         if (Server::getInstance()->isStart() === Server::SERVER_NOT_START) {
             trigger_error("you can't add a process {$processName}.{$processClass} after server start");
@@ -75,12 +67,7 @@ class ProcessManager
         }
     }
 
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function removeProcessByKey($key)
+    public function removeProcessByKey(string $key): bool
     {
         if ($process = $this->getProcessByKey($key)) {
             $pid = $process->getPid();
@@ -89,12 +76,7 @@ class ProcessManager
         return true;
     }
 
-    /**
-     * @param int $pid
-     *
-     * @return bool
-     */
-    public function removeProcessByPid($pid)
+    public function removeProcessByPid(int $pid): bool
     {
         if ($process = $this->getProcessByPid($pid)) {
             $this->_removeInTable($process);
@@ -107,12 +89,7 @@ class ProcessManager
         return true;
     }
 
-    /**
-     * @param $key
-     *
-     * @return null|Process
-     */
-    public function getProcessByKey($key)
+    public function getProcessByKey(string $key): ?Process
     {
         $key = $this->_generateKey($key);
         if (isset($this->_processList[$key])) {
@@ -121,12 +98,7 @@ class ProcessManager
         return null;
     }
 
-    /**
-     * @param int $pid
-     *
-     * @return null|Process
-     */
-    public function getProcessByPid($pid)
+    public function getProcessByPid(int $pid): ?Process
     {
         foreach ($this->_table as $key => $item) {
             if ($item['pid'] == $pid) {
@@ -136,42 +108,31 @@ class ProcessManager
         return null;
     }
 
-    /**
-     * @param $key
-     * @param $process
-     */
-    public function setProcess($key, $process)
+    public function setProcess(string $key, Process $process)
     {
         $this->_processList[$this->_generateKey($key)] = $process;
     }
 
     /**
      * @param $key
-     *
-     * @return bool
      */
-    public function reboot($key)
+    public function reboot(string $key): bool
     {
         if ($process = $this->getProcessByKey($key)) {
-            \Swoole\Process::kill($process->getPid(), SIGTERM);
+            \Swoole\Coroutine::resume($process->getPid());
             return true;
         }
         return false;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function kill($key)
+    public function kill(string $key): bool
     {
         if ($process = $this->getProcessByKey($key)) {
             $pid = $process->getPid();
-            if (\Swoole\Process::kill($pid, 0)) {
-                \Swoole\Process::kill($pid);
-                while ($ret = \Swoole\Process::wait(false));
-//                    echo "PID={$ret['pid']}\n";
+            if (\Swoole\Coroutine::exists($pid)) {
+                \Swoole\Coroutine::cancel($pid);
+                \Swoole\Coroutine\System::waitPid($pid);
+                // echo "PID={$ret['pid']}\n";
             }
             $this->_removeInTable($process);
         }
@@ -189,12 +150,7 @@ class ProcessManager
         }
     }
 
-    /**
-     * @param string $key
-     *
-     * @return string
-     */
-    private function _generateKey($key)
+    private function _generateKey(string $key): string
     {
         return hash('md5', $key);
     }

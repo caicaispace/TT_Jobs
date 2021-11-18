@@ -36,10 +36,9 @@ class LogicRequest
     }
 
     /**
-     * @param null $key
      * @return array|bool
      */
-    public function getId($key = null)
+    public function getId(?string $key = null)
     {
         return $this->_resolveData($this->id, $key);
     }
@@ -73,10 +72,9 @@ class LogicRequest
     }
 
     /**
-     * @param string $key
      * @return array|bool
      */
-    public function getWhere($key = null)
+    public function getWhere(?string $key = null)
     {
         return $this->_resolveData($this->where, $key);
     }
@@ -91,10 +89,9 @@ class LogicRequest
     }
 
     /**
-     * @param string $key
      * @return string
      */
-    public function getField($key = null)
+    public function getField(?string $key = null)
     {
         if (! $data = $this->field) {
             return false;

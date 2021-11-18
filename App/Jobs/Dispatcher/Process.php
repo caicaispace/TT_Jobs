@@ -13,87 +13,66 @@ use Core\Swoole\Memory\TableManager;
  */
 class Process
 {
-    private $_key;
-    private $_pid;
+    private string $_key;
+    private int $_pid;
     private $_onFinish;
-    private $_processName;
-    private $_args = [];
+    private string $_processName;
+    private array $_args = [];
 
     /**
      * Process constructor.
-     *
-     * @param string $key
-     * @param string $processName
-     * @param callable $onFinish
      */
-    public function __construct($key, $processName, $onFinish, array $args)
+    public function __construct(string $key, string $processName, callable $onFinish, array $args)
     {
-        $pid = \swoole_async::exec($processName, [$this, 'onFinish']);
+        $gid = \Swoole\Coroutine::create(function () use ($processName) {
+            $ret = \Swoole\Coroutine\System::exec($processName);
+            if ($ret) {
+                $this->onFinish($ret['output'], $ret);
+            }
+        });
 
         $this->_args        = $args;
         $this->_key         = $key;
         $this->_onFinish    = $onFinish;
         $this->_processName = $processName;
-        $this->_pid         = $pid;
+        $this->_pid         = $gid;
 
-        TableManager::getInstance()->get(ProcessManager::SWOOLE_TABLE_NAME)->set(md5($key), ['pid' => $pid]);
+        TableManager::getInstance()->get(ProcessManager::SWOOLE_TABLE_NAME)->set(md5($key), ['pid' => $gid]);
     }
 
-    /**
-     * @return null|int
-     */
-    public function getPid()
+    public function getPid(): ?int
     {
         return $this->_pid;
     }
 
-    public function getProcessKey()
+    public function getProcessKey(): string
     {
         return $this->_key;
     }
 
-    /**
-     * @return string
-     */
-    public function getProcessName()
+    public function getProcessName(): string
     {
         return $this->_processName;
     }
 
-    /**
-     * @return array
-     */
-    public function getArgs()
+    public function getArgs(): array
     {
         return $this->_args;
     }
 
-    /**
-     * @param $key
-     *
-     * @return null|mixed
-     */
-    public function getArg($key)
+    public function getArg(string $key)
     {
         return isset($this->_args[$key])
             ? $this->_args[$key]
             : null;
     }
 
-    /**
-     * @param $result
-     * @param $status
-     */
-    public function onFinish($result, $status)
+    public function onFinish(string $result, array $status)
     {
         call_user_func($this->_onFinish, $result, $status, $this->_args);
     }
 
-    /**
-     * @param string $str
-     * @param array|mixed ...$args
-     */
-    public function onReceive($str, ...$args)
+    public function onReceive(string $str, ...$args)
     {
     }
 }

@@ -132,7 +132,7 @@ class Tasks
                     'run_minute' => $runMinute,
                     'run_status' => TasksLoad::RUN_STATUS_NORMAL,
                 ];
-                $this->_table->set(SnowFlake::make(), $tableData);
+                $this->_table->set((string) SnowFlake::make(), $tableData);
             }
         }
         return true;

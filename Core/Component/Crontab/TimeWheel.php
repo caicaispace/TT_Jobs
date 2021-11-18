@@ -20,7 +20,7 @@ class TimeWheel
     protected static $instance;
 
     private $_tableColumns = [
-        'id' => ['type' => \swoole_table::TYPE_STRING, 'size' => 11],
+        'id' => ['type' => \Swoole\Table::TYPE_STRING, 'size' => 11],
     ];
 
     public function __construct()
@@ -39,51 +39,35 @@ class TimeWheel
         return self::$instance;
     }
 
-    /**
-     * @param $data
-     * @return bool
-     */
-    public function push($data)
+    public function push(array $data): bool
     {
         $minute = date('i');
         $table  = $this->_getTable($minute);
-        $key    = SnowFlake::make();
+        $key    = (string) SnowFlake::make();
         return $table->set($key, $data);
     }
 
-    /**
-     * @return \swoole_table
-     */
-    public function pop()
+    public function pop(): \Swoole\Table
     {
         return $this->table();
     }
 
-    /**
-     * @return \swoole_table
-     */
-    public function table()
+    public function table(): \Swoole\Table
     {
         $minute = date('i');
         return $this->_getTable($minute);
     }
 
-    /**
-     * @return int
-     */
-    public function count()
+    public function count(): int
     {
         $minute = date('i');
         return $this->_getTable($minute)->count();
     }
 
-    /**
-     * @return bool
-     */
-    public function clear()
+    public function clear(): bool
     {
         for ($i = 1; $i <= 60; ++$i) {
-            $table = $this->_getTable($i);
+            $table = $this->_getTable((string) $i);
             foreach ($table as $k => $v) {
                 $table->del($k);
             }
@@ -91,22 +75,14 @@ class TimeWheel
         return true;
     }
 
-    /**
-     * @param $key
-     * @return bool
-     */
-    public function del($key)
+    public function del(string $key): bool
     {
         $minute = date('i');
         $table  = $this->_getTable($minute);
         return $table->del($key);
     }
 
-    /**
-     * @param $minute
-     * @return null|\swoole_table
-     */
-    private function _getTable($minute)
+    private function _getTable(string $minute): ?\Swoole\Table
     {
         $tableName = self::SWOOLE_TABLE_NAME . $minute;
         return TableManager::getInstance()->get($tableName);

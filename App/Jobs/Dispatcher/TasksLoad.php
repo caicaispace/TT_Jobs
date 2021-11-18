@@ -30,7 +30,7 @@ class TasksLoad
     public const RUN_STATUS_SUCCESS         = 4;   // 运行成功
     public const RUN_STATUS_FAILED          = 5;   // 运行失败
 
-    protected static $instance;
+    protected static TasksLoad $instance;
 
     private $_table;
 
@@ -64,10 +64,7 @@ class TasksLoad
         return self::$instance;
     }
 
-    /**
-     * @return bool
-     */
-    public function addTask(array $data)
+    public function addTask(array $data): bool
     {
         if ($this->_table->count() > self::LOAD_SIZE) {
             return false;
@@ -89,17 +86,14 @@ class TasksLoad
 
     /**
      * @param $key
-     *
-     * @return bool
      */
-    public function deleteTask($key)
+    public function deleteTask($key): bool
     {
         return $this->_table->del($key);
     }
 
     /**
      * @param $key
-     *
      * @return array
      */
     public function getTaskInfo($key)
@@ -107,18 +101,12 @@ class TasksLoad
         return $this->_table->get($key);
     }
 
-    /**
-     * @return null|swoole_table
-     */
-    public function getTasks()
+    public function getTasks(): ?\Swoole\Table
     {
         return $this->_table;
     }
 
-    /**
-     * @return bool
-     */
-    private function _loadTasks()
+    private function _loadTasks(): bool
     {
         try {
             $model = new TaskModel();

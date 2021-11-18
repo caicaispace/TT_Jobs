@@ -31,7 +31,7 @@ class Parse
      * @throws \InvalidArgumentException 错误信息
      * @return array|int unix timestamp  下一分钟内是否需要执行任务，如果需要，则把需要在那几秒执行返回
      */
-    public static function parse($crontabString, $startTime = null)
+    public static function parse($crontabString, ?int $startTime = null)
     {
         if (is_array($crontabString)) {
             return self::_parseArray($crontabString, $startTime);
@@ -82,12 +82,8 @@ class Parse
 
     /**
      * 解析单个配置的含义.
-     * @param $s
-     * @param $min
-     * @param $max
-     * @return array
      */
-    protected static function _parseCronNumber($s, $min, $max)
+    protected static function _parseCronNumber(string $s, int $min, int $max): array
     {
         $result = [];
         $v1     = explode(',', $s);
@@ -105,12 +101,7 @@ class Parse
         return $result;
     }
 
-    /**
-     * @param $data
-     * @param $startTime
-     * @return array
-     */
-    protected static function _parseArray($data, $startTime)
+    protected static function _parseArray(array $data, int $startTime): array
     {
         $result = [];
         foreach ($data as $v) {

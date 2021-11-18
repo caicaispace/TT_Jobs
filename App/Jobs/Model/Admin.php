@@ -18,18 +18,10 @@ class Admin extends Model
     public const DELETED    = 1;
     public const UN_DELETED = 0;
 
-    /**
-     * @var array
-     */
-    public $snapshotData          = [];
+    public array $snapshotData    = [];
     protected $autoWriteTimestamp = true;
 
-    /**
-     * @param array $snapshotData
-     *
-     * @return $this
-     */
-    public function setSnapshotData($snapshotData = [])
+    public function setSnapshotData(array $snapshotData = []): Admin
     {
         if (empty($snapshotData)) {
             $snapshotData = $this->toArray();
@@ -40,10 +32,8 @@ class Admin extends Model
 
     /**
      * @param null $field
-     *
-     * @return null|array
      */
-    public function getSnapshotData($field = null)
+    public function getSnapshotData($field = null): ?array
     {
         if (empty($this->snapshotData)) {
             return null;

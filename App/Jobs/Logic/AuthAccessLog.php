@@ -39,15 +39,11 @@ class AuthAccessLog extends ALogic
         try {
             $ret = $model->select();
         } catch (Exception $e) {
-            return $this->response()
-                ->setMsg($e->getMessage())
-                ->error();
+            return $this->response()->setMsg($e->getMessage())->error();
         }
         $list         = $ret->toArray();
         $responseData = $list;
-        return $this->response()
-            ->setData($responseData)
-            ->success();
+        return $this->response()->setData($responseData)->success();
     }
 
     public function getInfo()
@@ -59,9 +55,7 @@ class AuthAccessLog extends ALogic
             return $this->response()->error();
         }
         $responseData = $model->toArray();
-        return $this->response()
-            ->setData($responseData)
-            ->success();
+        return $this->response()->setData($responseData)->success();
     }
 
     public function create()
@@ -74,9 +68,7 @@ class AuthAccessLog extends ALogic
             return $this->response()->error();
         }
         $responseData = $model->toArray();
-        return $this->response()
-            ->setData($responseData)
-            ->success();
+        return $this->response()->setData($responseData)->success();
     }
 
     public function update()

@@ -39,9 +39,7 @@ class Admin extends ALogic
         try {
             $ret = $model->select();
         } catch (Exception $e) {
-            return $this->response()
-                ->setMsg($e->getMessage())
-                ->error();
+            return $this->response()->setMsg($e->getMessage())->error();
         }
 
         $list = $ret->toArray();
@@ -51,9 +49,7 @@ class Admin extends ALogic
         }, $list);
 
         $responseData = $list;
-        return $this->response()
-            ->setData($responseData)
-            ->success();
+        return $this->response()->setData($responseData)->success();
     }
 
     public function getInfo()
@@ -65,9 +61,7 @@ class Admin extends ALogic
             return $this->response()->error();
         }
         $responseData = $model->toArray();
-        return $this->response()
-            ->setData($responseData)
-            ->success();
+        return $this->response()->setData($responseData)->success();
     }
 
     public function create()
@@ -80,9 +74,7 @@ class Admin extends ALogic
             return $this->response()->error();
         }
         $requestData = $model->toArray();
-        return $this->response()
-            ->setData($requestData)
-            ->success();
+        return $this->response()->setData($requestData)->success();
     }
 
     public function update()
@@ -103,8 +95,7 @@ class Admin extends ALogic
         } catch (Exception $e) {
             return $this->response()->error($e->getMessage());
         }
-        return $this->response()
-            ->success();
+        return $this->response()->success();
     }
 
     public function delete()
@@ -119,7 +110,6 @@ class Admin extends ALogic
         if (! $ret = $model->save()) {
             return $this->response()->error();
         }
-        return $this->response()
-            ->success();
+        return $this->response()->success();
     }
 }

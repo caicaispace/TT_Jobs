@@ -23,7 +23,7 @@ class SnowFlake
      * @param int $workerID 任务进程ID 0-31
      * @return int 分布式ID
      */
-    public static function make($dataCenterID = 0, $workerID = 0)
+    public static function make(int $dataCenterID = 0, int $workerID = 0): int
     {
         // 41bit timestamp + 5bit dataCenter + 5bit worker + 12bit
 

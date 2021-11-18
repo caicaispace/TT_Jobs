@@ -19,16 +19,11 @@ use Swoole\Server as SwooleServer;
  */
 class Dispatcher
 {
-    protected static $instance;
-    /**
-     * @var SwooleServer
-     */
-    private $_server;
+    protected static Dispatcher $instance;
 
-    /**
-     * @var int
-     */
-    private $_workerId;
+    private SwooleServer $_server;
+
+    private int $_workerId;
 
     public function __construct()
     {
@@ -42,12 +37,7 @@ class Dispatcher
         return self::$instance;
     }
 
-    /**
-     * @param int $workerId
-     *
-     * @return $this
-     */
-    public function setServer(SwooleServer $server, $workerId)
+    public function setServer(SwooleServer $server, int $workerId): self
     {
         $this->_server   = $server;
         $this->_workerId = $workerId;
@@ -67,7 +57,7 @@ class Dispatcher
         }
     }
 
-    public function _taskOnFinish($result, $status, $taskInfo)
+    public function _taskOnFinish(string $result, array $status, array $taskInfo)
     {
 //        echo '-------------' . date('Y-m-d H:i:s') . '-------------' . PHP_EOL;
 //

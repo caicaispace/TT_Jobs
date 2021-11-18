@@ -30,9 +30,7 @@ class AuthGroupAccess extends ALogic
             return $this->response()->error($e->getMessage());
         }
         $responseData = $model->toArray();
-        return $this->response()
-            ->setData($responseData)
-            ->success();
+        return $this->response()->setData($responseData)->success();
     }
 
     public function create()
@@ -57,9 +55,7 @@ class AuthGroupAccess extends ALogic
             return $this->response()->error();
         }
         $responseData = $model->toArray();
-        return $this->response()
-            ->setData($responseData)
-            ->success();
+        return $this->response()->setData($responseData)->success();
     }
 
     public function update()
@@ -87,8 +83,7 @@ class AuthGroupAccess extends ALogic
         if (! $ret = (new Model())->insertAll($requestData)) {
             return $this->response()->error();
         }
-        return $this->response()
-            ->success();
+        return $this->response()->success();
     }
 
     public function delete()
