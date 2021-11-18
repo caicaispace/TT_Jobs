@@ -11,7 +11,7 @@ use App\Jobs\Dispatcher\TasksLoad as JobsLoadTasks;
 use App\Jobs\Model\Task as TaskModel;
 use App\Jobs\Model\TaskLog as TaskLogModel;
 use Core\Swoole\Timer;
-use swoole_server;
+use Swoole\Server as SwooleServer;
 
 /**
  * 调度器
@@ -21,7 +21,7 @@ class Dispatcher
 {
     protected static $instance;
     /**
-     * @var swoole_server
+     * @var SwooleServer
      */
     private $_server;
 
@@ -37,7 +37,7 @@ class Dispatcher
     public static function getInstance()
     {
         if (! isset(self::$instance)) {
-            self::$instance = new static();
+            self::$instance = new self();
         }
         return self::$instance;
     }
@@ -47,7 +47,7 @@ class Dispatcher
      *
      * @return $this
      */
-    public function setServer(swoole_server $server, $workerId)
+    public function setServer(SwooleServer $server, $workerId)
     {
         $this->_server   = $server;
         $this->_workerId = $workerId;

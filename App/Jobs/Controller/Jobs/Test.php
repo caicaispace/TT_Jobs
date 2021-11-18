@@ -62,15 +62,15 @@ class Test extends Controller
         // //            continue;
         // //        }
 
-        $responseData = [];
-        if (JobsExpression::isValidExpression($jobsString)) {
-            $ret = JobsExpression::factory($jobsString)->getMultipleRunDates(10, '2018-06-24 01:00:00');
-            foreach ($ret as $k => $v) {
-                $date = $v->format('YmdHi');
-                var_dump($date);
-                $responseData[] = $date;
-            }
-        }
-        $this->response()->writeJson(200, $responseData);
+        // $responseData = [];
+        // if (JobsExpression::isValidExpression($jobsString)) {
+        //     $ret = JobsExpression::factory($jobsString)->getMultipleRunDates(10, '2018-06-24 01:00:00');
+        //     foreach ($ret as $k => $v) {
+        //         $date = $v->format('YmdHi');
+        //         var_dump($date);
+        //         $responseData[] = $date;
+        //     }
+        // }
+        // $this->response()->writeJson(200, $responseData);
     }
 }

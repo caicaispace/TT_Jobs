@@ -26,13 +26,16 @@
   },
   "autoload": {
     "psr-4": {
-        "App\\": "App/"
+        "App\\": "App/",
+        "Core\\": "Core/"
     },
     "files": []
   },
   "scripts": {
-    "cs-fix": "php-cs-fixer fix $1",
+    "start": "php ./App/Jobs/bin/server start",
+    "fmt": "php-cs-fixer fix $1",
     "analyse": "phpstan analyse --memory-limit 300M -l 0 -c phpstan.neon ./App",
-    "start": "php ./App/Jobs/bin/server start"
+    "dev": "composer dump-autoload -o",
+    "pro": "composer dump-autoload -o --no-dev --classmap-authoritative"
   }
 }

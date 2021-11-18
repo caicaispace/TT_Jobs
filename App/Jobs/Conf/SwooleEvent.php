@@ -10,7 +10,7 @@ use App\Jobs\Dispatcher\Dispatcher as JobsDispatcher;
 use App\Jobs\Dispatcher\ProcessManager as JobsProcessManager;
 use App\Jobs\Dispatcher\Tasks as JobsTasks;
 use App\Jobs\Dispatcher\TasksLoad as JobsLoadTasks;
-use App\Jobs\Event\onHttpDispatcher;
+use App\Jobs\Event\OnHttpDispatcher;
 use Core\AbstractInterface\AEvent;
 use Core\Http\Request;
 use Core\Http\Response;
@@ -42,27 +42,27 @@ class SwooleEvent extends AEvent
 //        });
     }
 
-    public function beforeWorkerStart(\swoole_server $server)
+    public function beforeWorkerStart(\Swoole\Server $server)
     {
         JobsTasks::getInstance();
         JobsLoadTasks::getInstance();
         JobsProcessManager::getInstance();
     }
 
-    public function onStart(\swoole_server $server)
+    public function onStart(\Swoole\Server $server)
     {
     }
 
-    public function onShutdown(\swoole_server $server)
+    public function onShutdown(\Swoole\Server $server)
     {
     }
 
-    public function onWorkerStart(\swoole_server $server, $workerId)
+    public function onWorkerStart(\Swoole\Server $server, $workerId)
     {
         JobsDispatcher::getInstance()->setServer($server, $workerId)->dispatch();
     }
 
-    public function onWorkerStop(\swoole_server $server, $workerId)
+    public function onWorkerStop(\Swoole\Server $server, $workerId)
     {
     }
 
@@ -72,27 +72,27 @@ class SwooleEvent extends AEvent
 
     public function onDispatcher(Request $request, Response $response, $targetControllerClass, $targetAction)
     {
-        onHttpDispatcher::auth($request, $response, $targetControllerClass, $targetAction);
-        onHttpDispatcher::accessLog($request, $response, $targetControllerClass, $targetAction);
+        OnHttpDispatcher::auth($request, $response, $targetControllerClass, $targetAction);
+        OnHttpDispatcher::accessLog($request, $response, $targetControllerClass, $targetAction);
     }
 
     public function onResponse(Request $request, Response $response)
     {
     }
 
-    public function onTask(\swoole_server $server, $taskId, $workerId, $taskObj)
+    public function onTask(\Swoole\Server $server, $taskId, $workerId, $taskObj)
     {
     }
 
-    public function onFinish(\swoole_server $server, $taskId, $taskObj)
+    public function onFinish(\Swoole\Server $server, $taskId, $taskObj)
     {
     }
 
-    public function onWorkerError(\swoole_server $server, $workerId, $workerPid, $exitCode)
+    public function onWorkerError(\Swoole\Server $server, $workerId, $workerPid, $exitCode)
     {
     }
 
-    public function onMessage(\swoole_server $server, $frame)
+    public function onMessage(\Swoole\Server $server, $frame)
     {
     }
 }

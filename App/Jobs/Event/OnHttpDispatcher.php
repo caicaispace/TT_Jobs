@@ -13,9 +13,9 @@ use Core\Http\Response;
 use Core\Utility\Auth\Web as Auth;
 
 /**
- * Class onHttpDispatcher.
+ * Class OnHttpDispatcher.
  */
-class onHttpDispatcher
+class OnHttpDispatcher
 {
     /**
      * 权限检测.

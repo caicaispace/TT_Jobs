@@ -29,7 +29,7 @@ class ProcessManager
             self::SWOOLE_TABLE_NAME,
             [
                 'pid' => [
-                    'type' => \swoole_table::TYPE_INT,
+                    'type' => \Swoole\Table::TYPE_INT,
                     'size' => 10,
                 ],
             ],
@@ -41,7 +41,7 @@ class ProcessManager
     public static function getInstance()
     {
         if (! isset(self::$instance)) {
-            self::$instance = new static();
+            self::$instance = new self();
         }
         return self::$instance;
     }
@@ -98,9 +98,9 @@ class ProcessManager
     {
         if ($process = $this->getProcessByPid($pid)) {
             $this->_removeInTable($process);
-            if (\swoole_process::kill($pid, 0)) {
-                \swoole_process::kill($pid);
-                while ($ret = \swoole_process::wait(false));
+            if (\Swoole\Process::kill($pid, 0)) {
+                \Swoole\Process::kill($pid);
+                while ($ret = \Swoole\Process::wait(false));
 //                    echo "PID={$ret['pid']}\n";
             }
         }
@@ -153,7 +153,7 @@ class ProcessManager
     public function reboot($key)
     {
         if ($process = $this->getProcessByKey($key)) {
-            \swoole_process::kill($process->getPid(), SIGTERM);
+            \Swoole\Process::kill($process->getPid(), SIGTERM);
             return true;
         }
         return false;
@@ -168,9 +168,9 @@ class ProcessManager
     {
         if ($process = $this->getProcessByKey($key)) {
             $pid = $process->getPid();
-            if (\swoole_process::kill($pid, 0)) {
-                \swoole_process::kill($pid);
-                while ($ret = \swoole_process::wait(false));
+            if (\Swoole\Process::kill($pid, 0)) {
+                \Swoole\Process::kill($pid);
+                while ($ret = \Swoole\Process::wait(false));
 //                    echo "PID={$ret['pid']}\n";
             }
             $this->_removeInTable($process);

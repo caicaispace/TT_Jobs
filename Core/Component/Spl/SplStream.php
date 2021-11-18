@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * @link https://github.com/TTSimple/TT_Jobs
  */
-namespace EasySwoole\Core\Component\Spl;
+namespace Core\Component\Spl;
 
 class SplStream
 {

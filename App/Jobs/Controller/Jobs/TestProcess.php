@@ -6,7 +6,7 @@ declare(strict_types=1);
  */
 namespace App\Jobs\Controller\Jobs;
 
-use Common\Process as ProcessTest;
+use App\Jobs\Dispatcher\Process as ProcessTest;
 use Core\AbstractInterface\AHttpController as Controller;
 use Core\Http\Message\Status;
 use Core\Swoole\Process\ProcessManager;
@@ -22,15 +22,18 @@ class TestProcess extends Controller
 
     public function go()
     {
-        go(function () {
+        /* @phpstan-ignore-next-line */
+        \go(function () {
             $ret = \Swoole\Coroutine\System::exec('php ' . ROOT . '/test.php ' . __FILE__);
             var_dump($ret);
         });
-        go(function () {
+        /* @phpstan-ignore-next-line */
+        \go(function () {
             $ret = \Swoole\Coroutine\System::exec('php ' . ROOT . '/test.php ' . __FILE__);
             var_dump($ret);
         });
-        go(function () {
+        /* @phpstan-ignore-next-line */
+        \go(function () {
             $ret = \Swoole\Coroutine\System::exec('php ' . ROOT . '/test.php ' . __FILE__);
             var_dump($ret);
         });

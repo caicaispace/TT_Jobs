@@ -35,7 +35,7 @@ abstract class AEvent
     /*
      * 未执行swoole_http_server start
      */
-    abstract public function beforeWorkerStart(\swoole_server $server);
+    abstract public function beforeWorkerStart(\Swoole\Server $server);
 
     /*
      * Server启动在主进程的主线程回调此函数
@@ -52,7 +52,7 @@ abstract class AEvent
        worker进程已经创建好了。新创建的对象在主进程内，worker进程无法访问到此内存区域。
        因此全局对象创建的代码需要放置在swoole_server_start之前。
      */
-    abstract public function onStart(\swoole_server $server);
+    abstract public function onStart(\Swoole\Server $server);
 
     /*
      * 在此之前Swoole Server已进行了如下操作
@@ -63,7 +63,7 @@ abstract class AEvent
        强制kill进程不会回调onShutdown，如kill -9
        需要使用kill -15来发送SIGTREM信号到主进程才能按照正常的流程终止
      */
-    abstract public function onShutdown(\swoole_server $server);
+    abstract public function onShutdown(\Swoole\Server $server);
 
     /*
      * 此事件在worker进程/task进程启动时发生。这里创建的对象可以在进程生命周期内使用
@@ -76,12 +76,12 @@ abstract class AEvent
         $worker_id和进程PID没有任何关系
      * 每个worker进程启动均会执行该函数，6个worker就执行6次
      */
-    abstract public function onWorkerStart(\swoole_server $server, $workerId);
+    abstract public function onWorkerStart(\Swoole\Server $server, $workerId);
 
     /*
     * 每个worker进程启动均会执行该函数，6个worker就执行6次
     */
-    abstract public function onWorkerStop(\swoole_server $server, $workerId);
+    abstract public function onWorkerStop(\Swoole\Server $server, $workerId);
 
     abstract public function onRequest(Request $request, Response $response);
 
@@ -89,11 +89,11 @@ abstract class AEvent
 
     abstract public function onResponse(Request $request, Response $response);
 
-    abstract public function onTask(\swoole_server $server, $taskId, $workerId, $callBackObj);
+    abstract public function onTask(\Swoole\Server $server, $taskId, $workerId, $callBackObj);
 
-    abstract public function onFinish(\swoole_server $server, $taskId, $callBackObj);
+    abstract public function onFinish(\Swoole\Server $server, $taskId, $callBackObj);
 
-    abstract public function onWorkerError(\swoole_server $server, $worker_id, $worker_pid, $exit_code);
+    abstract public function onWorkerError(\Swoole\Server $server, $worker_id, $worker_pid, $exit_code);
 
-    abstract public function onMessage(\swoole_server $server, $frame);
+    abstract public function onMessage(\Swoole\Server $server, $frame);
 }

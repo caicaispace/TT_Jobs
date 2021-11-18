@@ -25,12 +25,12 @@ class Tasks
     private $_table;
 
     private $_tableColumns = [
-        'id'              => ['type' => \swoole_table::TYPE_STRING, 'size' => 11],
-        'run_id'          => ['type' => \swoole_table::TYPE_STRING, 'size' => 20],
-        'run_minute'      => ['type' => \swoole_table::TYPE_STRING, 'size' => 12],
-        'run_status'      => ['type' => \swoole_table::TYPE_INT, 'size' => 2],
-        'run_time_start'  => ['type' => \swoole_table::TYPE_INT, 'size' => 11],
-        'run_time_update' => ['type' => \swoole_table::TYPE_INT, 'size' => 11],
+        'id'              => ['type' => \Swoole\Table::TYPE_STRING, 'size' => 11],
+        'run_id'          => ['type' => \Swoole\Table::TYPE_STRING, 'size' => 20],
+        'run_minute'      => ['type' => \Swoole\Table::TYPE_STRING, 'size' => 12],
+        'run_status'      => ['type' => \Swoole\Table::TYPE_INT, 'size' => 2],
+        'run_time_start'  => ['type' => \Swoole\Table::TYPE_INT, 'size' => 11],
+        'run_time_update' => ['type' => \Swoole\Table::TYPE_INT, 'size' => 11],
     ];
 
     public function __construct()
@@ -42,7 +42,7 @@ class Tasks
     public static function getInstance()
     {
         if (! isset(self::$instance)) {
-            self::$instance = new static();
+            self::$instance = new self();
         }
         return self::$instance;
     }
@@ -208,7 +208,7 @@ class Tasks
      */
     private function _cleanProcess()
     {
-        while ($ret = \swoole_process::wait(true)) {
+        while ($ret = \Swoole\Process::wait(true)) {
             echo "swoole_process wait PID={$ret['pid']}" . PHP_EOL;
             ProcessManager::getInstance()->removeProcessByPid($ret['pid']);
         }

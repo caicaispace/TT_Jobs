@@ -22,7 +22,6 @@
 //         佛祖保佑       永无BUG       永不修改                  //
 ////////////////////////////////////////////////////////////////////
 
-
 require_once 'Core.php';
 
 $server = \Core\Core::getInstance()->frameWorkInitialize();
@@ -37,15 +36,15 @@ function commandParser()
     }
     foreach ($argv as $item) {
         if (substr($item, 0, 2) === '--') {
-            $temp          = trim($item, "--");
-            $temp          = explode("-", $temp);
+            $temp          = trim($item, '--');
+            $temp          = explode('-', $temp);
             $key           = array_shift($temp);
             $options[$key] = array_shift($temp) ?: '';
         }
     }
     return [
-        "command" => $command,
-        "options" => $options,
+        'command' => $command,
+        'options' => $options,
     ];
 }
 
@@ -53,32 +52,22 @@ function commandHandler()
 {
     $command = commandParser();
     switch ($command['command']) {
-        case "start":
-        {
+        case 'start':
             startServer($command['options']);
             break;
-        }
         case 'stop':
-        {
             stopServer($command['options']);
             break;
-        }
         case 'reload':
-        {
             reloadServer($command['options']);
             break;
-        }
         case 'version':
-        {
             echo \Core\Component\Di::getInstance()->get(\Core\Component\SysConst::VERSION);
             echo "\n";
             break;
-        }
         case 'help':
         default:
-        {
             help($command['options']);
-        }
     }
 }
 
@@ -90,9 +79,9 @@ function startServer($options)
     _________  /______ _________  /_
     __  ___/  __/  __ `/_  ___/  __/
     _(__  )/ /_ / /_/ /_  /   / /_
-    /____/ \__/ \__,_/ /_/    \__/        Thanks PHP and Swoole.
+    /____/ \\__/ \\__,_/ /_/    \\__/        Thanks PHP and Swoole.
     
-                      Power by EasySwoole v1.0
+                      Power by Swoole
 _.------------------------------------------------------------------._
 \n";
     $now_date = date('Y-m-d H:i:s');
@@ -102,27 +91,27 @@ _.------------------------------------------------------------------._
     global $server;
     $conf = \Core\Conf\Config::getInstance();
     if (isset($options['ip'])) {
-        $conf->setConf("SERVER.LISTEN", $options['ip']);
+        $conf->setConf('SERVER.LISTEN', $options['ip']);
     }
     echo 'listen address        ' . $conf->getConf('SERVER.LISTEN') . "\n";
-    if (!empty($options['p'])) {
-        $conf->setConf("SERVER.PORT", $options['p']);
+    if (! empty($options['p'])) {
+        $conf->setConf('SERVER.PORT', $options['p']);
     }
     echo 'listen port           ' . $conf->getConf('SERVER.PORT') . "\n";
-    if (!empty($options['pid'])) {
+    if (! empty($options['pid'])) {
         $pidFile = $options['pid'];
-        \COre\Conf\Config::getInstance()->setConf("SERVER.CONFIG.pid_file", $pidFile);
+        \COre\Conf\Config::getInstance()->setConf('SERVER.CONFIG.pid_file', $pidFile);
     }
     if (isset($options['workerNum'])) {
-        $conf->setConf("SERVER.CONFIG.worker_num", $options['workerNum']);
+        $conf->setConf('SERVER.CONFIG.worker_num', $options['workerNum']);
     }
     echo 'worker num            ' . $conf->getConf('SERVER.CONFIG.worker_num') . "\n";
     if (isset($options['taskWorkerNum'])) {
-        $conf->setConf("SERVER.CONFIG.task_worker_num", $options['taskWorkerNum']);
+        $conf->setConf('SERVER.CONFIG.task_worker_num', $options['taskWorkerNum']);
     }
     echo 'task worker num       ' . $conf->getConf('SERVER.CONFIG.task_worker_num') . "\n";
     if (isset($options['user'])) {
-        $conf->setConf("SERVER.CONFIG.user", $options['user']);
+        $conf->setConf('SERVER.CONFIG.user', $options['user']);
     }
     echo 'user                  ' . get_current_user() . "\n";
 //    if (isset($options['group'])) {
@@ -130,14 +119,14 @@ _.------------------------------------------------------------------._
 //    }
 //    echo 'user group            ' . $conf->getConf('SERVER.CONFIG.group') . "\n";
     if (isset($options['cpuAffinity'])) {
-        $conf->setConf("SERVER.CONFIG.open_cpu_affinity", true);
+        $conf->setConf('SERVER.CONFIG.open_cpu_affinity', true);
     }
     $label = 'false';
     if (isset($options['d'])) {
-        $conf->setConf("SERVER.CONFIG.daemonize", true);
+        $conf->setConf('SERVER.CONFIG.daemonize', true);
         $label = 'true';
     } else {
-        \Core\Conf\Config::getInstance()->setConf("SERVER.CONFIG.pid_file", null);
+        \Core\Conf\Config::getInstance()->setConf('SERVER.CONFIG.pid_file', null);
     }
     echo 'daemonize             ' . $label . "\n";
     $label = 'false';
@@ -158,53 +147,51 @@ _.------------------------------------------------------------------._
     echo 'php version           ' . phpversion() . "\n";
     echo 'swoole version        ' . phpversion('swoole') . "\n";
     $server->run();
-
 }
 
 function stopServer($options)
 {
-    $pidFile = \Core\Conf\Config::getInstance()->getConf("SERVER.CONFIG.pid_file");
-    if (!empty($options['pid'])) {
+    $pidFile = \Core\Conf\Config::getInstance()->getConf('SERVER.CONFIG.pid_file');
+    if (! empty($options['pid'])) {
         $pidFile = $options['pid'];
     }
-    if (!file_exists($pidFile)) {
+    if (! file_exists($pidFile)) {
         echo "pid file :{$pidFile} not exist \n";
         return;
     }
     $pid = file_get_contents($pidFile);
-    if (!swoole_process::kill($pid, 0)) {
+    if (! \Swoole\Process::kill($pid, 0)) {
         echo "pid :{$pid} not exist \n";
         return;
     }
     if (isset($options['f'])) {
-        swoole_process::kill($pid, SIGKILL);
+        \Swoole\Process::kill($pid, SIGKILL);
     } else {
-        swoole_process::kill($pid);
+        \Swoole\Process::kill($pid);
     }
     //等待两秒
     $time = time();
     while (true) {
         usleep(1000);
-        if (!swoole_process::kill($pid, 0)) {
-            echo "server stop at " . date("y-m-d h:i:s") . "\n";
+        if (! \Swoole\Process::kill($pid, 0)) {
+            echo 'server stop at ' . date('y-m-d h:i:s') . "\n";
             if (is_file($pidFile)) {
                 unlink($pidFile);
             }
             break;
-        } else {
-            if (time() - $time > 2) {
-                echo "stop server fail.try --force again \n";
-                break;
-            }
+        }
+        if (time() - $time > 2) {
+            echo "stop server fail.try --force again \n";
+            break;
         }
     }
 }
 
 function reloadServer($options)
 {
-    $pidFile = \Core\Conf\Config::getInstance()->getConf("SERVER.CONFIG.pid_file");
+    $pidFile = \Core\Conf\Config::getInstance()->getConf('SERVER.CONFIG.pid_file');
     if (isset($options['pid'])) {
-        if (!empty($options['pid'])) {
+        if (! empty($options['pid'])) {
             $pidFile = $options['pid'];
         }
     }
@@ -213,18 +200,18 @@ function reloadServer($options)
     } else {
         $sig = SIGUSR1;
     }
-    if (!file_exists($pidFile)) {
+    if (! file_exists($pidFile)) {
         echo "pid file :{$pidFile} not exist \n";
         return;
     }
     $pid = file_get_contents($pidFile);
     opCacheClear();
-    if (!swoole_process::kill($pid, 0)) {
+    if (! \Swoole\Process::kill($pid, 0)) {
         echo "pid :{$pid} not exist \n";
         return;
     }
-    swoole_process::kill($pid, $sig);
-    echo "send server reload command at " . date("y-m-d h:i:s") . "\n";
+    \Swoole\Process::kill($pid, $sig);
+    echo 'send server reload command at ' . date('y-m-d h:i:s') . "\n";
 }
 
 function help($options)
@@ -236,7 +223,6 @@ function help($options)
     }
     switch ($opName) {
         case 'start':
-        {
             echo "------------ 启动命令 ------------\n";
             echo "执行php App/bin/server start 即可启动服务。启动可选参数为:\n";
             echo "--d                       是否以系统守护模式运行\n";
@@ -249,41 +235,34 @@ function help($options)
             echo "--taskWorkerNum-num       设置Task进程数\n";
             echo "--cpuAffinity-boolean     是否开启CPU亲和\n";
             break;
-        }
         case 'stop':
-        {
             echo "------------ 停止命令 ------------\n";
             echo "执行php App/bin/server stop 即可启动服务。启动可选参数为:\n";
             echo "--pid-fileName        指定服务PID存储文件\n";
             echo "--f                   强制停止服务\n";
             break;
-        }
         case 'reload':
-        {
             echo "------------ 重启命令 ------------\n";
             echo "执行php App/bin/server reload 即可启动服务。启动可选参数为:\n";
             echo "--pid-fileName        指定服务PID存储文件\n";
             echo "--pid-all             是否重启所有进程，默认true\n";
             break;
-        }
         default:
-        {
             echo "------------ 欢迎使用 ------------\n";
             echo "有关某个命令的详细信息，请使用 help 命令, 如help --start 可选参数为:\n";
             echo "--start            启动\n";
             echo "--stop             停止\n";
             echo "--reload           重启\n";
-        }
     }
 }
 
 function evenCheck()
 {
     if (version_compare(phpversion(), '5.6', '<')) {
-        die("php version must >= 5.6");
+        exit('php version must >= 5.6');
     }
     if (version_compare(phpversion('swoole'), '1.9.5', '<')) {
-        die("swoole version must >= 1.9.5");
+        exit('swoole version must >= 1.9.5');
     }
 }
 

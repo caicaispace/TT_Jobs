@@ -9,7 +9,6 @@ namespace App\Jobs\Dispatcher;
 use App\Jobs\Model\Task as TaskModel;
 use Core\Component\Error\Trigger;
 use Core\Swoole\Memory\TableManager;
-use swoole_table;
 
 /**
  * Class TasksLoad.
@@ -36,18 +35,18 @@ class TasksLoad
     private $_table;
 
     private $_tableColumns = [
-        'id'              => ['type' => swoole_table::TYPE_INT, 'size' => 11],
-        'task_name'       => ['type' => swoole_table::TYPE_STRING, 'size' => 500],
-        'cron_spec'       => ['type' => swoole_table::TYPE_STRING, 'size' => 500],
-        'group_id'        => ['type' => swoole_table::TYPE_INT, 'size' => 11],
-        'single'          => ['type' => swoole_table::TYPE_INT, 'size' => 1],
-        'timeout'         => ['type' => swoole_table::TYPE_INT, 'size' => 11],
-        'status'          => ['type' => swoole_table::TYPE_INT, 'size' => 2],
-        'command'         => ['type' => swoole_table::TYPE_STRING, 'size' => 500],
-        'exec_count'      => ['type' => swoole_table::TYPE_INT, 'size' => 8],
-        'run_status'      => ['type' => swoole_table::TYPE_INT, 'size' => 2],
-        'run_time_start'  => ['type' => swoole_table::TYPE_INT, 'size' => 11],
-        'run_time_update' => ['type' => swoole_table::TYPE_INT, 'size' => 11],
+        'id'              => ['type' => \Swoole\Table::TYPE_INT, 'size' => 11],
+        'task_name'       => ['type' => \Swoole\Table::TYPE_STRING, 'size' => 500],
+        'cron_spec'       => ['type' => \Swoole\Table::TYPE_STRING, 'size' => 500],
+        'group_id'        => ['type' => \Swoole\Table::TYPE_INT, 'size' => 11],
+        'single'          => ['type' => \Swoole\Table::TYPE_INT, 'size' => 1],
+        'timeout'         => ['type' => \Swoole\Table::TYPE_INT, 'size' => 11],
+        'status'          => ['type' => \Swoole\Table::TYPE_INT, 'size' => 2],
+        'command'         => ['type' => \Swoole\Table::TYPE_STRING, 'size' => 500],
+        'exec_count'      => ['type' => \Swoole\Table::TYPE_INT, 'size' => 8],
+        'run_status'      => ['type' => \Swoole\Table::TYPE_INT, 'size' => 2],
+        'run_time_start'  => ['type' => \Swoole\Table::TYPE_INT, 'size' => 11],
+        'run_time_update' => ['type' => \Swoole\Table::TYPE_INT, 'size' => 11],
     ];
 
     public function __construct()
@@ -60,7 +59,7 @@ class TasksLoad
     public static function getInstance()
     {
         if (! isset(self::$instance)) {
-            self::$instance = new static();
+            self::$instance = new self();
         }
         return self::$instance;
     }

@@ -42,22 +42,22 @@ class Event extends AEvent
         $this->extendedEvent->frameInitialized();
     }
 
-    public function beforeWorkerStart(\swoole_server $server)
+    public function beforeWorkerStart(\Swoole\Server $server)
     {
         $this->extendedEvent->beforeWorkerStart($server);
     }
 
-    public function onStart(\swoole_server $server)
+    public function onStart(\Swoole\Server $server)
     {
         $this->extendedEvent->onStart($server);
     }
 
-    public function onShutdown(\swoole_server $server)
+    public function onShutdown(\Swoole\Server $server)
     {
         $this->extendedEvent->onStart($server);
     }
 
-    public function onWorkerStart(\swoole_server $server, $workerId)
+    public function onWorkerStart(\Swoole\Server $server, $workerId)
     {
         // WebSocketCommandParser
 //        \Core\Conf\WebSocketCommandParser::getInstance()->onWorkerStart($server, $workerId);
@@ -66,7 +66,7 @@ class Event extends AEvent
         $this->extendedEvent->onWorkerStart($server, $workerId);
     }
 
-    public function onWorkerStop(\swoole_server $server, $workerId)
+    public function onWorkerStop(\Swoole\Server $server, $workerId)
     {
         $this->extendedEvent->onWorkerStop($server, $workerId);
     }
@@ -86,27 +86,27 @@ class Event extends AEvent
         $this->extendedEvent->onResponse($request, $response);
     }
 
-    public function onTask(\swoole_server $server, $taskId, $workerId, $taskObj)
+    public function onTask(\Swoole\Server $server, $taskId, $workerId, $taskObj)
     {
         $this->extendedEvent->onTask($server, $taskId, $workerId, $taskObj);
     }
 
-    public function onFinish(\swoole_server $server, $taskId, $taskObj)
+    public function onFinish(\Swoole\Server $server, $taskId, $taskObj)
     {
         $this->extendedEvent->onFinish($server, $taskId, $taskObj);
     }
 
-    public function onWorkerError(\swoole_server $server, $workerId, $workerPid, $exitCode)
+    public function onWorkerError(\Swoole\Server $server, $workerId, $workerPid, $exitCode)
     {
         $this->extendedEvent->onWorkerError($server, $workerId, $workerPid, $exitCode);
     }
 
-    public function onMessage(\swoole_server $server, $frame)
+    public function onMessage(\Swoole\Server $server, $frame)
     {
         $this->extendedEvent->onMessage($server, $frame);
     }
 
-    private function _AutoReload(\swoole_server $server, $workerId)
+    private function _AutoReload(\Swoole\Server $server, $workerId)
     {
         if ($workerId == 0) {
             if (extension_loaded('inotify')) {
