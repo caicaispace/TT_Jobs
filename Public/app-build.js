@@ -1,5 +1,5 @@
 ({
-    appDir: "apps",
-    baseUrl: "apps",
-    dir: "apps-build"
+  appDir: "apps",
+  baseUrl: "apps",
+  dir: "apps-build"
 })

@@ -1,5 +1,5 @@
 ({
-    appDir: "js",
-    baseUrl: "js",
-    dir: "js-build"
+  appDir: "js",
+  baseUrl: "js",
+  dir: "js-build"
 })

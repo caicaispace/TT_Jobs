@@ -1,158 +1,158 @@
 define(['backbone', 'mu/common', 'nprogress'], function (Backbone, common, NProgress) {
-    Backbone.ajax = function (options) {
-	    NProgress.start();
-        var success = options.success;
-        var alert_types = 'PUT,POST,DELETE';
-        options.success = function (resp) {
-            if (!resp.status) {
-                if (typeof options.validate === 'undefined')
-                    return common.error(null, resp);
-                return options.error(resp);
-			}
-            if (success) success(resp);
-			if (alert_types.indexOf(options.type) > -1) common.success();
-			NProgress.done();
-        }
-        return Backbone.$.ajax.apply(Backbone.$, arguments);
-    };
-
-    /**************** page layout ****************/
-    var layout = {
-		'$header': $('#headerbar'),
-		'$left': $('.sidebar-nav'),
-		'$right': $('#rightpanel'),
-		'$content': $('#right-content'),
-		'$breadcrumb': $('#breadcrumb'),
-		'$route_history_back': $('#route-history-back'),
-		'$route_history_go': $('#route-history-go'),
+  Backbone.ajax = function (options) {
+    NProgress.start();
+    var success = options.success;
+    var alert_types = 'PUT,POST,DELETE';
+    options.success = function (resp) {
+      if (!resp.status) {
+        if (typeof options.validate === 'undefined')
+          return common.error(null, resp);
+        return options.error(resp);
+      }
+      if (success) success(resp);
+      if (alert_types.indexOf(options.type) > -1) common.success();
+      NProgress.done();
     }
-    /**************** page layout ****************/
+    return Backbone.$.ajax.apply(Backbone.$, arguments);
+  };
 
-	var AppRouter = Backbone.Router.extend({
-		routes: {
-			"": "table",
+  /**************** page layout ****************/
+  var layout = {
+    '$header': $('#headerbar'),
+    '$left': $('.sidebar-nav'),
+    '$right': $('#rightpanel'),
+    '$content': $('#right-content'),
+    '$breadcrumb': $('#breadcrumb'),
+    '$route_history_back': $('#route-history-back'),
+    '$route_history_go': $('#route-history-go'),
+  }
+  /**************** page layout ****************/
 
-			"index": "index",
+  var AppRouter = Backbone.Router.extend({
+    routes: {
+      "": "table",
 
-            "statistics/:action": 'statistics',
-            "table/:action": 'table',
+      "index": "index",
 
-			"test": 'test',
+      "statistics/:action": 'statistics',
+      "table/:action": 'table',
 
-			"*actions": 'defaultRoute'
-		},
+      "test": 'test',
 
-		index: function() {
-			this.show('statistics/dashboard');
-		},
+      "*actions": 'defaultRoute'
+    },
 
-        statistics: function (action) {
-            var controller = 'statistics';
-            action = action || 'dashboard';
-            this.show(controller + '/' + action);
-        },
+    index: function () {
+      this.show('statistics/dashboard');
+    },
 
-		table: function(action) {
-            var controller = 'table';
-            action = action || 'list';
-            this.show(controller + '/' + action);
-		},
+    statistics: function (action) {
+      var controller = 'statistics';
+      action = action || 'dashboard';
+      this.show(controller + '/' + action);
+    },
 
-		test: function(){
-			this.show('test');
-		},
+    table: function (action) {
+      var controller = 'table';
+      action = action || 'list';
+      this.show(controller + '/' + action);
+    },
 
-		initialize: function() {
+    test: function () {
+      this.show('test');
+    },
 
-		},
+    initialize: function () {
 
-		//匹配所有url
-		defaultRoute: function(actions) {
-			if (actions) {
-				//console.log(actions);
-			}
-		},
+    },
 
-		// 面包屑导航
-		breadcrumb: function() {
-			var current_route  = Backbone.history.getFragment();
-			var current_routes = current_route.split('/');
-			current_route      = current_routes.join(' / ');
-			layout.$breadcrumb.html(current_route)
-		},
+    //匹配所有url
+    defaultRoute: function (actions) {
+      if (actions) {
+        //console.log(actions);
+      }
+    },
 
-		/**
-		 * 显示视图
-		 * @param  {string} name    视图名
-		 * @param  {object} options 传入视图配置
-		 */
-		show: function(name, options) {
-			// var before = this.beforeShow();
-			// before.loading();
-			// var after  = this.afterShow();
-			this.breadcrumb();
+    // 面包屑导航
+    breadcrumb: function () {
+      var current_route = Backbone.history.getFragment();
+      var current_routes = current_route.split('/');
+      current_route = current_routes.join(' / ');
+      layout.$breadcrumb.html(current_route)
+    },
 
-			options === void 0
-				? options = {$insertDOM: layout.$content}
-				: options.$insertDOM = layout.$content;
-				// : options = {insertDOM: '#right-content'};
+    /**
+     * 显示视图
+     * @param  {string} name    视图名
+     * @param  {object} options 传入视图配置
+     */
+    show: function (name, options) {
+      // var before = this.beforeShow();
+      // before.loading();
+      // var after  = this.afterShow();
+      this.breadcrumb();
 
-			require(['v/' + name], function(view) {
-				APP.currentView = new view(options);
-				// APP.currentView.$el.fadeIn(1000);
-			});
-		},
+      options === void 0
+        ? options = { $insertDOM: layout.$content }
+        : options.$insertDOM = layout.$content;
+      // : options = {insertDOM: '#right-content'};
 
-		/**
-		 * 前置函数
-		 * @return {[ object ]}
-		 */
-		beforeShow: function(){
-		},
+      require(['v/' + name], function (view) {
+        APP.currentView = new view(options);
+        // APP.currentView.$el.fadeIn(1000);
+      });
+    },
 
-		/**
-		 * 后置函数
-		 * @return {[ object ]}
-		 */
-		afterShow: function(){
-		}
-	});
+    /**
+     * 前置函数
+     * @return {[ object ]}
+     */
+    beforeShow: function () {
+    },
 
-	var ar = new AppRouter;
+    /**
+     * 后置函数
+     * @return {[ object ]}
+     */
+    afterShow: function () {
+    }
+  });
 
-	ar.on('route', function(func, arg) {
-		if (APP.currentView) APP.currentView.remove().off();
-	});
+  var ar = new AppRouter;
 
-	require(['v/common/header', 'v/common/left_menu'], function(header, leftMenu) {
-		new header({
-			layout: layout,
-			$insertDOM: layout.$left
-		});
-		new leftMenu({
-			layout: layout,
-			$insertDOM: layout.$left
-		});
-		Backbone.history.start();
-		layout.$route_history_back.click(function () {
-			window.history.back()
-		});
-		layout.$route_history_go.click(function () {
-			window.history.go(1)
-		});
-		require(['jquery_fullscreen'], function () {
-			$('#view-fullscreen').fullscreen();
-		});
-		// /* remove route '#' , but you can't refresh on F5 or browser's refresh button */
-		// Backbone.history.start({ pushState: true });
-		// $(document).on("click", "a:not([data-bypass])", function(evt) {
-		// 	var href = { prop: $(this).prop("href"), attr: $(this).attr("href") };
-		// 	var root = location.protocol + "//" + location.host + Backbone.history.options.root;
+  ar.on('route', function (func, arg) {
+    if (APP.currentView) APP.currentView.remove().off();
+  });
 
-		// 	if (href.prop && href.prop.slice(0, root.length) === root) {
-		// 		evt.preventDefault();
-		// 		Backbone.history.navigate(href.attr, true);
-		// 	}
-		// });
-	});
+  require(['v/common/header', 'v/common/left_menu'], function (header, leftMenu) {
+    new header({
+      layout: layout,
+      $insertDOM: layout.$left
+    });
+    new leftMenu({
+      layout: layout,
+      $insertDOM: layout.$left
+    });
+    Backbone.history.start();
+    layout.$route_history_back.click(function () {
+      window.history.back()
+    });
+    layout.$route_history_go.click(function () {
+      window.history.go(1)
+    });
+    require(['jquery_fullscreen'], function () {
+      $('#view-fullscreen').fullscreen();
+    });
+    // /* remove route '#' , but you can't refresh on F5 or browser's refresh button */
+    // Backbone.history.start({ pushState: true });
+    // $(document).on("click", "a:not([data-bypass])", function(evt) {
+    // 	var href = { prop: $(this).prop("href"), attr: $(this).attr("href") };
+    // 	var root = location.protocol + "//" + location.host + Backbone.history.options.root;
+
+    // 	if (href.prop && href.prop.slice(0, root.length) === root) {
+    // 		evt.preventDefault();
+    // 		Backbone.history.navigate(href.attr, true);
+    // 	}
+    // });
+  });
 });
