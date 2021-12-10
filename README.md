@@ -9,8 +9,8 @@
 
 ## 环境要求
 
-- php >= 5.6
-- swoole >= 1.9.23
+- php >= 7.4
+- swoole >= 4.7.1
 
 ## 配置
 
@@ -41,21 +41,9 @@ demo: demo      # demo
 
 ## 注意事项
 
-swoole >= 4.3.0 需要安装 [swoole Async 模块](https://github.com/swoole/ext-async)
+xxx
 
-```
-git clone https://github.com/swoole/ext-async.git
-cd ext-async
-git checkout v.4.4.7 # 切换版本至 swoole 相同版本
-phpize
-./configure
-make -j 4
-sudo make install
-```
-
-
-
-## TODO
+## v1.0 TODO
 
 - [ ] 全局常量
 - [ ] 一键迁移 crontab
