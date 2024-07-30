@@ -23,6 +23,11 @@ var ROOT_PATH = '.';
 // var ROOT_PATH = '../../';
 
 var server = http.createServer(function(request, response) {
+    if (path.normalize(decodeURI(pathname)) !== decode_uri(pathname)) {
+        response.statusCode = 403;
+        response.end();
+        return;
+    }
     var pathname = url.parse(request.url).pathname;
     if (pathname.charAt(pathname.length - 1) === "/") {
         pathname += "index.html"; //指定为默认网页
